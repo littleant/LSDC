@@ -18,7 +18,7 @@ public abstract class Resource {
 		return out;
 	}
 	
-	
+	///sums up several lists (memory usage app1 + memory usage app2 +....)
 	protected LinkedList<Integer> aggregateValues(LinkedList<LinkedList<Integer>> input ) {
 		boolean allFinished = false;
 		int i = 1;
@@ -38,4 +38,20 @@ public abstract class Resource {
 		}
 		return null;
 	}
+	
+	
+	public abstract Integer getCurrentCpuUsage();
+	
+	public abstract Integer getCurrentMemoryUsage();
+	
+	public abstract Integer getCurrentStorageUsage();
+	
+	public abstract Integer getCurrentCpuAllocation();
+	
+	public abstract Integer getCurrentMemoryAllocation();
+	
+	public abstract Integer getCurrentStorageAllocation();
+	
+	//calculate next tick
+	abstract public void nextTick();
 }

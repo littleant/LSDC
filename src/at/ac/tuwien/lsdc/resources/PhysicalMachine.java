@@ -1,35 +1,105 @@
 package at.ac.tuwien.lsdc.resources;
 
+import java.util.LinkedList;
+
 import at.ac.tuwien.lsdc.mape.Problem;
 
-public class PhysicalMachine implements Problem {
+public class PhysicalMachine extends Resource implements Problem {
+	//is the machine running? true=>yes
 	private boolean status;
-	private int usedCpu;
-	private int usedMemory;
-	private int usedStorage;
+	private final Integer STARTUPTIME = 20;
+	
+	private LinkedList<VirtualMachine> vms = new LinkedList<VirtualMachine>();
+	
 	public boolean isStatus() {
 		return status;
 	}
-	public void setStatus(boolean status) {
-		this.status = status;
+
+	public void startMachine() {
+		suspendedTicks = STARTUPTIME;
+		status = true;
 	}
-	public int getUsedCpu() {
-		return usedCpu;
+	
+	public void stopMachine() {
+		status = false;
 	}
-	public void setUsedCpu(int usedCpu) {
-		this.usedCpu = usedCpu;
+	
+	@Override
+	public void nextTick() {
+		if (suspendedTicks>0) {
+			suspendedTicks--;
+		}
+		else if(status==false ){
+			//machine is not running
+		}
+		else {
+			runningTicks++;
+			for (VirtualMachine vm : vms ) {
+				vm.nextTick();
+			}
+		}
+		
 	}
-	public int getUsedMemory() {
-		return usedMemory;
+	@Override
+	//returns actual cpu - usage of the vms and apps
+	public Integer getCurrentCpuUsage() {
+		int curcpu =0;
+		for (VirtualMachine vm: vms) {
+			curcpu +=vm.getCurrentCpuUsage();
+		}
+		return curcpu;
 	}
-	public void setUsedMemory(int usedMemory) {
-		this.usedMemory = usedMemory;
+	
+	@Override
+	//returns the memory that is actually used by the vms and apps
+	public Integer getCurrentMemoryUsage() {
+		int curmem=0;
+		for(VirtualMachine vm: vms) {
+			curmem+=vm.getCurrentMemoryUsage();
+		}
+		return null;
 	}
-	public int getUsedStorage() {
-		return usedStorage;
+	
+	
+	
+	@Override
+	//returns the storage that is actually used by the vms and apps
+	public Integer getCurrentStorageUsage() {
+		int curstorage = 0;
+		for (VirtualMachine vm: vms) {
+			curstorage += vm.getCurrentStorageUsage();
+		}
+		return curstorage;
 	}
-	public void setUsedStorage(int usedStorage) {
-		this.usedStorage = usedStorage;
+	
+	
+	//returns the storage that is currently allocated by the vms
+	public Integer getCurrentStorageAllocation() {
+		int curstorage = 0;
+		for(VirtualMachine vm:vms) {
+			curstorage+=vm.getCurrentStorageAllocation();
+		}
+		return curstorage;
+	}
+	@Override
+	//returns the cpu that is currently allocated by the vms
+	public Integer getCurrentCpuAllocation() {
+		int curcpu=0;
+		for (VirtualMachine vm : vms) {
+			curcpu += vm.getCurrentCpuAllocation();
+		}
+		return curcpu;
+		
+	}
+	
+	@Override
+	//returns the memory that is currently allocated by the vms
+	public Integer getCurrentMemoryAllocation() {
+		int curmem=0;
+		for (VirtualMachine vm: vms){
+			curmem += vm.getCurrentMemoryAllocation();
+		}
+		return null;
 	}
 	
 }
