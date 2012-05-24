@@ -5,11 +5,10 @@ import java.util.List;
 
 import at.ac.tuwien.lsdc.mape.Problem;
 
-public class App implements Problem {
+public class App extends Resource implements Problem {
 	// how many ticks the App will run
 	private int ticks;
-	// how many ticks the App ran
-	private int tickNumber;
+	
 	// extra ticks that the App cannot run.
 	// If this is > 0 the App is suspendend and the extraTicks should be decremented.
 	private int extraTicks = 0;
@@ -20,9 +19,21 @@ public class App implements Problem {
 	private int storage;
 
 	// used resources per tick
-	private List<Integer> cpuUsage;
-	private List<Integer> memoryUsage;
-	private List<Integer> storageUsage;
+	private LinkedList<Integer> cpuUsage;
+	private LinkedList<Integer> memoryUsage;
+	private LinkedList<Integer> storageUsage;
+	
+	// link to the hosting vm
+	private VirtualMachine vm;
+	
+	
+	public App(int cpu, int memory, int storage, VirtualMachine vm) {
+		this.cpu= cpu;
+		this.memory = memory;
+		this.storage = storage;
+		this.vm = vm;
+		
+	}
 	
 	public int getTicks() {
 		return ticks;
@@ -32,13 +43,6 @@ public class App implements Problem {
 		this.ticks = ticks;
 	}
 
-	public int getTickNumber() {
-		return tickNumber;
-	}
-
-	public void setTickNumber(int tickNumber) {
-		this.tickNumber = tickNumber;
-	}
 
 	public int getExtraTicks() {
 		return extraTicks;
@@ -72,55 +76,105 @@ public class App implements Problem {
 		this.storage = storage;
 	}
 
-	public int getCurrentCpuUsage() {
-		return this.getCpuUsage().get(this.getTickNumber());
+	public Integer getCurrentCpuUsage() {
+		return this.getCpuUsage().get(this.runningTicks);
 	}
 
-	public int getCurrentMemoryUsage() {
-		return this.getMemoryUsage().get(this.getTickNumber());
+	public Integer getCurrentMemoryUsage() {
+		return this.getMemoryUsage().get(this.runningTicks);
 	}
 
-	public int getCurrentStorageUsage() {
-		return this.getStorageUsage().get(this.getTickNumber());
+	public Integer getCurrentStorageUsage() {
+		return this.getStorageUsage().get(this.runningTicks);
 	}
 
-	public List<Integer> getCpuUsage() {
+	public LinkedList<Integer> getCpuUsage() {
 		return cpuUsage;
 	}
 
-	public void setCpuUsage(List<Integer> cpuUsage) {
+	public void setCpuUsage(LinkedList<Integer> cpuUsage) {
 		this.cpuUsage = cpuUsage;
 	}
 
-	public List<Integer> getMemoryUsage() {
+	public LinkedList<Integer> getMemoryUsage() {
 		return memoryUsage;
 	}
 
-	public void setMemoryUsage(List<Integer> memoryUsage) {
+	public void setMemoryUsage(LinkedList<Integer> memoryUsage) {
 		this.memoryUsage = memoryUsage;
 	}
 
-	public List<Integer> getStorageUsage() {
+	public LinkedList<Integer> getStorageUsage() {
 		return storageUsage;
 	}
 
-	public void setStorageUsage(List<Integer> storageUsage) {
+	public void setStorageUsage(LinkedList<Integer> storageUsage) {
 		this.storageUsage = storageUsage;
 	}
 	
 	public LinkedList<Integer> getCpuUsageHistory(int maxNumberOfEntries) {
-		// TODO
-		return null;
+		return getLastEntriesUtil(cpuUsage, maxNumberOfEntries);
 	}
 	
 	public LinkedList<Integer> getMemoryUsageHistory(int maxNumberOfEntries) {
-		// TODO
-		return null;
+		return getLastEntriesUtil(memoryUsage, maxNumberOfEntries);
 	}
 	
 	public LinkedList<Integer> getStorageUsageHistory(int maxNumberOfEntries) {
-		// TODO
-		return null;
+		return getLastEntriesUtil(storageUsage, maxNumberOfEntries);
+	}
+
+	@Override
+	//at app level equivalent to usage 
+	public Integer getCurrentCpuAllocation() {
+		return this.getCurrentCpuUsage();
+	}
+
+	@Override
+	//at app level equivalent to usage
+	public Integer getCurrentMemoryAllocation() {
+		// TODO Auto-generated method stub
+		return this.getCurrentMemoryUsage();
+	}
+
+	@Override
+	//at app level equivalent to usage
+	public Integer getCurrentStorageAllocation() {
+		// TODO Auto-generated method stub
+		return this.getCurrentStorageUsage();
+	}
+
+	@Override
+	public void nextTick() {
+		if (suspendedTicks>0) {
+			suspendedTicks--;
+		}
+		else {
+			runningTicks++;
+			
+			//terminate?
+			if(runningTicks>=ticks){
+				vm.getApps().remove(this);
+			}
+		}
+	}
+
+	@Override
+	//at app level equivalent to usage
+	public LinkedList<Integer> getStorageAllocationHistory(int maxEntries) {
+		return this.getStorageUsageHistory(maxEntries);
+	}
+
+	@Override	
+	//at app level equivalent to usage	
+	public LinkedList<Integer> getCpuAllocationHistory(int maxEntries) {
+		return this.getCpuUsageHistory(maxEntries);
+	}
+
+	@Override
+	//at app level equivalent to usage	
+	public LinkedList<Integer> getMemoryAllocationHistory(int maxEntries) {
+		return this.getMemoryUsageHistory(maxEntries);
 	}
 
 }

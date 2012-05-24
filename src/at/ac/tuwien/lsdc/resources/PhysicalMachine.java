@@ -101,6 +101,79 @@ public class PhysicalMachine extends Resource implements Problem {
 		}
 		return null;
 	}
+
+	@Override
+	//get and aggregate the usage values for all vms
+	public LinkedList<Integer> getStorageUsageHistory(int maxEntries) {
+
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		
+		for (VirtualMachine vm: vms) {
+			values.add(vm.getStorageUsageHistory(maxEntries));
+		}
+		
+		return this.aggregateValues(values);
+	}
+
+	@Override
+	//get and aggregate the usage values for all vms
+	public LinkedList<Integer> getMemoryUsageHistory(int maxEntries) {
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		
+		for (VirtualMachine vm: vms) {
+			values.add(vm.getMemoryUsageHistory(maxEntries));
+		}
+		
+		return this.aggregateValues(values);
+	}
+
+	@Override
+	//get and aggregate the usage values for all vms
+	public LinkedList<Integer> getCpuUsageHistory(int maxEntries) {
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		
+		for (VirtualMachine vm: vms) {
+			values.add(vm.getCpuUsageHistory(maxEntries));
+		}
+		
+		return this.aggregateValues(values);
+	}
+
+	@Override
+	//get and aggregate the allocation values for all vms
+	public LinkedList<Integer> getStorageAllocationHistory(int maxEntries) {
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		
+		for (VirtualMachine vm: vms) {
+			values.add(vm.getStorageAllocationHistory(maxEntries));
+		}
+		
+		return this.aggregateValues(values);
+	}
+
+	@Override
+	//get and aggregate the allocation values for all vms
+	public LinkedList<Integer> getCpuAllocationHistory(int maxEntries) {
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		
+		for (VirtualMachine vm: vms) {
+			values.add(vm.getCpuAllocationHistory(maxEntries));
+		}
+		
+		return this.aggregateValues(values);
+	}
+
+	@Override
+	//get and aggregate the allocation values for all vms
+	public LinkedList<Integer> getMemoryAllocationHistory(int maxEntries) {
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		
+		for (VirtualMachine vm: vms) {
+			values.add(vm.getMemoryAllocationHistory(maxEntries));
+		}
+		
+		return this.aggregateValues(values);
+	}
 	
 }
 

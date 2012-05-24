@@ -52,6 +52,18 @@ public abstract class Resource {
 	
 	public abstract Integer getCurrentStorageAllocation();
 	
+	public abstract LinkedList<Integer> getStorageUsageHistory(int maxEntries);
+	
+	public abstract LinkedList<Integer> getMemoryUsageHistory(int maxEntries);
+	
+	public abstract LinkedList<Integer> getCpuUsageHistory(int maxEntries);
+	
+	public abstract LinkedList<Integer> getStorageAllocationHistory(int maxEntries) ;
+	
+	public abstract LinkedList<Integer> getCpuAllocationHistory(int maxEntries) ;
+	
+	public abstract LinkedList<Integer> getMemoryAllocationHistory(int maxEntries) ;
+	
 	//calculate next tick
 	abstract public void nextTick();
 }

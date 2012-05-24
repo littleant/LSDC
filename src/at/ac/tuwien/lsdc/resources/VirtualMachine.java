@@ -26,6 +26,7 @@ public class VirtualMachine extends Resource implements Problem  {
 	private VirtualMachine() {
 	}
 	
+	
 	public Integer getCurrentCpuAllocation() {
 		return allocatedCpu.getLast();
 	}
