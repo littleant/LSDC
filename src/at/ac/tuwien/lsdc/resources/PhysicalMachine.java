@@ -6,22 +6,22 @@ import at.ac.tuwien.lsdc.mape.Problem;
 
 public class PhysicalMachine extends Resource implements Problem {
 	//is the machine running? true=>yes
-	private boolean status;
+	private boolean isRunning;
 	private final Integer STARTUPTIME = 20;
 	
 	private LinkedList<VirtualMachine> vms = new LinkedList<VirtualMachine>();
 	
-	public boolean isStatus() {
-		return status;
+	public boolean isRunning() {
+		return isRunning;
 	}
 
 	public void startMachine() {
 		suspendedTicks = STARTUPTIME;
-		status = true;
+		isRunning = true;
 	}
 	
 	public void stopMachine() {
-		status = false;
+		isRunning = false;
 	}
 	
 	@Override
@@ -29,7 +29,7 @@ public class PhysicalMachine extends Resource implements Problem {
 		if (suspendedTicks>0) {
 			suspendedTicks--;
 		}
-		else if(status==false ){
+		else if(isRunning==false ){
 			//machine is not running
 		}
 		else {
