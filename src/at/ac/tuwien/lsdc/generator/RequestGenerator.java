@@ -15,7 +15,9 @@ public class RequestGenerator {
 	List<Integer> memory;
 	List<Integer> storage;
 	List<Integer> slas;
-	
+
+	// RequestQueue
+	private List<Request> requests;
 		
 	public static RequestGenerator getInstance() {
 		if (RequestGenerator.instance == null) {
@@ -27,9 +29,7 @@ public class RequestGenerator {
 		}
 		
 		return RequestGenerator.instance;
-	}	
-	
-	private List<Request> requests;
+	}
 
 	public List<Request> getRequests() {
 		return requests;
