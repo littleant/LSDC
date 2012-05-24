@@ -9,6 +9,8 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomData;
 import org.apache.commons.math3.random.RandomDataImpl;
 
+import at.ac.tuwien.lsdc.generator.RequestGenerator;
+
 public class CsvGenerator {
 
 	public static void main(String args[]) throws IOException {
@@ -46,7 +48,9 @@ public class CsvGenerator {
 			
 		}
 		
-		RequestG
+		RequestGenerator rg = RequestGenerator.getInstance();
+		rg.generateRequest();
+		System.out.println(rg.toString());
 
 	}
 

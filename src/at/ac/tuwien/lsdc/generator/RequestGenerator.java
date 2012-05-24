@@ -15,8 +15,36 @@ public class RequestGenerator {
 	List<Integer> memory;
 	List<Integer> storage;
 	List<Integer> slas;
+
+	// RequestQueue
+	private List<Request> requests;
+		
+	public static RequestGenerator getInstance() {
+		if (RequestGenerator.instance == null) {
+			synchronized(RequestGenerator.class) {
+				if (RequestGenerator.instance == null) {
+					RequestGenerator.instance = new RequestGenerator();
+				}
+			}
+		}
+		
+		return RequestGenerator.instance;
+	}
+
+	public List<Request> getRequests() {
+		return requests;
+	}
+
+	public void setRequests(List<Request> requests) {
+		this.requests = requests;
+	}
 	
-	private RequestGenerator() {
+	public void addRequest(Request request) {
+		this.requests.add(request);
+	}
+	
+	
+	public void generateRequest() {
 
 		FileReader input = null;
 		try {
@@ -35,6 +63,7 @@ public class RequestGenerator {
 		}
 
 		String[] values = line.split(";");
+		System.out.println("Size of the values " + values.length);
 		
 		cpu = new ArrayList<Integer>();
 		memory = new ArrayList<Integer>();
@@ -43,44 +72,47 @@ public class RequestGenerator {
 		
 		
 		int i;
-		for (i = 1; i < 4;i++);
+		for (i = 1; i < 4;i++)
 		slas.add(Integer.parseInt(values[i]));
+		System.out.println("Size of the slas " + this.slas.size());
 		
-		for (; i < Integer.parseInt(values[0])+3;i++);
+		for (; i < Integer.parseInt(values[0])+4;i++)
 		cpu.add(Integer.parseInt(values[i]));
+		System.out.println("Size of the cpus " + this.cpu.size());
 		
-		for (; i < 2*Integer.parseInt(values[0])+3;i++);
+		for (; i < 2*Integer.parseInt(values[0])+4;i++)
 		memory.add(Integer.parseInt(values[i]));
+		System.out.println("Size of the memory " + this.memory.size());
 		
-		for (; i < 3*Integer.parseInt(values[0])+3;i++);
+		
+		for (; i < 3*Integer.parseInt(values[0])+4;i++)
 		storage.add(Integer.parseInt(values[i]));
+		System.out.println("Size of the storage " + this.storage.size());
 		
 
 	}
 	
-	public static RequestGenerator getInstance() {
-		if (RequestGenerator.instance == null) {
-			synchronized(RequestGenerator.class) {
-				if (RequestGenerator.instance == null) {
-					RequestGenerator.instance = new RequestGenerator();
-				}
-			}
-		}
+	@Override
+	public String toString(){
 		
-		return RequestGenerator.instance;
-	}	
-	
-	private List<Request> requests;
+		String request= "SLAS: ";
 
-	public List<Request> getRequests() {
-		return requests;
+		for (int i =0;i <this.slas.size();i++)
+			request +=slas.get(i)+";";
+
+		request += "\nCpus: ";
+		for (int i =0;i <this.cpu.size();i++)
+			request +=cpu.get(i)+";";
+		request += "\nMemory: ";
+		for (int i =0;i <this.memory.size();i++)
+			request +=memory.get(i)+";";
+		request += "\nStorage: ";
+		for (int i =0;i <this.storage.size();i++)
+			request +=storage.get(i)+";";
+		
+		
+		return request;
+		
 	}
 
-	public void setRequests(List<Request> requests) {
-		this.requests = requests;
-	}
-	
-	public void addRequest(Request request) {
-		this.requests.add(request);
-	}
 }
