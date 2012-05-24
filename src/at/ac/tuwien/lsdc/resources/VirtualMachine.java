@@ -4,9 +4,7 @@ import java.util.LinkedList;
 
 import at.ac.tuwien.lsdc.mape.Problem;
 
-public class VirtualMachine implements Problem {
-	private int suspendedTicks;
-	
+public class VirtualMachine extends Resource implements Problem  {
 	
 	private LinkedList<Integer> allocatedCpu = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedMemory = new LinkedList<Integer>();
@@ -28,9 +26,52 @@ public class VirtualMachine implements Problem {
 		return allocatedCpu.getLast();
 	}
 	
+	//returns the last n cpu - allocation values 
 	public LinkedList<Integer> getCpuAllocationHistory(int maxNumberOfEntries) {
-		
+		return this.getLastEntriesUtil(allocatedCpu, maxNumberOfEntries);
 	}
+	
+	//returns the last n memory - allocation values
+	public LinkedList<Integer> getMemoryAllocationHistory(int maxNumberOfEntries) {
+		return this.getLastEntriesUtil(allocatedMemory, maxNumberOfEntries);
+	}
+	
+	//returns the last n storage allocation values
+	public LinkedList<Integer> getStorageAllocationHistory(int maxNumberOfEntries) {
+		return this.getLastEntriesUtil(allocatedStorage, maxNumberOfEntries);
+	}
+	
+	//returns the last n cpu - usage parameters
+	public LinkedList<Integer> getCpuUsageHistory(int maxNumberOfEntries) {
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		for (App a: apps) {
+			values.add(a.getCpuUsageHistory(maxNumberOfEntries));
+		}
+		
+		return this.aggregateValues(values);
+	}
+	
+	//returns the last n memory - usage parameters
+	public LinkedList<Integer> getMemoryUsageHistory(int maxNumberOfEntries) {
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		for (App a: apps) {
+			values.add(a.getMemoryUsageHistory(maxNumberOfEntries));
+		}
+		
+		return this.aggregateValues(values);
+	}
+	
+	//returns the last n storage - usage parameters
+	public LinkedList<Integer> getStorageUsageHistory(int maxNumberOfEntries) {
+		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		for (App a: apps) {
+			values.add(a.getStorageUsageHistory(maxNumberOfEntries));
+		}
+			
+		return this.aggregateValues(values);
+	}
+		
+	
 	
 	//get CPU usage produced by apps
 	public Integer getCurrentCpuUsage() {
@@ -68,6 +109,13 @@ public class VirtualMachine implements Problem {
 	public Integer getCurrentStorageAllocation()  {
 		return allocatedStorage.getLast();
 	}
+	
+	
+	public void nextTick(){
+		if(suspendedTicks>0)
+	}
+	
+	
 	
 	
 	
