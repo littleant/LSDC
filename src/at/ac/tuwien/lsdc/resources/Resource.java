@@ -14,6 +14,7 @@ public abstract class Resource {
 		Iterator<Integer> it = input.descendingIterator();
 		while (it.hasNext() && i<maxNoOfEntries){
 			out.addFirst(it.next());
+			i++;
 		}
 		return out;
 	}
@@ -34,7 +35,9 @@ public abstract class Resource {
 					curVal += li.get(li.size()-i);
 				}
 			}
-			aggregated.addFirst(curVal);
+			if(allFinished==false){
+				aggregated.addFirst(curVal);
+			}
 			i++;
 		}
 		return aggregated;
