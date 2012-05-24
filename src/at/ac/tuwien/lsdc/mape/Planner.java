@@ -4,5 +4,5 @@ import at.ac.tuwien.lsdc.actions.Action;
 
 public abstract class Planner {
 
-	public Action selectAction(App app);
+	public abstract Action selectAction(Problem problem);
 }
