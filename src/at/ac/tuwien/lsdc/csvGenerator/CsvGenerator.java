@@ -49,8 +49,7 @@ public class CsvGenerator {
 		}
 		
 		RequestGenerator rg = RequestGenerator.getInstance();
-		rg.generateRequest();
-		System.out.println(rg.toString());
+		System.out.println(rg.generateRequest().toString());
 
 	}
 

@@ -79,4 +79,26 @@ public class Request {
 	public void setStorageUsage(LinkedList<Integer> storageUsage) {
 		this.storageUsage = storageUsage;
 	}
+	
+	@Override
+	public String toString(){
+		
+		String request= "SLAS: ";
+
+		request += this.cpu + ";" + this.memory + ";" + this.storage + ";";
+		
+		request += "\nCpus: ";
+		for (int i =0;i <this.cpuUsage.size();i++)
+			request +=cpuUsage.get(i)+";";
+		request += "\nMemory: ";
+		for (int i =0;i <this.memoryUsage.size();i++)
+			request +=memoryUsage.get(i)+";";
+		request += "\nStorage: ";
+		for (int i =0;i <this.storageUsage.size();i++)
+			request +=storageUsage.get(i)+";";
+		
+		
+		return request;
+		
+	}
 }
