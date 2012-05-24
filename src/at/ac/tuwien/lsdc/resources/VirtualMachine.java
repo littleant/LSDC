@@ -1,6 +1,7 @@
 package at.ac.tuwien.lsdc.resources;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import at.ac.tuwien.lsdc.mape.Problem;
 
@@ -135,8 +136,7 @@ public class VirtualMachine extends Resource implements Problem  {
 		this.suspendenTicks = suspendenTicks;
 	}
 	
-	
-	
-	
-	
+	public List<App> getApps() {
+		return this.apps;
+	}
 }
