@@ -40,7 +40,7 @@ public class RequestGenerator {
 	}
 	
 	
-	public void generateRequest() {
+	public Request generateRequest() {
 		Request request = new Request();
 		
 		FileReader input = null;
@@ -90,7 +90,7 @@ public class RequestGenerator {
 		request.setStorageUsage(storage);
 		System.out.println("Size of the storage " + storage.size());
 		
-
+		return request;
 	}
 
 }
