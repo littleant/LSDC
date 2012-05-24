@@ -1,7 +1,7 @@
 package at.ac.tuwien.lsdc.mape;
 
 public class Analyser {
-	public void getTopProblem() {
+	public Problem getTopProblem() {
 		// Check SLAs against real data (red, orange, green)
 		// TODO
 		
@@ -11,6 +11,6 @@ public class Analyser {
 		// Decide what the top problem is
 		// TODO
 		
-		// return Problem;
+		return null;
 	}
 }
