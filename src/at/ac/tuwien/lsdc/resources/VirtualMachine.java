@@ -101,7 +101,7 @@ public class VirtualMachine extends Resource implements Problem  {
 	public Integer getCurrentStorageUsage() {
 		int storusage =0 ;
 		for (App a : apps) {
-			storusage +=a.getCurrentMemoryUsage();
+			storusage +=a.getCurrentStorageUsage();
 		}
 		return storusage;
 	}

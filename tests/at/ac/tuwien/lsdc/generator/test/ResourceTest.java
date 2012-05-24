@@ -6,6 +6,8 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
+import at.ac.tuwien.lsdc.resources.App;
+import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
@@ -90,5 +92,66 @@ public class ResourceTest {
 		assertTrue(out.size()==5);
 		
 	}
+	
+	@Test
+	// pm1: 
+	// vm1: 
+	//	app1: cpu= 11, mem = 23, storage = 9
+	//	app2: cpu= 22, mem = 14, storage = 11
+	// => VM: cpu= 33, mem = 37, storage = 20
+	//
+	// vm2:
+	//  app3: cpu= 3, mem= 4, storage = 5
+	// => VM: cpu= 3, mem= 4, storage = 5
+	public void testResourceUsages() {
+		PhysicalMachine pm1 = new PhysicalMachine();
+		pm1.setRunning(true);
+		
+		VirtualMachine vm1 = new VirtualMachine(40, 40, 40, 0);
+		//App1
+		LinkedList<Integer> cpu = new LinkedList<Integer>();
+		cpu.add(11);
+		LinkedList<Integer> mem = new LinkedList<Integer>();
+		mem.add(23);
+		LinkedList<Integer> storage = new LinkedList<Integer>();
+		storage.add(9);
+		App app1 = new App(15, 25, 10, cpu, mem, storage);
+		
+		LinkedList<Integer> cpu2 = new LinkedList<Integer>();
+		cpu2.add(22);
+		LinkedList<Integer> mem2 = new LinkedList<Integer>();
+		mem2.add(14);
+		LinkedList<Integer> storage2 = new LinkedList<Integer>();
+		storage2.add(11);
+		App app2 = new App(25, 25, 15, cpu2, mem2, storage2);
+		
+		vm1.getApps().add(app1);
+		vm1.getApps().add(app2);
+		app1.setVm(vm1);
+		app2.setVm(vm1);
+		
+		VirtualMachine vm2 = new VirtualMachine(40, 40, 40, 0);
+		//App1
+		LinkedList<Integer> cpu3 = new LinkedList<Integer>();
+		cpu3.add(3);
+		LinkedList<Integer> mem3 = new LinkedList<Integer>();
+		mem3.add(4);
+		LinkedList<Integer> storage3 = new LinkedList<Integer>();
+		storage3.add(5);
+		App app3 = new App(10, 10, 10, cpu3, mem3, storage3);
+		
+		vm2.getApps().add(app3);
+		app3.setVm(vm2);
+		
 
+		pm1.getVms().add(vm1);
+		pm1.getVms().add(vm2);
+		assertTrue(pm1.getCurrentCpuUsage()==36);
+		assertTrue(pm1.getCurrentMemoryUsage()==41);
+		assertTrue(pm1.getCurrentStorageUsage()==25);
+	}
+	
 }
+	
+
+

@@ -27,6 +27,14 @@ public class App extends Resource implements Problem {
 	private VirtualMachine vm;
 	
 	
+	public VirtualMachine getVm() {
+		return vm;
+	}
+
+	public void setVm(VirtualMachine vm) {
+		this.vm = vm;
+	}
+
 	public App(int cpu, int memory, int storage, LinkedList<Integer> cpuUsage, LinkedList<Integer> memoryUsage, LinkedList<Integer> storageUsage) {
 		this.cpu= cpu;
 		this.memory = memory;

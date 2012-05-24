@@ -11,8 +11,20 @@ public class PhysicalMachine extends Resource implements Problem {
 	
 	private LinkedList<VirtualMachine> vms = new LinkedList<VirtualMachine>();
 	
+	public LinkedList<VirtualMachine> getVms() {
+		return vms;
+	}
+
+	public void setVms(LinkedList<VirtualMachine> vms) {
+		this.vms = vms;
+	}
+
 	public boolean isRunning() {
 		return isRunning;
+	}
+	
+	public void setRunning(boolean running) {
+		this.isRunning = running;
 	}
 
 	public void startMachine() {
