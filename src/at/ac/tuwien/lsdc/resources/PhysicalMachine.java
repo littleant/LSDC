@@ -57,7 +57,7 @@ public class PhysicalMachine extends Resource implements Problem {
 		for(VirtualMachine vm: vms) {
 			curmem+=vm.getCurrentMemoryUsage();
 		}
-		return null;
+		return curmem;
 	}
 	
 	
@@ -99,7 +99,7 @@ public class PhysicalMachine extends Resource implements Problem {
 		for (VirtualMachine vm: vms){
 			curmem += vm.getCurrentMemoryAllocation();
 		}
-		return null;
+		return curmem;
 	}
 
 	@Override

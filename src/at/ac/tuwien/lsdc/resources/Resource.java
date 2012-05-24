@@ -23,7 +23,7 @@ public abstract class Resource {
 		boolean allFinished = false;
 		int i = 1;
 		int curVal = 0;
-		
+		LinkedList<Integer> aggregated = new LinkedList<Integer>();
 		while (allFinished==false) {
 			allFinished = true;
 			curVal = 0;
@@ -34,9 +34,10 @@ public abstract class Resource {
 					curVal += li.get(li.size()-i);
 				}
 			}
+			aggregated.addFirst(curVal);
 			i++;
 		}
-		return null;
+		return aggregated;
 	}
 	
 	

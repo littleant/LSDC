@@ -23,6 +23,7 @@ public class VirtualMachine extends Resource implements Problem  {
 		this.suspendedTicks = startupTime;
 	}
 	
+	@SuppressWarnings("unused")
 	private VirtualMachine() {
 	}
 	
