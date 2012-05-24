@@ -27,12 +27,10 @@ public class App extends Resource implements Problem {
 	private VirtualMachine vm;
 	
 	
-	public App(int cpu, int memory, int storage, VirtualMachine vm) {
+	public App(int cpu, int memory, int storage) {
 		this.cpu= cpu;
 		this.memory = memory;
 		this.storage = storage;
-		this.vm = vm;
-		
 	}
 	
 	public int getTicks() {

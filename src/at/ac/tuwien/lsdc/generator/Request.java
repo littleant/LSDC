@@ -1,5 +1,6 @@
 package at.ac.tuwien.lsdc.generator;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import at.ac.tuwien.lsdc.resources.App;
@@ -13,17 +14,12 @@ public class Request {
 	private int storage;
 	
 	// usage per tick
-	private List<Integer> cpuUsage;
-	private List<Integer> memoryUsage;
-	private List<Integer> storageUsage;
+	private LinkedList<Integer> cpuUsage;
+	private LinkedList<Integer> memoryUsage;
+	private LinkedList<Integer> storageUsage;
 	
 	public App createApp() {
-		App app = new App();
-		
-		// populate app with date from this request
-		app.setCpu(this.cpu);
-		app.setMemory(this.memory);
-		app.setStorage(this.storage);
+		App app = new App(this.cpu, this.memory, this.storage);
 		
 		app.setCpuUsage(this.cpuUsage);
 		app.setMemoryUsage(this.memoryUsage);
@@ -68,7 +64,7 @@ public class Request {
 		return cpuUsage;
 	}
 
-	public void setCpuUsage(List<Integer> cpuUsage) {
+	public void setCpuUsage(LinkedList<Integer> cpuUsage) {
 		this.cpuUsage = cpuUsage;
 	}
 
@@ -76,7 +72,7 @@ public class Request {
 		return memoryUsage;
 	}
 
-	public void setMemoryUsage(List<Integer> memoryUsage) {
+	public void setMemoryUsage(LinkedList<Integer> memoryUsage) {
 		this.memoryUsage = memoryUsage;
 	}
 
@@ -84,7 +80,7 @@ public class Request {
 		return storageUsage;
 	}
 
-	public void setStorageUsage(List<Integer> storageUsage) {
+	public void setStorageUsage(LinkedList<Integer> storageUsage) {
 		this.storageUsage = storageUsage;
 	}
 }
