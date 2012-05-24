@@ -7,4 +7,5 @@ public abstract class Action {
 	public abstract int estimate();
 	
 	public abstract boolean preconditions();
+	
 }
