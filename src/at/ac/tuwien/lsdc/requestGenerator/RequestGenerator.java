@@ -1,4 +1,4 @@
-package at.ac.tuwien.lsdc.generator;
+package at.ac.tuwien.lsdc.requestGenerator;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RequestGenerator {
-	static volatile RequestGenerator instance;
-	
+
 	int ticks;
 	List<Integer> cpu;
 	List<Integer> memory;
 	List<Integer> storage;
 	List<Integer> slas;
-	
-	private RequestGenerator() {
+
+	public RequestGenerator() {
 
 		FileReader input = null;
 		try {
@@ -57,30 +56,5 @@ public class RequestGenerator {
 		
 
 	}
-	
-	public static RequestGenerator getInstance() {
-		if (RequestGenerator.instance == null) {
-			synchronized(RequestGenerator.class) {
-				if (RequestGenerator.instance == null) {
-					RequestGenerator.instance = new RequestGenerator();
-				}
-			}
-		}
-		
-		return RequestGenerator.instance;
-	}	
-	
-	private List<Request> requests;
 
-	public List<Request> getRequests() {
-		return requests;
-	}
-
-	public void setRequests(List<Request> requests) {
-		this.requests = requests;
-	}
-	
-	public void addRequest(Request request) {
-		this.requests.add(request);
-	}
 }
