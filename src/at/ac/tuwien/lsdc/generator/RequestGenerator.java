@@ -65,7 +65,7 @@ public class RequestGenerator {
 		List<Integer> slas = new LinkedList<Integer>();
 		int i;
 		for (i = 1; i < 4;i++)
-		slas.add(Integer.parseInt(values[i]));
+			slas.add(Integer.parseInt(values[i]));
 		
 		request.setCpu(slas.get(0));
 		request.setMemory(slas.get(1));
@@ -74,19 +74,19 @@ public class RequestGenerator {
 		
 		LinkedList<Integer> cpu = new LinkedList<Integer>();
 		for (; i < Integer.parseInt(values[0])+4;i++)
-		cpu.add(Integer.parseInt(values[i]));
+			cpu.add(Integer.parseInt(values[i]));
 		request.setCpuUsage(cpu);
 		System.out.println("Size of the cpus " + cpu.size());
 		
 		LinkedList<Integer> memory = new LinkedList<Integer>();
 		for (; i < 2*Integer.parseInt(values[0])+4;i++)
-		memory.add(Integer.parseInt(values[i]));
+			memory.add(Integer.parseInt(values[i]));
 		request.setMemoryUsage(memory);
 		System.out.println("Size of the memory " + memory.size());
 		
 		LinkedList<Integer> storage = new LinkedList<Integer>();
 		for (; i < 3*Integer.parseInt(values[0])+4;i++)
-		storage.add(Integer.parseInt(values[i]));
+			storage.add(Integer.parseInt(values[i]));
 		request.setStorageUsage(storage);
 		System.out.println("Size of the storage " + storage.size());
 		
