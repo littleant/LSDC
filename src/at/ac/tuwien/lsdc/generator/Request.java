@@ -19,11 +19,7 @@ public class Request {
 	private LinkedList<Integer> storageUsage;
 	
 	public App createApp() {
-		App app = new App(this.cpu, this.memory, this.storage);
-		
-		app.setCpuUsage(this.cpuUsage);
-		app.setMemoryUsage(this.memoryUsage);
-		app.setStorageUsage(this.storageUsage);
+		App app = new App(this.cpu, this.memory, this.storage, this.cpuUsage, this.memoryUsage, this.storageUsage);
 		
 		return app;
 	}

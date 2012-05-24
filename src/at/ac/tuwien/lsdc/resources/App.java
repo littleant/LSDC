@@ -27,10 +27,14 @@ public class App extends Resource implements Problem {
 	private VirtualMachine vm;
 	
 	
-	public App(int cpu, int memory, int storage) {
+	public App(int cpu, int memory, int storage, LinkedList<Integer> cpuUsage, LinkedList<Integer> memoryUsage, LinkedList<Integer> storageUsage) {
 		this.cpu= cpu;
 		this.memory = memory;
 		this.storage = storage;
+		
+		this.cpuUsage = cpuUsage;
+		this.memoryUsage = memoryUsage;
+		this.storageUsage = storageUsage;
 	}
 	
 	public int getTicks() {
