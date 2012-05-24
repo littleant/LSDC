@@ -5,7 +5,10 @@ import java.util.LinkedList;
 import at.ac.tuwien.lsdc.mape.Problem;
 
 public class VirtualMachine extends Resource implements Problem  {
+	// how many ticks this VM is suspended. Should be decremented each tick if >0
+	private int suspendenTicks = 0;
 	
+	// resources the VM has allocated on the PM
 	private LinkedList<Integer> allocatedCpu = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedMemory = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedStorage = new LinkedList<Integer>();
@@ -122,6 +125,14 @@ public class VirtualMachine extends Resource implements Problem  {
 				a.nextTick();
 			}
 		}
+	}
+
+	public int getSuspendenTicks() {
+		return suspendenTicks;
+	}
+
+	public void setSuspendenTicks(int suspendenTicks) {
+		this.suspendenTicks = suspendenTicks;
 	}
 	
 	
