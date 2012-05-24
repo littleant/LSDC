@@ -8,7 +8,7 @@ public abstract class Resource {
 	protected int runningTicks=0;
 	
 	//returns the last n elements of an integer list
-	protected LinkedList<Integer> getLastEntriesUtil(LinkedList<Integer> input,int maxNoOfEntries) {
+	public static LinkedList<Integer> getLastEntriesUtil(LinkedList<Integer> input,int maxNoOfEntries) {
 		LinkedList<Integer> out = new LinkedList<Integer>();
 		int i=0;
 		Iterator<Integer> it = input.descendingIterator();
@@ -19,7 +19,7 @@ public abstract class Resource {
 	}
 	
 	///sums up several lists (memory usage app1 + memory usage app2 +....)
-	protected LinkedList<Integer> aggregateValues(LinkedList<LinkedList<Integer>> input ) {
+	public static LinkedList<Integer> aggregateValues(LinkedList<LinkedList<Integer>> input ) {
 		boolean allFinished = false;
 		int i = 1;
 		int curVal = 0;
