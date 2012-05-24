@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 public abstract class Resource {
 	protected int suspendedTicks=0;
+	protected int runningTicks=0;
 	
 	//returns the last n elements of an integer list
 	protected LinkedList<Integer> getLastEntriesUtil(LinkedList<Integer> input,int maxNoOfEntries) {

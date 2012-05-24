@@ -112,7 +112,16 @@ public class VirtualMachine extends Resource implements Problem  {
 	
 	
 	public void nextTick(){
-		if(suspendedTicks>0)
+		if(suspendedTicks>0) {
+			suspendedTicks--;
+		}
+		else {
+			
+			runningTicks++;
+			for (App a: apps) {
+				a.nextTick();
+			}
+		}
 	}
 	
 	
