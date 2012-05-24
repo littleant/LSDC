@@ -21,7 +21,13 @@ public class Request {
 		App app = new App();
 		
 		// populate app with date from this request
-		// TODO
+		app.setCpu(this.cpu);
+		app.setMemory(this.memory);
+		app.setStorage(this.storage);
+		
+		app.setCpuUsage(this.cpuUsage);
+		app.setMemoryUsage(this.memoryUsage);
+		app.setStorageUsage(this.storageUsage);
 		
 		return app;
 	}

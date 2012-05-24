@@ -6,19 +6,23 @@ import java.util.List;
 import at.ac.tuwien.lsdc.mape.Problem;
 
 public class App implements Problem {
+	// how many ticks the App will run
 	private int ticks;
+	// how many ticks the App ran
 	private int tickNumber;
+	// extra ticks that the App cannot run.
+	// If this is > 0 the App is suspendend and the extraTicks should be decremented.
 	private int extraTicks = 0;
 	
 	// SLAs
 	private int cpu;
 	private int memory;
 	private int storage;
-	
-	// currently used resources
-	private int usedCpu;
-	private int usedMemory;
-	private int usedStorage;
+
+	// used resources per tick
+	private List<Integer> cpuUsage;
+	private List<Integer> memoryUsage;
+	private List<Integer> storageUsage;
 	
 	public int getTicks() {
 		return ticks;
@@ -68,28 +72,16 @@ public class App implements Problem {
 		this.storage = storage;
 	}
 
-	public int getUsedCpu() {
-		return usedCpu;
+	public int getCurrentCpuUsage() {
+		return this.getCpuUsage().get(this.getTickNumber());
 	}
 
-	public void setUsedCpu(int usedCpu) {
-		this.usedCpu = usedCpu;
+	public int getCurrentMemoryUsage() {
+		return this.getMemoryUsage().get(this.getTickNumber());
 	}
 
-	public int getUsedMemory() {
-		return usedMemory;
-	}
-
-	public void setUsedMemory(int usedMemory) {
-		this.usedMemory = usedMemory;
-	}
-
-	public int getUsedStorage() {
-		return usedStorage;
-	}
-
-	public void setUsedStorage(int usedStorage) {
-		this.usedStorage = usedStorage;
+	public int getCurrentStorageUsage() {
+		return this.getStorageUsage().get(this.getTickNumber());
 	}
 
 	public List<Integer> getCpuUsage() {
@@ -115,33 +107,19 @@ public class App implements Problem {
 	public void setStorageUsage(List<Integer> storageUsage) {
 		this.storageUsage = storageUsage;
 	}
-
-	// used resources per tick
-	private List<Integer> cpuUsage;
-	private List<Integer> memoryUsage;
-	private List<Integer> storageUsage;
-	
-	public int getCurrentCpuUsage() {
-		return 0;
-	}
-	
-	public int getCurrentMemoryUsage() {
-		return 0;
-	}
-	
-	public int getCurrentStorageUsage() {
-		return 0;
-	}
 	
 	public LinkedList<Integer> getCpuUsageHistory(int maxNumberOfEntries) {
+		// TODO
 		return null;
 	}
 	
 	public LinkedList<Integer> getMemoryUsageHistory(int maxNumberOfEntries) {
+		// TODO
 		return null;
 	}
 	
 	public LinkedList<Integer> getStorageUsageHistory(int maxNumberOfEntries) {
+		// TODO
 		return null;
 	}
 
