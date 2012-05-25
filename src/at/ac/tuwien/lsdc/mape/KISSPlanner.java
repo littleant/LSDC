@@ -31,7 +31,7 @@ public class KISSPlanner extends Planner {
 	}
 	
 	private int calculateFit(Action a) {
-		//TODO: real Fitness calculation?
+		//TODO: gst: real Fitness calculation?
 		return a.estimate();
 	}
 

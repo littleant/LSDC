@@ -18,7 +18,6 @@ public class ActionTest {
 //			System.out.println(action.getKnowledgeBase());
 			action.saveKnowledge("knowledge/cpu2.arff");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
