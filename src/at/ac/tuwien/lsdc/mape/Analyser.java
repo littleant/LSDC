@@ -21,98 +21,49 @@ public class Analyser {
 		}
 		
 		// Potential SLA violation regions
-		// FIXME: put these values in a properties-file. Highest to lowest value!
-		List<Integer> regions = new LinkedList<Integer>();
-		regions.add(90);
-		regions.add(75);
-		regions.add(0);
+		// FIXME: put these values in a properties-file.
+		int topRegion = 90;
+		int lowestRegion = 75;
 		
-		/*
 		// check which app is the most critical problem
 		App criticalApp = null;
-		int criticalAppCapacity = 0;
-		*/
+		int criticalAppPercentage = 0;
 		
-		Map<App, Integer> appCpuRegions = new HashMap<App, Integer>();
-		Map<App, Integer> appMemoryRegions = new HashMap<App, Integer>();
-		Map<App, Integer> appStorageRegions = new HashMap<App, Integer>();
 		for (App app : apps) {
 			// cpu
 			// 100% of SLA = app.getCpu()
 			// % of usage, compared to PM = app.getCurrentCpuUsage()
 			// percentage of usage, compared to the SLA
 			int cpuPercentage = app.getCurrentCpuUsage() / app.getCpu() * 100;
-			for (Integer region : regions) {
-				if (cpuPercentage >= region) {
-					// found the matching region
-					appCpuRegions.put(app, region);
-					
-					break;
-				}
+			// check if percentage is higher than previous app
+			if (cpuPercentage > criticalAppPercentage) {
+				// replace the top criticl app
+				criticalApp = app;
+				criticalAppPercentage = cpuPercentage;
 			}
 			
 			// memory
 			int memoryPercentage = app.getCurrentMemoryUsage() / app.getMemory() * 100;
-			for (Integer region : regions) {
-				if (memoryPercentage >= region) {
-					// found matching region
-					appMemoryRegions.put(app, region);
-					
-					break;
-				}
+			if (memoryPercentage > criticalAppPercentage) {
+				// replace the top criticl app
+				criticalApp = app;
+				criticalAppPercentage = memoryPercentage;
 			}
 			
 			// storage
 			int storagePercentage = app.getCurrentStorageUsage() / app.getStorage() * 100;
-			for (Integer region : regions) {
-				if (storagePercentage >= region) {
-					// found matching region
-					appMemoryRegions.put(app, region);
-					
-					break;
-				}
+			if (storagePercentage > criticalAppPercentage) {
+				// replace the top criticl app
+				criticalApp = app;
+				criticalAppPercentage = storagePercentage;
 			}
 		}
 		
 		// Decide what the top problem is
 		Problem problem = null;
-		int topRegion = regions.get(0);
 		
-		// search for a critical CPU problem (top region)
-		Iterator<App> i = appCpuRegions.keySet().iterator();
-		while (i.hasNext()) {
-			App app = i.next();
-			if (appCpuRegions.get(app) == topRegion) {
-				problem = app;
-				
-				break;
-			}
-		}
-		
-		if (problem == null) {
-			// search for a critical memory problem (top region)
-			i = appMemoryRegions.keySet().iterator();
-			while (i.hasNext()) {
-				App app = i.next();
-				if (appMemoryRegions.get(app) == topRegion) {
-					problem = app;
-					
-					break;
-				}
-			}
-		}
-		
-		if (problem == null) {
-			// search for a critical storage problem (top region)
-			i = appStorageRegions.keySet().iterator();
-			while (i.hasNext()) {
-				App app = i.next();
-				if (appStorageRegions.get(app) == topRegion) {
-					problem = app;
-					
-					break;
-				}
-			}
+		if (criticalAppPercentage >= topRegion) {
+			problem = criticalApp;
 		}
 		
 		if (problem == null) {
@@ -127,25 +78,12 @@ public class Analyser {
 		}
 		
 		if (problem == null) {
-			// rank CPU, memory and storage according to their regions
-			
-			
-			if (problem == null) {
-				// search for a CPU problem
-				// TODO
-			}
-			
-			if (problem == null) {
-				// search for a memory problem
-				// TODO
-			}
-			
-			if (problem == null) {
-				// search for a storage problem
-				// TODO
+			// take the top problem if there is one that's not in the "green" region
+			if (criticalAppPercentage >= lowestRegion) {
+				problem = criticalApp;
 			}
 		}
 		
-		return null;
+		return problem;
 	}
 }
