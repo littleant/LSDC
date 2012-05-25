@@ -8,6 +8,14 @@ import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 
 public class Monitor {
 	private int globalTicks =0;
+	public int getGlobalTicks() {
+		return globalTicks;
+	}
+
+	public void setGlobalTicks(int globalTicks) {
+		this.globalTicks = globalTicks;
+	}
+
 	private List<PhysicalMachine> pms = new LinkedList<PhysicalMachine>();
 	
 	static volatile Monitor instance;

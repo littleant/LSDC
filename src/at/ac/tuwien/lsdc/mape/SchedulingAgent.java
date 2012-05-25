@@ -33,6 +33,7 @@ public class SchedulingAgent {
 	public void start() throws NumberFormatException, IOException {
 		while (true) { 
 			//TODO: gst: werden immer Requests generiert??
+			System.out.println ("SchedulingAgent - Tick " + Monitor.getInstance().getGlobalTicks());
 			RequestGenerator.getInstance().generateRequests();
 			Resource problem = analyser.getTopProblem();
 			Action solution = planner.selectAction(problem);
