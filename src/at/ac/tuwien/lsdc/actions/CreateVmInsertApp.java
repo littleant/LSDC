@@ -13,7 +13,6 @@ public class CreateVmInsertApp extends Action {
 	private static int vmStartupCosts = 10;
 	private static int pmStartupCosts = 20;
 	
-	private VirtualMachine selectedVm;
 	private PhysicalMachine selectedPm = null;
 	private boolean preconditionsOk = false;
 	private int costs = 0;
@@ -51,6 +50,8 @@ public class CreateVmInsertApp extends Action {
 	public void execute() {
 		VirtualMachine oldVm = null;
 		PhysicalMachine oldPm = null;
+		
+		//if the App existed before
 		if (app.getVm()!=null) {
 			oldVm = app.getVm();
 			oldPm = oldVm.getPm();
@@ -61,7 +62,7 @@ public class CreateVmInsertApp extends Action {
 			RequestGenerator.getInstance().removeRequestFromQueue(app.getOriginalRequest());
 		}
 		
-		if (selectedPm.isRunning()!=false) {
+		if (selectedPm.isRunning()==false) {
 			selectedPm.startMachine();
 		}
 		
@@ -82,7 +83,8 @@ public class CreateVmInsertApp extends Action {
 	public void init(Resource problemApp) {
 		this.preconditionsOk=false;
 		this.selectedPm=null;
-		this.selectedVm=null;
+		this.costs=0;
+		this.app=null;
 		
 		CreateVmInsertApp.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
 		CreateVmInsertApp.pmStartupCosts = Configuration.getInstance().getPmStartupCosts();
@@ -118,8 +120,8 @@ public class CreateVmInsertApp extends Action {
 						selectedPm = pm;
 						break;
 					}
-				}
 					
+				}
 			}
 			preconditionsOk = found;
 		}

@@ -32,25 +32,25 @@ public class Analyser {
 			// 100% of SLA = app.getCpu()
 			// % of usage, compared to PM = app.getCurrentCpuUsage()
 			// percentage of usage, compared to the SLA
-			int cpuPercentage = app.getCurrentCpuUsage() / app.getCpu() * 100;
+			int cpuPercentage = app.getCurrentCpuUsage() / app.getVm().getCurrentCpuAllocation() * 100;
 			// check if percentage is higher than previous app
-			if (cpuPercentage > criticalAppPercentage) {
+			if (cpuPercentage > criticalAppPercentage && app.getVm().getCurrentCpuAllocation()<app.getCpu()) {
 				// replace the top criticl app
 				criticalApp = app;
 				criticalAppPercentage = cpuPercentage;
 			}
 			
 			// memory
-			int memoryPercentage = app.getCurrentMemoryUsage() / app.getMemory() * 100;
-			if (memoryPercentage > criticalAppPercentage) {
+			int memoryPercentage = app.getCurrentMemoryUsage() / app.getVm().getCurrentMemoryAllocation() * 100;
+			if (memoryPercentage > criticalAppPercentage && app.getVm().getCurrentMemoryAllocation()<app.getMemory()) {
 				// replace the top criticl app
 				criticalApp = app;
 				criticalAppPercentage = memoryPercentage;
 			}
 			
 			// storage
-			int storagePercentage = app.getCurrentStorageUsage() / app.getStorage() * 100;
-			if (storagePercentage > criticalAppPercentage) {
+			int storagePercentage = app.getCurrentStorageUsage() / app.getVm().getCurrentStorageAllocation()* 100;
+			if (storagePercentage > criticalAppPercentage && app.getVm().getCurrentStorageAllocation() <app.getStorage()) {
 				// replace the top criticl app
 				criticalApp = app;
 				criticalAppPercentage = storagePercentage;
@@ -61,6 +61,7 @@ public class Analyser {
 		Resource problem = null;
 		
 		if (criticalAppPercentage >= topRegion) {
+			System.out.println("Top problem is critical app: " + criticalApp.getResourceId());
 			problem = criticalApp;
 		}
 		
@@ -72,6 +73,7 @@ public class Analyser {
 				// take first request and define it as the top problem
 				problem = requests.get(0).createApp();
 			}
+			
 		}
 		
 		if (problem == null) {

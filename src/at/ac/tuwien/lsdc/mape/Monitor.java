@@ -111,6 +111,12 @@ public class Monitor {
 			sb.append(pm.getCurrentMemoryUsage()); 
 			sb.append(";");
 			sb.append(pm.getCurrentStorageUsage()); 
+			sb.append(";");
+			sb.append(";");
+			sb.append(";");
+			sb.append(";");
+			sb.append(";");
+			sb.append(pm.isRunning());
 
 			pmLog.println(sb.toString());
 			
@@ -185,7 +191,7 @@ public class Monitor {
 	}
 	
 	private String getLogHeader() {
-		return "ExecutionID;ID;RootID;GlobalTick;RunningTicks;SuspendedTicks;AllocatedCpu;AllocatedMemory;AllocatedStorage;UsedCpu;UsedMemory;UsedStorage;SLACpu;SLAMemory;SLAStorage;AppRuntime";
+		return "ExecutionID;ID;RootID;GlobalTick;RunningTicks;SuspendedTicks;AllocatedCpu;AllocatedMemory;AllocatedStorage;UsedCpu;UsedMemory;UsedStorage;SLACpu;SLAMemory;SLAStorage;AppRuntime;PMIsRunning";
 	}
 	
 }
