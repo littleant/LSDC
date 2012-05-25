@@ -4,10 +4,12 @@ import java.util.List;
 
 import at.ac.tuwien.lsdc.generator.Request;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
+import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 
 public class Analyser {
 	public Problem getTopProblem() {
 		// Check SLAs against real data (red, orange, green)
+		List<PhysicalMachine> pms = Monitor.getInstance().getPms();
 		// TODO
 		
 		// Check if there are one or more requests in the queue
