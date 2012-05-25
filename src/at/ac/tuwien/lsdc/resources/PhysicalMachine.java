@@ -3,9 +3,7 @@ package at.ac.tuwien.lsdc.resources;
 import java.util.LinkedList;
 import java.util.List;
 
-import at.ac.tuwien.lsdc.mape.Problem;
-
-public class PhysicalMachine extends Resource implements Problem {
+public class PhysicalMachine extends Resource {
 	//is the machine running? true=>yes
 	private boolean isRunning;
 	private final Integer STARTUPTIME = 20;
