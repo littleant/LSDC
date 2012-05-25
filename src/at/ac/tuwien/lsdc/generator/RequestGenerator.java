@@ -4,17 +4,16 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class RequestGenerator {
 	static volatile RequestGenerator instance;
 	
-	int ticks;
+	int ticks = 0;
 
 	// RequestQueue
-	private List<Request> requests;
+	private List<Request> requests = new LinkedList<Request>();
 		
 	public static RequestGenerator getInstance() {
 		if (RequestGenerator.instance == null) {
@@ -26,6 +25,10 @@ public class RequestGenerator {
 		}
 		
 		return RequestGenerator.instance;
+	}
+	
+	public void nextTick() {
+		this.ticks++;
 	}
 
 	public List<Request> getRequests() {
@@ -41,11 +44,8 @@ public class RequestGenerator {
 	}
 	
 	
-	public List<Request> generateRequests() throws NumberFormatException, IOException {
-		
-		List<Request> requests = new ArrayList<Request>();
-		
-		
+	public Request generateRequest() {
+		Request request = new Request();
 		
 		FileReader input = null;
 		try {
@@ -56,8 +56,13 @@ public class RequestGenerator {
 		}
 		BufferedReader bufRead = new BufferedReader(input);
 		String line = null;
-		while((line= bufRead.readLine()) != null){
-		Request request = new Request();
+		try {
+			line = bufRead.readLine();
+		} catch (IOException e) {
+			System.out.println("Exception while reading");
+			e.printStackTrace();
+		}
+
 		String[] values = line.split(";");
 		System.out.println("Size of the values " + values.length);
 		
@@ -89,11 +94,7 @@ public class RequestGenerator {
 		request.setStorageUsage(storage);
 		System.out.println("Size of the storage " + storage.size());
 		
-		requests.add(request);
-		
-		}
-		return requests;
-		
+		return request;
 	}
 
 }

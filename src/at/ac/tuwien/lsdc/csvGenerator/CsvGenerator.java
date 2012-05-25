@@ -63,13 +63,13 @@ public class CsvGenerator {
 			
 		}
 		
-		RequestGenerator rg = RequestGenerator.getInstance();
-		List<Request> requests = new ArrayList<Request>();
-		requests = rg.generateRequests();
-		for (Request r: requests){
-			System.out.println(r.toString());
-			System.out.println("");
-		}
+//		RequestGenerator rg = RequestGenerator.getInstance();
+//		List<Request> requests = new ArrayList<Request>();
+//		requests = rg.generateRequests();
+//		for (Request r: requests){
+//			System.out.println(r.toString());
+//			System.out.println("");
+//		}
 
 	}
 
