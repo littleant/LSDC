@@ -4,6 +4,8 @@ import at.ac.tuwien.lsdc.actions.Action;
 
 public class Executor {
 	public void execute(Action action) {
-		action.execute();
+		if (action!=null) {
+			action.execute();
+		}
 	}
 }
