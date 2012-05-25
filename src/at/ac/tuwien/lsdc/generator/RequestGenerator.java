@@ -10,7 +10,7 @@ import java.util.List;
 public class RequestGenerator {
 	static volatile RequestGenerator instance;
 	
-	int ticks;
+	int ticks = 0;
 
 	// RequestQueue
 	private List<Request> requests = new LinkedList<Request>();
@@ -25,6 +25,10 @@ public class RequestGenerator {
 		}
 		
 		return RequestGenerator.instance;
+	}
+	
+	public void nextTick() {
+		this.ticks++;
 	}
 
 	public List<Request> getRequests() {

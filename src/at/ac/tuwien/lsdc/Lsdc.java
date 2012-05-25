@@ -12,8 +12,8 @@ public class Lsdc {
 		RequestGenerator.getInstance().addRequest(request);
 		
 		// add new physical machines to our simulation
-		Integer pmCount = Configuration.getInstance().getMaxPms();
-		for (int i = 0; i < pmCount; i++) {
+		Integer maxPms = Configuration.getInstance().getMaxPms();
+		for (int i = 0; i < maxPms; i++) {
 			Monitor.getInstance().addPm(new PhysicalMachine());
 		}
 		
