@@ -46,6 +46,11 @@ public class RequestGenerator {
 		return pendingRequests;
 	}
 	
+	/**
+	 * Removes a request from the request-queue
+	 * 
+	 * @param request Request that should be removed
+	 */
 	public void removeRequestFromQueue(Request request) {
 		this.requests.remove(request);
 	}
