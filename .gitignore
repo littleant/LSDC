@@ -1,9 +1,11 @@
 *.class
 input.csv
+log/pmlog.txt
+log/vmlog.txt
+log/applog.txt
 
 # Package Files #
 #*.jar
 *.war
 *.ear
-input.csv
 input.csv
