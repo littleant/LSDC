@@ -5,6 +5,7 @@ import java.util.List;
 import at.ac.tuwien.lsdc.generator.Request;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.mape.Monitor;
+import at.ac.tuwien.lsdc.mape.SchedulingAgent;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 
 public class Lsdc {
@@ -20,6 +21,6 @@ public class Lsdc {
 		}
 		
 		// start mape-loop and simulation
-		// TODO
+		SchedulingAgent.getInstance().start();
 	}
 }
