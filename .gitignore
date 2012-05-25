@@ -9,3 +9,4 @@ log/applog.txt
 *.war
 *.ear
 input.csv
+analyse/lsdc.qvw
