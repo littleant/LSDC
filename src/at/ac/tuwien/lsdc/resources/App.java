@@ -36,6 +36,7 @@ public class App extends Resource implements Problem {
 	}
 
 	public App(int cpu, int memory, int storage, LinkedList<Integer> cpuUsage, LinkedList<Integer> memoryUsage, LinkedList<Integer> storageUsage) {
+		this.setNewAppId();
 		this.cpu= cpu;
 		this.memory = memory;
 		this.storage = storage;
@@ -43,6 +44,7 @@ public class App extends Resource implements Problem {
 		this.cpuUsage = cpuUsage;
 		this.memoryUsage = memoryUsage;
 		this.storageUsage = storageUsage;
+		this.ticks = this.cpuUsage.size();
 	}
 	
 	public int getTicks() {
@@ -186,6 +188,7 @@ public class App extends Resource implements Problem {
 
 	@Override
 	public void nextTick() {
+		System.out.println("APP "+ this.getResourceId()+ ": next tick");
 		if (suspendedTicks>0) {
 			suspendedTicks--;
 		}
@@ -193,7 +196,7 @@ public class App extends Resource implements Problem {
 			runningTicks++;
 			
 			//terminate?
-			if(runningTicks>=ticks){
+			if(runningTicks>ticks){
 				vm.getApps().remove(this);
 			}
 		}

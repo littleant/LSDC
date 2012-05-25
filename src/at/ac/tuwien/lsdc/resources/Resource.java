@@ -4,7 +4,32 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public abstract class Resource {
+	private static int lastPmId=0;
+	private static int lastVmId=0;
+	private static int lastAppId=0;
+	
 	protected int suspendedTicks=0;
+	private int resourceId=0;
+	
+	public void setNewPmId(){
+		lastPmId++;
+		this.resourceId=lastPmId;
+	}
+	
+	public void setNewVmId(){
+		lastVmId++;
+		this.resourceId = lastVmId;
+	}
+	
+	public void setNewAppId() {
+		lastAppId++;
+		this.resourceId = lastAppId;
+	}
+	
+	public int getResourceId() {
+		return resourceId;
+	}
+
 	public int getSuspendedTicks() {
 		return suspendedTicks;
 	}

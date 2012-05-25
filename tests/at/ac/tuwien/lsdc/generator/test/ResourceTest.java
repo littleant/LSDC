@@ -139,10 +139,13 @@ public class ResourceTest {
 		
 		LinkedList<Integer> cpu2 = new LinkedList<Integer>();
 		cpu2.add(22);
+		cpu2.add(15);
 		LinkedList<Integer> mem2 = new LinkedList<Integer>();
 		mem2.add(14);
+		mem2.add(24);
 		LinkedList<Integer> storage2 = new LinkedList<Integer>();
 		storage2.add(11);
+		storage2.add(17);
 		App app2 = new App(25, 25, 15, cpu2, mem2, storage2);
 		
 		vm1.getApps().add(app1);
@@ -166,19 +169,43 @@ public class ResourceTest {
 
 		pm1.getVms().add(vm1);
 		pm1.getVms().add(vm2);
+		
+		System.out.println("vorTick:");
+		printStatus(pm1);
 		pm1.nextTick();
-		System.out.println ("PM1: running= "+ pm1.getRunningTicks() + ", suspended="+ pm1.getSuspendedTicks());
-		System.out.println ("PM1: " + pm1.getCurrentCpuUsage() + " no vms: " + pm1.getVms().size());
-		for (VirtualMachine vm : pm1.getVms()) {
-			System.out.println ("VM: " + vm.getRunningTicks() + ", " + vm.getSuspendedTicks());
-			for (App a: vm.getApps()){
-				System.out.println("App: " + a.getRunningTicks() + ", " + a.getSuspendedTicks());
-			}
+		
+		System.out.println("nachTick1:");
+		printStatus(pm1);
+		
+		LinkedList<Integer>cpuHist = pm1.getCpuUsageHistory(3);
+		for (Integer i1: cpuHist) {
+			System.out.print (i1 + ", ");
 		}
+		
+		
 		
 		assertTrue(pm1.getCurrentCpuUsage()==36);
 		assertTrue(pm1.getCurrentMemoryUsage()==41);
 		assertTrue(pm1.getCurrentStorageUsage()==25);
+		
+		System.out.println("nachTick2:");
+		pm1.nextTick();
+		printStatus(pm1);
+		cpuHist = pm1.getCpuUsageHistory(3);
+		for (Integer i1: cpuHist) {
+			System.out.print (i1 + ", ");
+		}
+	}
+	
+	public static void printStatus(PhysicalMachine pm1) {
+		System.out.println ("PM " + pm1.getResourceId() + ": "+ pm1.getRunningTicks() + ", suspended="+ pm1.getSuspendedTicks());
+		System.out.println ("PM " + pm1.getResourceId() + ": " + pm1.getCurrentCpuUsage() + " no vms: " + pm1.getVms().size());
+		for (VirtualMachine vm : pm1.getVms()) {
+			System.out.println ("VM " + vm.getResourceId() + ": " + vm.getRunningTicks() + ", " + vm.getSuspendedTicks());
+			for (App a: vm.getApps()){
+				System.out.println("App " + a.getResourceId() +  ": "+ a.getRunningTicks() + "/" + a.getTicks()+ ", " + a.getSuspendedTicks());
+			}
+		}
 	}
 	
 }

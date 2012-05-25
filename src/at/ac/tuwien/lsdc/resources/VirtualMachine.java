@@ -6,8 +6,7 @@ import java.util.List;
 import at.ac.tuwien.lsdc.mape.Problem;
 
 public class VirtualMachine extends Resource implements Problem  {
-	// how many ticks this VM is suspended. Should be decremented each tick if >0
-	private int suspendenTicks = 0;
+
 	
 	// resources the VM has allocated on the PM
 	private LinkedList<Integer> allocatedCpu = new LinkedList<Integer>();
@@ -17,6 +16,7 @@ public class VirtualMachine extends Resource implements Problem  {
 	private LinkedList<App> apps = new LinkedList<App>();
 	
 	public VirtualMachine(int initialCpu, int initialMemory, int initialStorage, int startupTime) {
+		setNewVmId();
 		this.allocatedCpu.addLast(initialCpu);
 		this.allocatedMemory.addLast(initialMemory);
 		this.allocatedStorage.addLast(initialStorage);
@@ -130,14 +130,7 @@ public class VirtualMachine extends Resource implements Problem  {
 		}
 	}
 
-	public int getSuspendenTicks() {
-		return suspendenTicks;
-	}
 
-	public void setSuspendenTicks(int suspendenTicks) {
-		this.suspendenTicks = suspendenTicks;
-	}
-	
 	public List<App> getApps() {
 		return this.apps;
 	}
