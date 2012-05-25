@@ -27,7 +27,7 @@ public class CsvGenerator {
 		}
 		try {
 			
-			List<Integer> slas = new ArrayList<>();
+			List<Integer> slas = new ArrayList<Integer>();
 			
 			
 			BufferedWriter out = new BufferedWriter(new FileWriter("input.csv"));
