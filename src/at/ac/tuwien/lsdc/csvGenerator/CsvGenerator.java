@@ -36,11 +36,11 @@ public class CsvGenerator {
 
 			for(int k =0;k<11;k++){
 			// Runtime
-			int value = randomData.nextInt(1, 100);
+			int value = randomData.nextInt(1, 1000);
 			out.write(value + ";");
 			// Slas
 			for (int i = 0; i < 3; i++){
-				int generatedValue= randomData.nextInt(10, 60);
+				int generatedValue= randomData.nextInt(11, 60);
 				slas.add(generatedValue);
 				out.write(generatedValue + ";");
 			}
@@ -53,6 +53,10 @@ public class CsvGenerator {
 			// Storage
 			for (int i = 0; i < value; i++)
 				out.write(new Double(randomData.nextGaussian(randomData.nextInt(10, slas.get(2)), 5)).intValue()+ ";");
+			//Start
+			out.write(randomData.nextInt(1, 1000)+";");
+
+			
 			out.newLine();
 			out.flush();
 			
@@ -63,13 +67,13 @@ public class CsvGenerator {
 			
 		}
 		
-//		RequestGenerator rg = RequestGenerator.getInstance();
-//		List<Request> requests = new ArrayList<Request>();
-//		requests = rg.generateRequests();
-//		for (Request r: requests){
-//			System.out.println(r.toString());
-//			System.out.println("");
-//		}
+		RequestGenerator rg = RequestGenerator.getInstance();
+		List<Request> requests = new ArrayList<Request>();
+		requests = rg.generateRequests();
+		for (Request r: requests){
+			System.out.println(r.toString());
+			System.out.println("");
+		}
 
 	}
 

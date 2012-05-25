@@ -94,7 +94,10 @@ public class RequestGenerator {
 		request.setStorageUsage(storage);
 		System.out.println("Size of the storage " + storage.size());
 		
+		
+		request.setStart(Integer.parseInt(values[values.length-1]));
 		requests.add(request);
+		
 		
 		}
 		return requests;
