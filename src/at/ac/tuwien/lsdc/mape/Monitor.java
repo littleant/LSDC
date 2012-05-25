@@ -9,6 +9,10 @@ public class Monitor {
 	
 	static volatile Monitor instance;
 	
+	private Monitor() {
+		// do nothing
+	}
+	
 	public static Monitor getInstance() {
 		if (Monitor.instance == null) {
 			synchronized (Monitor.class) {
