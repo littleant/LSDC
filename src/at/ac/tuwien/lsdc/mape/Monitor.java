@@ -7,6 +7,7 @@ import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 
 public class Monitor {
+	private int globalTicks =0;
 	private List<PhysicalMachine> pms = new LinkedList<PhysicalMachine>();
 	
 	static volatile Monitor instance;
@@ -25,6 +26,13 @@ public class Monitor {
 		}
 		
 		return instance;
+	}
+	
+	public void nextTick() {
+		this.globalTicks++;
+		for (PhysicalMachine pm : pms){
+			pm.nextTick();
+		}
 	}
 	
 	public void getNewStati() {

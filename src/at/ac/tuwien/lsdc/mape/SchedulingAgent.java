@@ -1,10 +1,19 @@
 package at.ac.tuwien.lsdc.mape;
 
+import at.ac.tuwien.lsdc.actions.Action;
+import at.ac.tuwien.lsdc.generator.RequestGenerator;
+import at.ac.tuwien.lsdc.resources.Resource;
+
 public class SchedulingAgent {
 	private static volatile SchedulingAgent instance;
+	private Analyser analyser;
+	private Planner planner;
+	private Executor executor;
 	
 	private SchedulingAgent() {
-		// do nothing
+		analyser = new Analyser();
+		planner = new KISSPlanner();
+		executor = new Executor();
 	}
 	
 	public static SchedulingAgent getInstance() {
@@ -20,6 +29,13 @@ public class SchedulingAgent {
 	}
 	
 	public void start() {
-		// TODO: start simulation and scheduling
+		while (true) { 
+			//TODO: werden immer Requests generiert??
+			RequestGenerator.getInstance().generateRequest();
+			Resource problem = analyser.getTopProblem();
+			Action solution = planner.selectAction(problem);
+			executor.execute(solution);
+			Monitor.getInstance().nextTick();
+		}
 	}
 }
