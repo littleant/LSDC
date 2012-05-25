@@ -1,8 +1,14 @@
 package at.ac.tuwien.lsdc.mape;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
+import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.generator.Request;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.resources.App;
@@ -18,9 +24,8 @@ public class Analyser {
 		}
 		
 		// Potential SLA violation regions
-		// FIXME: put these values in a properties-file.
-		int topRegion = 90;
-		int lowestRegion = 75;
+		int topRegion = Configuration.getInstance().getTopRegion();
+		int bottomRegion = Configuration.getInstance().getBottomRegion();
 		
 		// check which app is the most critical problem
 		App criticalApp = null;
@@ -76,7 +81,7 @@ public class Analyser {
 		
 		if (problem == null) {
 			// take the top problem if there is one that's not in the "green" region
-			if (criticalAppPercentage >= lowestRegion) {
+			if (criticalAppPercentage >= bottomRegion) {
 				problem = criticalApp;
 			}
 		}

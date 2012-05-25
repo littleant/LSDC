@@ -13,7 +13,7 @@ public class RequestGenerator {
 	int ticks;
 
 	// RequestQueue
-	private List<Request> requests;
+	private List<Request> requests = new LinkedList<Request>();
 		
 	public static RequestGenerator getInstance() {
 		if (RequestGenerator.instance == null) {

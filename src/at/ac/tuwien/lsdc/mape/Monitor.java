@@ -1,11 +1,12 @@
 package at.ac.tuwien.lsdc.mape;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 
 public class Monitor {
-	private List<PhysicalMachine> pms;
+	private List<PhysicalMachine> pms = new LinkedList<PhysicalMachine>();
 	
 	static volatile Monitor instance;
 	
