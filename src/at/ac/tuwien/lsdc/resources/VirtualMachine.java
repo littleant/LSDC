@@ -3,20 +3,28 @@ package at.ac.tuwien.lsdc.resources;
 import java.util.LinkedList;
 import java.util.List;
 
-import at.ac.tuwien.lsdc.mape.Problem;
+public class VirtualMachine extends Resource {
 
-public class VirtualMachine extends Resource implements Problem  {
-	// how many ticks this VM is suspended. Should be decremented each tick if >0
-	private int suspendenTicks = 0;
 	
 	// resources the VM has allocated on the PM
 	private LinkedList<Integer> allocatedCpu = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedMemory = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedStorage = new LinkedList<Integer>();
+	private PhysicalMachine pm;
 	
+	public PhysicalMachine getPm() {
+		return pm;
+	}
+
+	public void setPm(PhysicalMachine pm) {
+		this.pm = pm;
+	}
+
+
 	private LinkedList<App> apps = new LinkedList<App>();
 	
 	public VirtualMachine(int initialCpu, int initialMemory, int initialStorage, int startupTime) {
+		setNewVmId();
 		this.allocatedCpu.addLast(initialCpu);
 		this.allocatedMemory.addLast(initialMemory);
 		this.allocatedStorage.addLast(initialStorage);
@@ -101,7 +109,7 @@ public class VirtualMachine extends Resource implements Problem  {
 	public Integer getCurrentStorageUsage() {
 		int storusage =0 ;
 		for (App a : apps) {
-			storusage +=a.getCurrentMemoryUsage();
+			storusage +=a.getCurrentStorageUsage();
 		}
 		return storusage;
 	}
@@ -129,15 +137,18 @@ public class VirtualMachine extends Resource implements Problem  {
 			}
 		}
 	}
-
-	public int getSuspendenTicks() {
-		return suspendenTicks;
-	}
-
-	public void setSuspendenTicks(int suspendenTicks) {
-		this.suspendenTicks = suspendenTicks;
+	
+	public App createApp(App a) {
+		this.getApps().add(a);
+		a.setVm(this);
+		return a;
 	}
 	
+	public void terminate() {
+		pm.getVms().remove(this);
+	}
+
+
 	public List<App> getApps() {
 		return this.apps;
 	}

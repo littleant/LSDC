@@ -2,10 +2,7 @@ package at.ac.tuwien.lsdc.resources;
 
 import java.util.LinkedList;
 
-
-import at.ac.tuwien.lsdc.mape.Problem;
-
-public class App extends Resource implements Problem {
+public class App extends Resource {
 	// how many ticks the App will run
 	private int ticks;
 	
@@ -27,7 +24,16 @@ public class App extends Resource implements Problem {
 	private VirtualMachine vm;
 	
 	
+	public VirtualMachine getVm() {
+		return vm;
+	}
+
+	public void setVm(VirtualMachine vm) {
+		this.vm = vm;
+	}
+
 	public App(int cpu, int memory, int storage, LinkedList<Integer> cpuUsage, LinkedList<Integer> memoryUsage, LinkedList<Integer> storageUsage) {
+		this.setNewAppId();
 		this.cpu= cpu;
 		this.memory = memory;
 		this.storage = storage;
@@ -35,6 +41,7 @@ public class App extends Resource implements Problem {
 		this.cpuUsage = cpuUsage;
 		this.memoryUsage = memoryUsage;
 		this.storageUsage = storageUsage;
+		this.ticks = this.cpuUsage.size();
 	}
 	
 	public int getTicks() {
@@ -79,15 +86,30 @@ public class App extends Resource implements Problem {
 	}
 
 	public Integer getCurrentCpuUsage() {
-		return this.getCpuUsage().get(this.runningTicks);
+		if(this.runningTicks>0 && this.runningTicks<=this.getCpuUsage().size()) {
+			return this.getCpuUsage().get(this.runningTicks-1);
+		}
+		else {
+			return 0;
+		}
 	}
 
 	public Integer getCurrentMemoryUsage() {
-		return this.getMemoryUsage().get(this.runningTicks);
+		if(this.runningTicks>0 && this.runningTicks<=this.getMemoryUsage().size()) {
+			return this.getMemoryUsage().get(this.runningTicks-1);
+		}
+		else{
+			return 0;
+		}
 	}
 
 	public Integer getCurrentStorageUsage() {
-		return this.getStorageUsage().get(this.runningTicks);
+		if(this.runningTicks>0 && this.runningTicks<=this.getStorageUsage().size()) {
+			return this.getStorageUsage().get(this.runningTicks-1);
+		}
+		else {
+			return 0;
+		}
 	}
 
 	public LinkedList<Integer> getCpuUsage() {
@@ -115,15 +137,30 @@ public class App extends Resource implements Problem {
 	}
 	
 	public LinkedList<Integer> getCpuUsageHistory(int maxNumberOfEntries) {
-		return getLastEntriesUtil(cpuUsage, maxNumberOfEntries);
+		if(this.runningTicks>0 && this.runningTicks<=this.getCpuUsage().size()) {
+			return getLastEntriesUtil(cpuUsage, maxNumberOfEntries, runningTicks-1 );
+		}
+		else {
+			return new LinkedList<Integer>();
+		}
 	}
 	
 	public LinkedList<Integer> getMemoryUsageHistory(int maxNumberOfEntries) {
-		return getLastEntriesUtil(memoryUsage, maxNumberOfEntries);
+		if(this.runningTicks>0 && this.runningTicks<=this.getMemoryUsage().size()) {
+			return getLastEntriesUtil(memoryUsage, maxNumberOfEntries, runningTicks-1);
+		}
+		else {
+			return new LinkedList<Integer>();
+		}
 	}
 	
 	public LinkedList<Integer> getStorageUsageHistory(int maxNumberOfEntries) {
-		return getLastEntriesUtil(storageUsage, maxNumberOfEntries);
+		if(this.runningTicks>0 && this.runningTicks<=this.getStorageUsage().size()) {
+			return getLastEntriesUtil(storageUsage, maxNumberOfEntries,runningTicks-1);
+		}
+		else {
+			return new LinkedList<Integer>();
+		}
 	}
 
 	@Override
@@ -148,6 +185,7 @@ public class App extends Resource implements Problem {
 
 	@Override
 	public void nextTick() {
+		System.out.println("APP "+ this.getResourceId()+ ": next tick");
 		if (suspendedTicks>0) {
 			suspendedTicks--;
 		}
@@ -155,7 +193,7 @@ public class App extends Resource implements Problem {
 			runningTicks++;
 			
 			//terminate?
-			if(runningTicks>=ticks){
+			if(runningTicks>ticks){
 				vm.getApps().remove(this);
 			}
 		}

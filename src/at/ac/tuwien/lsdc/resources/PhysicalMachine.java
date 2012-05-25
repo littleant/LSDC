@@ -1,18 +1,48 @@
 package at.ac.tuwien.lsdc.resources;
 
 import java.util.LinkedList;
+import java.util.List;
 
-import at.ac.tuwien.lsdc.mape.Problem;
-
-public class PhysicalMachine extends Resource implements Problem {
+public class PhysicalMachine extends Resource {
 	//is the machine running? true=>yes
 	private boolean isRunning;
 	private final Integer STARTUPTIME = 20;
 	
+	public PhysicalMachine(){
+		setNewPmId();
+	}
+	
 	private LinkedList<VirtualMachine> vms = new LinkedList<VirtualMachine>();
 	
+	public LinkedList<VirtualMachine> getVms() {
+		return vms;
+	}
+
+	public void setVms(LinkedList<VirtualMachine> vms) {
+		this.vms = vms;
+	}
+	
+	/**
+	 * Retrieves all apps that are deployed on this machine (in VMs)
+	 * 
+	 * @return deployed apps
+	 */
+	public List<App> getApps() {
+		List<App> apps = new LinkedList<App>();
+		List<VirtualMachine> vms = this.getVms();
+		for (VirtualMachine vm : vms) {
+			apps.addAll(vm.getApps());
+		}
+		
+		return apps;
+	}
+
 	public boolean isRunning() {
 		return isRunning;
+	}
+	
+	public void setRunning(boolean running) {
+		this.isRunning = running;
 	}
 
 	public void startMachine() {
@@ -173,6 +203,13 @@ public class PhysicalMachine extends Resource implements Problem {
 		}
 		
 		return this.aggregateValues(values);
+	}
+	
+	public VirtualMachine createNewVm(int initialCpu, int initialMemory, int initialStorage, int startupTime) {
+		VirtualMachine vm = new VirtualMachine(initialCpu, initialMemory, initialStorage, startupTime);
+		vm.setPm(this);
+		this.getVms().add(vm);
+		return vm;
 	}
 	
 }
