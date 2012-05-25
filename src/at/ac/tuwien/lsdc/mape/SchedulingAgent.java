@@ -38,6 +38,7 @@ public class SchedulingAgent {
 			Resource problem = analyser.getTopProblem();
 			Action solution = planner.selectAction(problem);
 			executor.execute(solution);
+			Monitor.getInstance().logSystemStatus();
 			Monitor.getInstance().nextTick();
 		}
 	}
