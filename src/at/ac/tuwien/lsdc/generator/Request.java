@@ -9,6 +9,7 @@ public class Request {
 	private int ticks;
 	
 	// SLAs
+	private int start;
 	private int cpu;
 	private int memory;
 	private int storage;
@@ -24,6 +25,14 @@ public class Request {
 		return app;
 	}
 
+	
+	public int getStart() {
+		return start;
+	}
+
+	public void setStart(int start) {
+		this.start = start;
+	}
 	public int getTicks() {
 		return ticks;
 	}
@@ -101,4 +110,6 @@ public class Request {
 		return request;
 		
 	}
+
+	
 }

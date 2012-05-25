@@ -1,5 +1,6 @@
 package at.ac.tuwien.lsdc.actions;
 
+import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.mape.Monitor;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
@@ -8,9 +9,8 @@ import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class CreateVmInsertApp extends Action {
 	private App app;
-	//TODO: gst: replace by config file
-	private static final int VMSTARTUPCOSTS = 10;
-	private static final int PMSTARTUPCOSTS =20;
+	private static int vmStartupCosts = 10;
+	private static int pmStartupCosts = 20;
 	
 	private VirtualMachine selectedVm;
 	private PhysicalMachine selectedPm = null;
@@ -74,6 +74,9 @@ public class CreateVmInsertApp extends Action {
 
 	@Override
 	public void init(Resource problemApp) {
+		CreateVmInsertApp.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
+		CreateVmInsertApp.pmStartupCosts = Configuration.getInstance().getPmStartupCosts();
+		
 		if (problemApp instanceof App){
 			app = (App)problemApp;
 			boolean found = false;
@@ -83,7 +86,7 @@ public class CreateVmInsertApp extends Action {
 				if(pm.isRunning())  {
 					if((100-pm.getCurrentCpuAllocation())>=app.getCpu() && (100-pm.getCurrentMemoryAllocation())>=app.getMemory() && (100-pm.getCurrentCpuAllocation())>app.getStorage()) {
 						found=true;
-						costs = VMSTARTUPCOSTS;
+						costs = vmStartupCosts;
 						
 						if(selectedPm == null || calculateFit(app, pm)>fitFactor) {
 							selectedPm = pm;
@@ -101,7 +104,7 @@ public class CreateVmInsertApp extends Action {
 				for(PhysicalMachine pm : Monitor.getInstance().getPms()){
 					if (pm.isRunning()==false) {
 						found=true;
-						costs += PMSTARTUPCOSTS;
+						costs += pmStartupCosts;
 						selectedPm = pm;
 						break;
 					}
