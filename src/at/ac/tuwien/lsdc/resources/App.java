@@ -2,6 +2,8 @@ package at.ac.tuwien.lsdc.resources;
 
 import java.util.LinkedList;
 
+import at.ac.tuwien.lsdc.generator.Request;
+
 public class App extends Resource {
 	// how many ticks the App will run
 	private int ticks;
@@ -23,6 +25,7 @@ public class App extends Resource {
 	// link to the hosting vm
 	private VirtualMachine vm;
 	
+	Request originalRequest;
 	
 	public VirtualMachine getVm() {
 		return vm;
@@ -32,7 +35,7 @@ public class App extends Resource {
 		this.vm = vm;
 	}
 
-	public App(int cpu, int memory, int storage, LinkedList<Integer> cpuUsage, LinkedList<Integer> memoryUsage, LinkedList<Integer> storageUsage) {
+	public App(int cpu, int memory, int storage, LinkedList<Integer> cpuUsage, LinkedList<Integer> memoryUsage, LinkedList<Integer> storageUsage, Request request) {
 		this.setNewAppId();
 		this.cpu= cpu;
 		this.memory = memory;
@@ -42,6 +45,8 @@ public class App extends Resource {
 		this.memoryUsage = memoryUsage;
 		this.storageUsage = storageUsage;
 		this.ticks = this.cpuUsage.size();
+		
+		this.originalRequest = request;
 	}
 	
 	public int getTicks() {

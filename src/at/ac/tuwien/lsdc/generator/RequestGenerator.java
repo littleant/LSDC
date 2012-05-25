@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import at.ac.tuwien.lsdc.mape.Monitor;
+
 public class RequestGenerator {
 	static volatile RequestGenerator instance;
 	
@@ -26,8 +28,26 @@ public class RequestGenerator {
 		return RequestGenerator.instance;
 	}
 	
-	public void nextTick() {
-		// TODO???
+	/**
+	 * Retrieve requests that are not yet handled by the system
+	 * 
+	 * @return List of requests that should be converted to apps
+	 */
+	public List<Request> getPendingRequests() {
+		int globalTick = Monitor.getInstance().getGlobalTicks();
+		
+		List<Request> pendingRequests = new LinkedList<Request>();
+		for (Request request : this.requests) {
+			if (request.getStart() >= globalTick) {
+				pendingRequests.add(request);
+			}
+		}
+		
+		return pendingRequests;
+	}
+	
+	public void removeRequestFromQueue(Request request) {
+		this.requests.remove(request);
 	}
 
 	public List<Request> getRequests() {

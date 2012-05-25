@@ -20,7 +20,7 @@ public class Request {
 	private LinkedList<Integer> storageUsage;
 	
 	public App createApp() {
-		App app = new App(this.cpu, this.memory, this.storage, this.cpuUsage, this.memoryUsage, this.storageUsage);
+		App app = new App(this.cpu, this.memory, this.storage, this.cpuUsage, this.memoryUsage, this.storageUsage, this);
 		
 		return app;
 	}

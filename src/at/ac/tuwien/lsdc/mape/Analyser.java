@@ -66,8 +66,7 @@ public class Analyser {
 		
 		if (problem == null) {
 			// Check if there are one or more requests in the queue
-			RequestGenerator requestGenerator = RequestGenerator.getInstance();
-			List<Request> requests = requestGenerator.getRequests();
+			List<Request> requests = RequestGenerator.getInstance().getPendingRequests();
 			
 			if (requests.size() > 0) {
 				// take first request and define it as the top problem
