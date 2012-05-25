@@ -135,7 +135,7 @@ public class ResourceTest {
 		storage.add(9);
 		storage.add(12);
 		storage.add(15);
-		App app1 = new App(15, 25, 10, cpu, mem, storage);
+		App app1 = new App(15, 25, 10, cpu, mem, storage, null);
 		
 		LinkedList<Integer> cpu2 = new LinkedList<Integer>();
 		cpu2.add(22);
@@ -146,7 +146,7 @@ public class ResourceTest {
 		LinkedList<Integer> storage2 = new LinkedList<Integer>();
 		storage2.add(11);
 		storage2.add(17);
-		App app2 = new App(25, 25, 15, cpu2, mem2, storage2);
+		App app2 = new App(25, 25, 15, cpu2, mem2, storage2, null);
 		
 		vm1.getApps().add(app1);
 		vm1.getApps().add(app2);
@@ -161,7 +161,7 @@ public class ResourceTest {
 		mem3.add(4);
 		LinkedList<Integer> storage3 = new LinkedList<Integer>();
 		storage3.add(5);
-		App app3 = new App(10, 10, 10, cpu3, mem3, storage3);
+		App app3 = new App(10, 10, 10, cpu3, mem3, storage3, null);
 		
 		vm2.getApps().add(app3);
 		app3.setVm(vm2);
