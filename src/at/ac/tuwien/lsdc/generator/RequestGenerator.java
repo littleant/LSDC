@@ -38,7 +38,7 @@ public class RequestGenerator {
 		
 		List<Request> pendingRequests = new LinkedList<Request>();
 		for (Request request : this.requests) {
-			if (request.getStart() >= globalTick) {
+			if (request.getStart() <= globalTick) {
 				pendingRequests.add(request);
 			}
 		}
