@@ -1,5 +1,6 @@
 package at.ac.tuwien.lsdc;
 
+import java.io.IOException;
 import java.util.List;
 
 import at.ac.tuwien.lsdc.generator.Request;
@@ -9,7 +10,7 @@ import at.ac.tuwien.lsdc.mape.SchedulingAgent;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 
 public class Lsdc {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NumberFormatException, IOException {
 		// add a request to request queue
 		List<Request> requests = RequestGenerator.getInstance().generateRequests();
 		RequestGenerator.getInstance().setRequests(requests);

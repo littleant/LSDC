@@ -1,5 +1,7 @@
 package at.ac.tuwien.lsdc.mape;
 
+import java.io.IOException;
+
 import at.ac.tuwien.lsdc.actions.Action;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.resources.Resource;
@@ -28,10 +30,10 @@ public class SchedulingAgent {
 		return SchedulingAgent.instance;
 	}
 	
-	public void start() {
+	public void start() throws NumberFormatException, IOException {
 		while (true) { 
 			//TODO: gst: werden immer Requests generiert??
-			RequestGenerator.getInstance().generateRequest();
+			RequestGenerator.getInstance().generateRequests();
 			Resource problem = analyser.getTopProblem();
 			Action solution = planner.selectAction(problem);
 			executor.execute(solution);
