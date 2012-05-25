@@ -10,6 +10,10 @@ public class PhysicalMachine extends Resource implements Problem {
 	private boolean isRunning;
 	private final Integer STARTUPTIME = 20;
 	
+	public PhysicalMachine(){
+		setNewPmId();
+	}
+	
 	private LinkedList<VirtualMachine> vms = new LinkedList<VirtualMachine>();
 	
 	public LinkedList<VirtualMachine> getVms() {
