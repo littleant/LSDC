@@ -1,21 +1,17 @@
 package at.ac.tuwien.lsdc.mape;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.generator.Request;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
+import at.ac.tuwien.lsdc.resources.Resource;
 
 public class Analyser {
-	public Problem getTopProblem() {
+	public Resource getTopProblem() {
 		// Check SLAs against SLA violation regions (red, orange, green)
 		List<PhysicalMachine> pms = Monitor.getInstance().getPms();
 		List<App> apps = new LinkedList<App>();
@@ -62,7 +58,7 @@ public class Analyser {
 		}
 		
 		// Decide what the top problem is
-		Problem problem = null;
+		Resource problem = null;
 		
 		if (criticalAppPercentage >= topRegion) {
 			problem = criticalApp;

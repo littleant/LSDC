@@ -3,6 +3,7 @@ package at.ac.tuwien.lsdc.mape;
 import java.util.LinkedList;
 import java.util.List;
 
+import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 
 public class Monitor {
@@ -28,10 +29,12 @@ public class Monitor {
 	
 	public void getNewStati() {
 		// increment global tick counter in RequestGenerator
-		// TODO
+		RequestGenerator.getInstance().nextTick();
 		
 		// updates PMs, which update VMs, which update Apps
-		// TODO
+		for (PhysicalMachine pm : this.pms) {
+			pm.nextTick();
+		}
 	}
 
 	public List<PhysicalMachine> getPms() {

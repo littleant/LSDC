@@ -2,10 +2,7 @@ package at.ac.tuwien.lsdc.resources;
 
 import java.util.LinkedList;
 
-
-import at.ac.tuwien.lsdc.mape.Problem;
-
-public class App extends Resource implements Problem {
+public class App extends Resource {
 	// how many ticks the App will run
 	private int ticks;
 	
