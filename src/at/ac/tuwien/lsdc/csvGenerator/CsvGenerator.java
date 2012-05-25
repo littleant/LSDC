@@ -56,7 +56,7 @@ public class CsvGenerator {
 			//Start
 			out.write(randomData.nextInt(1, 1000)+";");
 
-			
+			//
 			out.newLine();
 			out.flush();
 			
