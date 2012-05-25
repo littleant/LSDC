@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,8 +41,11 @@ public class RequestGenerator {
 	}
 	
 	
-	public Request generateRequest() {
-		Request request = new Request();
+	public List<Request> generateRequests() throws NumberFormatException, IOException {
+		
+		List<Request> requests = new ArrayList<Request>();
+		
+		
 		
 		FileReader input = null;
 		try {
@@ -52,13 +56,8 @@ public class RequestGenerator {
 		}
 		BufferedReader bufRead = new BufferedReader(input);
 		String line = null;
-		try {
-			line = bufRead.readLine();
-		} catch (IOException e) {
-			System.out.println("Exception while reading");
-			e.printStackTrace();
-		}
-
+		while((line= bufRead.readLine()) != null){
+		Request request = new Request();
 		String[] values = line.split(";");
 		System.out.println("Size of the values " + values.length);
 		
@@ -90,7 +89,11 @@ public class RequestGenerator {
 		request.setStorageUsage(storage);
 		System.out.println("Size of the storage " + storage.size());
 		
-		return request;
+		requests.add(request);
+		
+		}
+		return requests;
+		
 	}
 
 }
