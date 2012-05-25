@@ -87,15 +87,30 @@ public class App extends Resource implements Problem {
 	}
 
 	public Integer getCurrentCpuUsage() {
-		return this.getCpuUsage().get(this.runningTicks);
+		if(this.runningTicks>0 && this.runningTicks<=this.getCpuUsage().size()) {
+			return this.getCpuUsage().get(this.runningTicks-1);
+		}
+		else {
+			return 0;
+		}
 	}
 
 	public Integer getCurrentMemoryUsage() {
-		return this.getMemoryUsage().get(this.runningTicks);
+		if(this.runningTicks>0 && this.runningTicks<=this.getMemoryUsage().size()) {
+			return this.getMemoryUsage().get(this.runningTicks-1);
+		}
+		else{
+			return 0;
+		}
 	}
 
 	public Integer getCurrentStorageUsage() {
-		return this.getStorageUsage().get(this.runningTicks);
+		if(this.runningTicks>0 && this.runningTicks<=this.getStorageUsage().size()) {
+			return this.getStorageUsage().get(this.runningTicks-1);
+		}
+		else {
+			return 0;
+		}
 	}
 
 	public LinkedList<Integer> getCpuUsage() {
@@ -123,15 +138,30 @@ public class App extends Resource implements Problem {
 	}
 	
 	public LinkedList<Integer> getCpuUsageHistory(int maxNumberOfEntries) {
-		return getLastEntriesUtil(cpuUsage, maxNumberOfEntries);
+		if(this.runningTicks>0 && this.runningTicks<=this.getCpuUsage().size()) {
+			return getLastEntriesUtil(cpuUsage, maxNumberOfEntries, runningTicks-1 );
+		}
+		else {
+			return new LinkedList<Integer>();
+		}
 	}
 	
 	public LinkedList<Integer> getMemoryUsageHistory(int maxNumberOfEntries) {
-		return getLastEntriesUtil(memoryUsage, maxNumberOfEntries);
+		if(this.runningTicks>0 && this.runningTicks<=this.getMemoryUsage().size()) {
+			return getLastEntriesUtil(memoryUsage, maxNumberOfEntries, runningTicks-1);
+		}
+		else {
+			return new LinkedList<Integer>();
+		}
 	}
 	
 	public LinkedList<Integer> getStorageUsageHistory(int maxNumberOfEntries) {
-		return getLastEntriesUtil(storageUsage, maxNumberOfEntries);
+		if(this.runningTicks>0 && this.runningTicks<=this.getStorageUsage().size()) {
+			return getLastEntriesUtil(storageUsage, maxNumberOfEntries,runningTicks-1);
+		}
+		else {
+			return new LinkedList<Integer>();
+		}
 	}
 
 	@Override

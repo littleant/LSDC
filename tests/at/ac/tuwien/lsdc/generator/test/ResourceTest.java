@@ -91,6 +91,19 @@ public class ResourceTest {
 		out = Resource.getLastEntriesUtil(l1, 10);
 		assertTrue(out.size()==5);
 		
+		out = Resource.getLastEntriesUtil(l1, 3,3);
+		assertTrue(out.size()==3);
+		assertTrue(out.get(0)==2);
+		assertTrue(out.get(1)==3);
+		assertTrue(out.get(2)==4);
+		
+		s="";
+		for (Integer i1: out) {
+			s+=i1 + ";";
+		}
+		System.out.println (s);
+		
+		
 	}
 	
 	@Test
@@ -104,6 +117,7 @@ public class ResourceTest {
 	//  app3: cpu= 3, mem= 4, storage = 5
 	// => VM: cpu= 3, mem= 4, storage = 5
 	public void testResourceUsages() {
+		System.out.println ("Resource Usage");
 		PhysicalMachine pm1 = new PhysicalMachine();
 		pm1.setRunning(true);
 		
@@ -111,10 +125,16 @@ public class ResourceTest {
 		//App1
 		LinkedList<Integer> cpu = new LinkedList<Integer>();
 		cpu.add(11);
+		cpu.add(13);
+		cpu.add(10);
 		LinkedList<Integer> mem = new LinkedList<Integer>();
 		mem.add(23);
+		mem.add(20);
+		mem.add(18);
 		LinkedList<Integer> storage = new LinkedList<Integer>();
 		storage.add(9);
+		storage.add(12);
+		storage.add(15);
 		App app1 = new App(15, 25, 10, cpu, mem, storage);
 		
 		LinkedList<Integer> cpu2 = new LinkedList<Integer>();
@@ -146,6 +166,16 @@ public class ResourceTest {
 
 		pm1.getVms().add(vm1);
 		pm1.getVms().add(vm2);
+		pm1.nextTick();
+		System.out.println ("PM1: running= "+ pm1.getRunningTicks() + ", suspended="+ pm1.getSuspendedTicks());
+		System.out.println ("PM1: " + pm1.getCurrentCpuUsage() + " no vms: " + pm1.getVms().size());
+		for (VirtualMachine vm : pm1.getVms()) {
+			System.out.println ("VM: " + vm.getRunningTicks() + ", " + vm.getSuspendedTicks());
+			for (App a: vm.getApps()){
+				System.out.println("App: " + a.getRunningTicks() + ", " + a.getSuspendedTicks());
+			}
+		}
+		
 		assertTrue(pm1.getCurrentCpuUsage()==36);
 		assertTrue(pm1.getCurrentMemoryUsage()==41);
 		assertTrue(pm1.getCurrentStorageUsage()==25);

@@ -5,18 +5,44 @@ import java.util.LinkedList;
 
 public abstract class Resource {
 	protected int suspendedTicks=0;
+	public int getSuspendedTicks() {
+		return suspendedTicks;
+	}
+
+	public void setSuspendedTicks(int suspendedTicks) {
+		this.suspendedTicks = suspendedTicks;
+	}
+
+	public int getRunningTicks() {
+		return runningTicks;
+	}
+
+	public void setRunningTicks(int runningTicks) {
+		this.runningTicks = runningTicks;
+	}
+
 	protected int runningTicks=0;
 	
 	//returns the last n elements of an integer list
-	public static LinkedList<Integer> getLastEntriesUtil(LinkedList<Integer> input,int maxNoOfEntries) {
+	public static LinkedList<Integer> getLastEntriesUtil(LinkedList<Integer> input,int maxNoOfEntries, int lastElementId) {
 		LinkedList<Integer> out = new LinkedList<Integer>();
 		int i=0;
+		int t=0;
+		int entries=0;
 		Iterator<Integer> it = input.descendingIterator();
-		while (it.hasNext() && i<maxNoOfEntries){
-			out.addFirst(it.next());
+		while (it.hasNext() && entries<maxNoOfEntries){
+			t = it.next();
+			if(i >= (input.size()-lastElementId-1)){
+				entries++;
+				out.addFirst(t);
+			}
 			i++;
 		}
 		return out;
+	}
+	
+	public static LinkedList<Integer> getLastEntriesUtil(LinkedList<Integer> input,int maxNoOfEntries) {
+		return getLastEntriesUtil(input, maxNoOfEntries, input.size()-1);
 	}
 	
 	///sums up several lists (memory usage app1 + memory usage app2 +....)
