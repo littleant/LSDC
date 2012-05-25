@@ -8,7 +8,7 @@ import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class CreateVmInsertApp extends Action {
 	private App app;
-	//TODO: replace by config file
+	//TODO: gst: replace by config file
 	private static final int VMSTARTUPCOSTS = 10;
 	private static final int PMSTARTUPCOSTS =20;
 	
@@ -20,13 +20,12 @@ public class CreateVmInsertApp extends Action {
 	
 	@Override
 	public int predict() {
-		// TODO: Implement using WEKA
+		// TODO: gst: Implement using WEKA
 		return 100;
 	}
 
 	@Override
 	public int estimate() {
-		// TODO Auto-generated method stub
 		return costs;
 	}
 
@@ -38,7 +37,7 @@ public class CreateVmInsertApp extends Action {
 	
 	
 	//calculate if an App fits to a pm
-	//TODO: use WEKA to calc fit factor!!
+	//TODO: gst: use WEKA to calc fit factor!!
 	private int calculateFit(App app2, PhysicalMachine pm) {
 		int cpuFit = pm.getCurrentCpuAllocation()-app2.getCpu();
 		int memFit = pm.getCurrentMemoryAllocation()-app2.getMemory();
@@ -60,13 +59,13 @@ public class CreateVmInsertApp extends Action {
 			selectedPm.startMachine();
 		}
 		
-		//TODO: hard - coded startup value!!
+		//TODO: gst: hard - coded startup value!!
 		VirtualMachine vm = selectedPm.createNewVm(app.getCpu(), app.getMemory(), app.getStorage(), 10);
 		vm.createApp(this.app);
 		
 		if(oldVm!=null) {
 			oldVm.getApps().remove(app);
-			//TODO: what happens if the VM is now empty??
+			//TODO: gst: what happens if the VM is now empty??
 			if(oldVm.getApps().size()==0) {
 				oldVm.terminate();
 			}
@@ -95,7 +94,7 @@ public class CreateVmInsertApp extends Action {
 		
 		
 			//no running machine found => search for a stopped machine
-			//TODO: replace by real action
+			//TODO: gst: replace by real action
 			if (found ==false ) {
 				//Start a new machine
 			

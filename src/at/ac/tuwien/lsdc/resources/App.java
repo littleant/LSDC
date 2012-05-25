@@ -172,14 +172,12 @@ public class App extends Resource {
 	@Override
 	//at app level equivalent to usage
 	public Integer getCurrentMemoryAllocation() {
-		// TODO Auto-generated method stub
 		return this.getCurrentMemoryUsage();
 	}
 
 	@Override
 	//at app level equivalent to usage
 	public Integer getCurrentStorageAllocation() {
-		// TODO Auto-generated method stub
 		return this.getCurrentStorageUsage();
 	}
 

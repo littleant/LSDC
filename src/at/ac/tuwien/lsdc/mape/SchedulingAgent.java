@@ -30,7 +30,7 @@ public class SchedulingAgent {
 	
 	public void start() {
 		while (true) { 
-			//TODO: werden immer Requests generiert??
+			//TODO: gst: werden immer Requests generiert??
 			RequestGenerator.getInstance().generateRequest();
 			Resource problem = analyser.getTopProblem();
 			Action solution = planner.selectAction(problem);
