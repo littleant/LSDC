@@ -207,5 +207,12 @@ public class PhysicalMachine extends Resource implements Problem {
 		return this.aggregateValues(values);
 	}
 	
+	public VirtualMachine createNewVm(int initialCpu, int initialMemory, int initialStorage, int startupTime) {
+		VirtualMachine vm = new VirtualMachine(initialCpu, initialMemory, initialStorage, startupTime);
+		vm.setPm(this);
+		this.getVms().add(vm);
+		return vm;
+	}
+	
 }
 

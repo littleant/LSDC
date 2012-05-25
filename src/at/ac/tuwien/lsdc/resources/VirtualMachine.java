@@ -12,7 +12,17 @@ public class VirtualMachine extends Resource implements Problem  {
 	private LinkedList<Integer> allocatedCpu = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedMemory = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedStorage = new LinkedList<Integer>();
+	private PhysicalMachine pm;
 	
+	public PhysicalMachine getPm() {
+		return pm;
+	}
+
+	public void setPm(PhysicalMachine pm) {
+		this.pm = pm;
+	}
+
+
 	private LinkedList<App> apps = new LinkedList<App>();
 	
 	public VirtualMachine(int initialCpu, int initialMemory, int initialStorage, int startupTime) {
@@ -128,6 +138,16 @@ public class VirtualMachine extends Resource implements Problem  {
 				a.nextTick();
 			}
 		}
+	}
+	
+	public App createApp(App a) {
+		this.getApps().add(a);
+		a.setVm(this);
+		return a;
+	}
+	
+	public void terminate() {
+		pm.getVms().remove(this);
 	}
 
 
