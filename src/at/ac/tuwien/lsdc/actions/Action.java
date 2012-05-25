@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import at.ac.tuwien.lsdc.resources.App;
+import at.ac.tuwien.lsdc.resources.Resource;
 
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
@@ -19,7 +20,7 @@ public abstract class Action {
 		this.knowledgeBase = knowledgeBase;
 	}
 
-	public abstract void init(App problemApp);
+	public abstract void init(Resource problemApp);
 	
 	public abstract int predict();
 	
