@@ -25,8 +25,16 @@ public class App extends Resource {
 	// link to the hosting vm
 	private VirtualMachine vm;
 	
-	Request originalRequest;
+	private Request originalRequest;
 	
+	public Request getOriginalRequest() {
+		return originalRequest;
+	}
+
+	public void setOriginalRequest(Request originalRequest) {
+		this.originalRequest = originalRequest;
+	}
+
 	public VirtualMachine getVm() {
 		return vm;
 	}

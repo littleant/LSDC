@@ -1,6 +1,7 @@
 package at.ac.tuwien.lsdc.actions;
 
 import at.ac.tuwien.lsdc.Configuration;
+import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.mape.Monitor;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
@@ -53,6 +54,11 @@ public class CreateVmInsertApp extends Action {
 		if (app.getVm()!=null) {
 			oldVm = app.getVm();
 			oldPm = oldVm.getPm();
+		}
+		
+		//remove the app from the request- queue??? 
+		if(app.getOriginalRequest()!=null) {
+			RequestGenerator.getInstance().removeRequestFromQueue(app.getOriginalRequest());
 		}
 		
 		if (selectedPm.isRunning()!=false) {
