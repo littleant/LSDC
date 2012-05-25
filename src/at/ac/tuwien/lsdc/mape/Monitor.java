@@ -68,9 +68,6 @@ public class Monitor {
 	}
 	
 	public void getNewStati() {
-		// increment global tick counter in RequestGenerator
-		RequestGenerator.getInstance().nextTick();
-		
 		// updates PMs, which update VMs, which update Apps
 		for (PhysicalMachine pm : this.pms) {
 			pm.nextTick();
