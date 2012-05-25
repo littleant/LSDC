@@ -17,7 +17,7 @@ public class KISSPlanner extends Planner {
 	@Override
 	public Action selectAction(Resource problem) {
 		int currentFit=10000;
-		Action selectedAction;
+		Action selectedAction = null;
 		for (Action a : knownActions) {
 			a.init(problem);
 			if (a.preconditions() && calculateFit(a)<currentFit) {
@@ -26,6 +26,7 @@ public class KISSPlanner extends Planner {
 			}
 			
 		}
+		
 		return selectedAction;
 	}
 	
