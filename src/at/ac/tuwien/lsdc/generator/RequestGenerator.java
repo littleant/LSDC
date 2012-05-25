@@ -38,7 +38,7 @@ public class RequestGenerator {
 		
 		List<Request> pendingRequests = new LinkedList<Request>();
 		for (Request request : this.requests) {
-			if (request.getStart() >= globalTick) {
+			if (request.getStart() <= globalTick) {
 				pendingRequests.add(request);
 			}
 		}
@@ -46,6 +46,11 @@ public class RequestGenerator {
 		return pendingRequests;
 	}
 	
+	/**
+	 * Removes a request from the request-queue
+	 * 
+	 * @param request Request that should be removed
+	 */
 	public void removeRequestFromQueue(Request request) {
 		this.requests.remove(request);
 	}
