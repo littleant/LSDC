@@ -3,6 +3,7 @@ package at.ac.tuwien.lsdc.actions;
 import at.ac.tuwien.lsdc.mape.Monitor;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
+import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class CreateVmInsertApp extends Action {
@@ -73,40 +74,46 @@ public class CreateVmInsertApp extends Action {
 	}
 
 	@Override
-	public void init(App problemApp) {
-		app = problemApp;
-		boolean found = false;
-		int fitFactor = 0;
-		
-		for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
-			if(pm.isRunning())  {
-				if((100-pm.getCurrentCpuAllocation())>=app.getCpu() && (100-pm.getCurrentMemoryAllocation())>=app.getMemory() && (100-pm.getCurrentCpuAllocation())>app.getStorage()) {
-					found=true;
-					costs = VMSTARTUPCOSTS;
-					
-					if(selectedPm == null || calculateFit(app, pm)>fitFactor) {
-						selectedPm = pm;
+	public void init(Resource problemApp) {
+		if (problemApp instanceof App){
+			app = (App)problemApp;
+			boolean found = false;
+			int fitFactor = 0;
+			
+			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
+				if(pm.isRunning())  {
+					if((100-pm.getCurrentCpuAllocation())>=app.getCpu() && (100-pm.getCurrentMemoryAllocation())>=app.getMemory() && (100-pm.getCurrentCpuAllocation())>app.getStorage()) {
+						found=true;
+						costs = VMSTARTUPCOSTS;
+						
+						if(selectedPm == null || calculateFit(app, pm)>fitFactor) {
+							selectedPm = pm;
+						}
 					}
 				}
 			}
-		}
 		
-		//no running machine found => search for a stopped machine
-		//TODO: replace by real action
-		if (found ==false ) {
-			//Start a new machine
 		
-			for(PhysicalMachine pm : Monitor.getInstance().getPms()){
-				if (pm.isRunning()==false) {
-					found=true;
-					costs += PMSTARTUPCOSTS;
-					selectedPm = pm;
-					break;
+			//no running machine found => search for a stopped machine
+			//TODO: replace by real action
+			if (found ==false ) {
+				//Start a new machine
+			
+				for(PhysicalMachine pm : Monitor.getInstance().getPms()){
+					if (pm.isRunning()==false) {
+						found=true;
+						costs += PMSTARTUPCOSTS;
+						selectedPm = pm;
+						break;
+					}
 				}
+					
 			}
-				
+			preconditionsOk = found;
 		}
-		preconditionsOk = found;
+		else {
+			preconditionsOk= false;
+		}
 	}
 
 }
