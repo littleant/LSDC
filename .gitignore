@@ -1,4 +1,5 @@
 *.class
+input.csv
 
 # Package Files #
 #*.jar
