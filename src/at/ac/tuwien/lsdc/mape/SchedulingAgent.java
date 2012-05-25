@@ -31,14 +31,17 @@ public class SchedulingAgent {
 	}
 	
 	public void start() throws NumberFormatException, IOException {
-		while (true) { 
+		int i=0;
+		while (i<10000) { 
 			//TODO: gst: werden immer Requests generiert??
-			System.out.println ("SchedulingAgent - Tick " + Monitor.getInstance().getGlobalTicks());
+			//System.out.println ("SchedulingAgent - Tick " + Monitor.getInstance().getGlobalTicks());
 			Resource problem = analyser.getTopProblem();
 			Action solution = planner.selectAction(problem);
 			executor.execute(solution);
 			Monitor.getInstance().logSystemStatus();
 			Monitor.getInstance().nextTick();
+			i++;
 		}
+		
 	}
 }

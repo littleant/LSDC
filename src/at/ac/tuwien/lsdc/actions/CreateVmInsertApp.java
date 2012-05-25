@@ -80,6 +80,10 @@ public class CreateVmInsertApp extends Action {
 
 	@Override
 	public void init(Resource problemApp) {
+		this.preconditionsOk=false;
+		this.selectedPm=null;
+		this.selectedVm=null;
+		
 		CreateVmInsertApp.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
 		CreateVmInsertApp.pmStartupCosts = Configuration.getInstance().getPmStartupCosts();
 		

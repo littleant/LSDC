@@ -37,9 +37,9 @@ public class Monitor {
 			pmLog = new PrintWriter("log/pmlog.txt");
 			vmLog = new PrintWriter("log/vmlog.txt");
 			appLog = new PrintWriter("log/applog.txt");
-			pmLog.append(getLogHeader());
-			vmLog.append(getLogHeader());
-			appLog.append(getLogHeader());
+			pmLog.println(getLogHeader());
+			vmLog.println(getLogHeader());
+			appLog.println(getLogHeader());
 			
 		} catch (IOException e) {
 		
@@ -166,7 +166,16 @@ public class Monitor {
 					sb.append(";");
 					sb.append(a.getCurrentMemoryUsage()); 
 					sb.append(";");
-					sb.append(a.getCurrentStorageUsage()); 
+					sb.append(a.getCurrentStorageUsage());
+					sb.append(";");
+					sb.append(a.getCpu());
+					sb.append(";");
+					sb.append(a.getMemory());
+					sb.append(";");
+					sb.append(a.getStorage());
+					sb.append(";");
+					sb.append(a.getCpuUsage().size());
+					
 					
 					appLog.println(sb.toString());
 				}
@@ -176,7 +185,7 @@ public class Monitor {
 	}
 	
 	private String getLogHeader() {
-		return "ExecutionID;ID;RootID;GlobalTick;RunningTicks;SuspendedTicks;AllocatedCpu;AllocatedMemory;AllocatedStorage;UsedCpu;UsedMemory;UsedStorage";
+		return "ExecutionID;ID;RootID;GlobalTick;RunningTicks;SuspendedTicks;AllocatedCpu;AllocatedMemory;AllocatedStorage;UsedCpu;UsedMemory;UsedStorage;SLACpu;SLAMemory;SLAStorage;AppRuntime";
 	}
 	
 }
