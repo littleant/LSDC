@@ -34,7 +34,7 @@ public class CsvGenerator {
 			RandomData randomData = new RandomDataImpl();
 			
 
-			for(int k =0;k<11;k++){
+			for(int k =0;k<100;k++){
 			// Runtime
 			int value = randomData.nextInt(1, 1000);
 			out.write(value + ";");
@@ -44,15 +44,26 @@ public class CsvGenerator {
 				slas.add(generatedValue);
 				out.write(generatedValue + ";");
 			}
-			// Cpu
+
+			//Set statistical parameters for the normal distribution mü, sigma
+			int cpumu = randomData.nextInt(10, (int)(slas.get(0)*0.7));
+			int cpusigma = randomData.nextInt(1, (int)cpumu/5+1);
+			
+			int memmu = randomData.nextInt(10, (int)(slas.get(1)*0.7));
+			int memsigma = randomData.nextInt(1, (int)memmu/5+1);
+			
+			int stormu = randomData.nextInt(10, (int)(slas.get(2)*0.7));
+			int storsigma = randomData.nextInt(1, (int)stormu/5+1);
+			
+			// Cpu			
 			for (int i = 0; i < value; i++)
-				out.write(new Double(randomData.nextGaussian(randomData.nextInt(10, slas.get(0)), 5)).intValue()+ ";");
+				out.write(new Double(randomData.nextGaussian(cpumu, cpusigma)).intValue()+ ";");
 			// Memory
 			for (int i = 0; i < value; i++)
-				out.write(new Double(randomData.nextGaussian(randomData.nextInt(10, slas.get(1)), 5)).intValue()+ ";");
+				out.write(new Double(randomData.nextGaussian(memmu, memsigma)).intValue()+ ";");
 			// Storage
 			for (int i = 0; i < value; i++)
-				out.write(new Double(randomData.nextGaussian(randomData.nextInt(10, slas.get(2)), 5)).intValue()+ ";");
+				out.write(new Double(randomData.nextGaussian(stormu, storsigma)).intValue()+ ";");
 			//Start
 			out.write(randomData.nextInt(1, 1000)+";");
 
