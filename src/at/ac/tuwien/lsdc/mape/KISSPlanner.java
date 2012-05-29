@@ -27,7 +27,9 @@ public class KISSPlanner extends Planner {
 					selectedAction= a;
 					currentFit = calculateFit(a);
 				}
-			} catch (InstantiationException | IllegalAccessException e) {
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 			
