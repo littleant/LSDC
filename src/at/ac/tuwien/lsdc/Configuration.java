@@ -17,6 +17,8 @@ public class Configuration {
 	private Integer pmStartupCosts = null;
 	private Integer vmStartupCosts = null;
 	
+	private String KBCreateVmInsertApp = null;
+	
 	public Integer getTopRegion() {
 		return topRegion;
 	}
@@ -55,6 +57,9 @@ public class Configuration {
 			this.maxPms = Integer.parseInt(properties.getProperty("maxPms"));
 			this.pmStartupCosts = Integer.parseInt(properties.getProperty("pmStartupCosts"));
 			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
+			
+			//knowledge
+			this.KBCreateVmInsertApp = properties.getProperty("KBCreateVmInsertApp");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -88,5 +93,13 @@ public class Configuration {
 		}
 		
 		return Configuration.instance;
+	}
+
+	public String getKBCreateVmInsertApp() {
+		return KBCreateVmInsertApp;
+	}
+
+	public void setKBCreateVmInsertApp(String kBCreateVmInsertApp) {
+		KBCreateVmInsertApp = kBCreateVmInsertApp;
 	}
 }
