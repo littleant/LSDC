@@ -16,7 +16,6 @@ public class ActionTest {
 //			System.out.println(action.getKnowledgeBase().firstInstance());
 			Thread.sleep(1000);
 //			System.out.println(action.getKnowledgeBase());
-			action.saveKnowledge("knowledge/cpu.arff");
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
