@@ -176,12 +176,13 @@ public class ResourceTest {
 		
 		System.out.println("nachTick1:");
 		printStatus(pm1);
-		
-		LinkedList<Integer>cpuHist = pm1.getCpuUsageHistory(3);
+		pm1.nextTick();
+		LinkedList<Integer>cpuHist = pm1.getCpuAllocationHistory(3);
+		System.out.print ("ALLOCATION:");
 		for (Integer i1: cpuHist) {
 			System.out.print (i1 + ", ");
 		}
-		
+		fail("");
 		
 		
 		assertTrue(pm1.getCurrentCpuUsage()==36);
