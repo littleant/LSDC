@@ -24,7 +24,6 @@ public class CreateVmInsertApp extends Action {
 	public static Instances getKnowledgeBase() {
 		if (knowledgeBase ==null ) {
 			try {
-				
 				CreateVmInsertApp.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -35,23 +34,18 @@ public class CreateVmInsertApp extends Action {
 	
 	@Override
 	public int predict() {
-		// TODO: gst: Implement using WEKA
 		// WEKA inputs: PM resource allocations, App SLAs
-		DataSource source;
+
+		Instances data = CreateVmInsertApp.getKnowledgeBase();
+		
+		J48 tree = new J48();         // new instance of tree
 		try {
-			source = new DataSource("/knowledge/createVmInsertApp.arff");
-			Instances data = source.getDataSet();
-			if (data.classIndex() == -1) {
-				data.setClassIndex(data.numAttributes() - 1);
-			}
-			
-			J48 tree = new J48();         // new instance of tree
-			tree.buildClassifier(data);   // build classifier
-			
-			
+			tree.buildClassifier(data);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		// TODO: use WEKA to classify
 		
 		return 100;
 	}
