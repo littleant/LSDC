@@ -4,6 +4,8 @@ package at.ac.tuwien.lsdc.actions;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -48,22 +50,69 @@ public class CreateVmInsertApp extends Action {
 	
 	@Override
 	public int predict() {
-		// WEKA inputs: PM resource allocations, App SLAs
-		Instance input = new Instance(0);
+		//Create new WEKA - instance
+		Instance instance = new Instance(34);
+	// ----- copy
+		LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(20);
+		LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(20);	
+		int beforeInsertionCount = cpuallhist.size()-10;	
 		
-		Instances data = CreateVmInsertApp.getKnowledgeBase();
+		double cpuratio = calculateAllocationUsageRatio(cpuallhist, cpuusagehist, beforeInsertionCount);
 		
-		MultilayerPerceptron mp = new MultilayerPerceptron();
+		LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(20);
+		LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(20);	
+			
+		 
+		double memoryratio = calculateAllocationUsageRatio(memallhist, memusagehist, beforeInsertionCount);
+			
+		LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(20);
+		LinkedList<Integer> storageusagehist = selectedPm.getStorageUsageHistory(20);	
+			
+		double storageratio = calculateAllocationUsageRatio(storageallhist, storageusagehist, beforeInsertionCount);
+		
+		//CPU/Memory/Storage - Allocation history before the new vm was created
+		int valuesStartAt = 10-beforeInsertionCount; //if machine doesn't have 10 values before insertion
+		for (int i = 0; i<10;i++) {
+			if(i>=valuesStartAt){
+				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+10),clusterValue( memallhist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
+			}
+			else {
+				//TODO: replace NULL VALUE
+				instance.setValue(getKnowledgeBase().attribute(i), Instance.missingValue());
+				instance.setValue(getKnowledgeBase().attribute(i+10), Instance.missingValue());
+				instance.setValue(getKnowledgeBase().attribute(i+20), Instance.missingValue());
+			}
+		}
+		
+		//SLAs
+		//CPU
+		instance.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
+		//Memory
+		instance.setValue(getKnowledgeBase().attribute(31),clusterValue(app.getMemory()));
+		//Storage
+		instance.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
+		
+		//Evaluation
+		instance.setValue(getKnowledgeBase().attribute(33), Instance.missingValue());
+	// ---- end copy
+		// TODO: fill with data
+		
+		Classifier classifier = new MultilayerPerceptron();
+		
+		int output = 0;
+		Evaluation evaluation;
 		try {
-			mp.buildClassifier(data);
-			mp.classifyInstance(input);
+			evaluation = new Evaluation(CreateVmInsertApp.getKnowledgeBase());
+			output = (int) evaluation.evaluateModelOnce(classifier, instance);
+			
+			System.out.println("output: "+ output);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		// TODO: use WEKA to classify
 		
-		return 100;
+		return output;
 	}
 
 	@Override

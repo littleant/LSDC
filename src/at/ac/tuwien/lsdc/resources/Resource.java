@@ -64,6 +64,7 @@ public abstract class Resource {
 			i++;
 		}
 		
+		// add zeros for missing values
 		if (out.size() < maxNoOfEntries) {
 			int max = maxNoOfEntries - out.size();
 			for (int j = 0; j < max; j++) {
