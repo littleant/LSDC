@@ -34,7 +34,7 @@ public class CsvGenerator {
 			RandomData randomData = new RandomDataImpl();
 			
 
-			for(int k =0;k<100;k++){
+			for(int k =0;k<10;k++){
 			// Runtime
 			int value = randomData.nextInt(1, 1000);
 			out.write(value + ";");
@@ -45,7 +45,7 @@ public class CsvGenerator {
 				out.write(generatedValue + ";");
 			}
 
-			//Set statistical parameters for the normal distribution mü, sigma
+			//Set statistical parameters for the normal distribution mï¿½, sigma
 			int cpumu = randomData.nextInt(10, (int)(slas.get(0)*0.7));
 			int cpusigma = randomData.nextInt(1, (int)cpumu/5+1);
 			
@@ -55,9 +55,10 @@ public class CsvGenerator {
 			int stormu = randomData.nextInt(10, (int)(slas.get(2)*0.7));
 			int storsigma = randomData.nextInt(1, (int)stormu/5+1);
 			
-			// Cpu			
-			for (int i = 0; i < value; i++)
+			// Cpu
+			for (int i = 0; i < value; i++) {
 				out.write(new Double(randomData.nextGaussian(cpumu, cpusigma)).intValue()+ ";");
+			}
 			// Memory
 			for (int i = 0; i < value; i++)
 				out.write(new Double(randomData.nextGaussian(memmu, memsigma)).intValue()+ ";");

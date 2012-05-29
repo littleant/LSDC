@@ -34,7 +34,7 @@ public class Analyser {
 			// percentage of usage, compared to the SLA
 			int cpuPercentage = app.getCurrentCpuUsage() / app.getVm().getCurrentCpuAllocation() * 100;
 			// check if percentage is higher than previous app
-			if (cpuPercentage > criticalAppPercentage && app.getVm().getCurrentCpuAllocation()<app.getCpu()) {
+			if (cpuPercentage > criticalAppPercentage && app.getVm().getCurrentCpuAllocation() < app.getCpu()) {
 				// replace the top criticl app
 				criticalApp = app;
 				criticalAppPercentage = cpuPercentage;
@@ -42,7 +42,7 @@ public class Analyser {
 			
 			// memory
 			int memoryPercentage = app.getCurrentMemoryUsage() / app.getVm().getCurrentMemoryAllocation() * 100;
-			if (memoryPercentage > criticalAppPercentage && app.getVm().getCurrentMemoryAllocation()<app.getMemory()) {
+			if (memoryPercentage > criticalAppPercentage && app.getVm().getCurrentMemoryAllocation() < app.getMemory()) {
 				// replace the top criticl app
 				criticalApp = app;
 				criticalAppPercentage = memoryPercentage;
@@ -50,7 +50,7 @@ public class Analyser {
 			
 			// storage
 			int storagePercentage = app.getCurrentStorageUsage() / app.getVm().getCurrentStorageAllocation()* 100;
-			if (storagePercentage > criticalAppPercentage && app.getVm().getCurrentStorageAllocation() <app.getStorage()) {
+			if (storagePercentage > criticalAppPercentage && app.getVm().getCurrentStorageAllocation() < app.getStorage()) {
 				// replace the top criticl app
 				criticalApp = app;
 				criticalAppPercentage = storagePercentage;
