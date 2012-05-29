@@ -63,6 +63,14 @@ public abstract class Resource {
 			}
 			i++;
 		}
+		
+		if (out.size() < maxNoOfEntries) {
+			int max = maxNoOfEntries - out.size();
+			for (int j = 0; j < max; j++) {
+				out.addFirst(0);
+			}
+		}
+		
 		return out;
 	}
 	

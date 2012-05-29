@@ -150,10 +150,10 @@ public class CreateVmInsertApp extends Action {
 		double ratioAfter = 0;
 		for(int i=0; i<usage.size();i++){ 
 			if(i<beforeInsertionCount) {
-				ratioBefore += usage.get(i)/allocation.get(i);
+				ratioBefore += usage.get(i)/Math.max(allocation.get(i), 1);
 			}
 			else {
-				ratioAfter += usage.get(i)/allocation.get(i);
+				ratioAfter += usage.get(i)/Math.max(allocation.get(i), 1);
 			}
 		}
 		return (ratioAfter/10) - (ratioBefore/Math.max(1, beforeInsertionCount));
