@@ -28,6 +28,7 @@ public class CreateVmInsertApp extends Action {
 				e.printStackTrace();
 			}
 		}
+		return knowledgeBase;
 	}
 	
 	@Override
