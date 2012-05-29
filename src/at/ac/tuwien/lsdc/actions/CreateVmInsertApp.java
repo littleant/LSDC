@@ -1,5 +1,7 @@
 package at.ac.tuwien.lsdc.actions;
 
+import java.util.LinkedList;
+
 import weka.core.Instances;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
@@ -18,6 +20,7 @@ public class CreateVmInsertApp extends Action {
 	private PhysicalMachine selectedPm = null;
 	private boolean preconditionsOk = false;
 	private int costs = 0;
+	private int waitForEvaluation = 10;
 	
 	public static Instances getKnowledgeBase() {
 		if (knowledgeBase ==null ) {
@@ -48,8 +51,48 @@ public class CreateVmInsertApp extends Action {
 	}
 	
 	@Override
-	public int evaluate() {
+	public double evaluate() {
+		if (waitForEvaluation>0) {
+			waitForEvaluation--;
+		}
+		else {
+			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(20);
+			LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(20);	
+			int beforeInsertionCount = cpuallhist.size()-10;	
+			
+			double cpuratio = calculateAllocationUsageRatio(cpuallhist, cpuusagehist, beforeInsertionCount);
+			
+			LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(20);
+			LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(20);	
+				
+			double memoryratio = calculateAllocationUsageRatio(memallhist, memusagehist, beforeInsertionCount);
+				
+			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(20);
+			LinkedList<Integer> storageusagehist = selectedPm.getStorageUsageHistory(20);	
+				
+			double storageratio = calculateAllocationUsageRatio(storageallhist, storageusagehist, beforeInsertionCount);
+			
+			return cpuratio+memoryratio+storageratio;
+			
+		}
 		return 0;
+	}
+	
+	private double calculateAllocationUsageRatio(LinkedList<Integer> allocation, LinkedList<Integer> usage, int beforeInsertionCount) {
+		
+		
+		
+		double ratioBefore =0;
+		double ratioAfter = 0;
+		for(int i=0; i<allocation.size();i++){ 
+			if(i<beforeInsertionCount) {
+				ratioBefore += usage.get(i)/allocation.get(i);
+			}
+			else {
+				ratioAfter += usage.get(i)/allocation.get(i);
+			}
+		}
+		return (ratioAfter/10) - (ratioBefore/Math.max(1, beforeInsertionCount));
 	}
 
 	
