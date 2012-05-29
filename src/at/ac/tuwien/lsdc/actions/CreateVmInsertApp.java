@@ -144,7 +144,9 @@ public class CreateVmInsertApp extends Action {
 	
 	private double calculateAllocationUsageRatio(LinkedList<Integer> allocation, LinkedList<Integer> usage, int beforeInsertionCount) {
 		
-		
+		if (usage.size() == 0) {
+			System.out.println("zweiter Wert");
+		}
 		
 		double ratioBefore =0;
 		double ratioAfter = 0;
