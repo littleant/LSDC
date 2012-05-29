@@ -52,34 +52,20 @@ public class CreateVmInsertApp extends Action {
 	public int predict() {
 		//Create new WEKA - instance
 		Instance instance = new Instance(34);
-	// ----- copy
-		LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(20);
-		LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(20);	
-		int beforeInsertionCount = cpuallhist.size()-10;	
-		
-		double cpuratio = calculateAllocationUsageRatio(cpuallhist, cpuusagehist, beforeInsertionCount);
-		
-		LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(20);
-		LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(20);	
+
+		LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(10);
+
+		LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(10);
 			
-		 
-		double memoryratio = calculateAllocationUsageRatio(memallhist, memusagehist, beforeInsertionCount);
-			
-		LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(20);
-		LinkedList<Integer> storageusagehist = selectedPm.getStorageUsageHistory(20);	
-			
-		double storageratio = calculateAllocationUsageRatio(storageallhist, storageusagehist, beforeInsertionCount);
+		LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(10);
 		
 		//CPU/Memory/Storage - Allocation history before the new vm was created
-		int valuesStartAt = 10-beforeInsertionCount; //if machine doesn't have 10 values before insertion
 		for (int i = 0; i<10;i++) {
-			if(i>=valuesStartAt){
+			if(i < cpuallhist.size()){
 				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
 				instance.setValue(getKnowledgeBase().attribute(i+10),clusterValue( memallhist.get(i)));
 				instance.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
-			}
-			else {
-				//TODO: replace NULL VALUE
+			} else {
 				instance.setValue(getKnowledgeBase().attribute(i), Instance.missingValue());
 				instance.setValue(getKnowledgeBase().attribute(i+10), Instance.missingValue());
 				instance.setValue(getKnowledgeBase().attribute(i+20), Instance.missingValue());
@@ -96,16 +82,21 @@ public class CreateVmInsertApp extends Action {
 		
 		//Evaluation
 		instance.setValue(getKnowledgeBase().attribute(33), Instance.missingValue());
-	// ---- end copy
-		// TODO: fill with data
+
+		instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
 		
 		Classifier classifier = new MultilayerPerceptron();
+		try {
+			classifier.buildClassifier(CreateVmInsertApp.getKnowledgeBase());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		
 		int output = 0;
 		Evaluation evaluation;
 		try {
 			evaluation = new Evaluation(CreateVmInsertApp.getKnowledgeBase());
-			output = (int) evaluation.evaluateModelOnce(classifier, instance);
+			output = (int) (evaluation.evaluateModelOnce(classifier, instance));
 			
 			System.out.println("output: "+ output);
 		} catch (Exception e) {

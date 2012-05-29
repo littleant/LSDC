@@ -196,7 +196,7 @@ public class App extends Resource {
 
 	@Override
 	public void nextTick() {
-		System.out.println("APP "+ this.getResourceId()+ ": next tick");
+		//System.out.println("APP "+ this.getResourceId()+ ": next tick");
 		if (suspendedTicks>0) {
 			suspendedTicks--;
 		}
