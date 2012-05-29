@@ -28,7 +28,9 @@ public abstract class Action {
 	public abstract void execute();
 	
 	//evaluate the action after the execution and add an entry to the knowledgebase
-	public abstract double evaluate();
+	public abstract boolean evaluate();
+	
+	public abstract void terminate();
 	
 	
 	//read the knowledgebase to an arff - file
@@ -72,7 +74,7 @@ public abstract class Action {
 	
 	//saves the knowledgebase to an arff - file
 	//TODO: gst: Problem bei Zur�ckschreiben in die gleiche Datei 
-	public void saveKnowledge(String filepath, Instances knowledgeBase) throws IOException {
+	public static void saveKnowledge(String filepath, Instances knowledgeBase) throws IOException {
 		 ArffSaver saver = new ArffSaver();
 		 saver.setInstances(knowledgeBase);
 		 File file = new File(filepath);
