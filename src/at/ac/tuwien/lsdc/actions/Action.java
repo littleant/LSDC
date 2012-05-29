@@ -37,7 +37,7 @@ public abstract class Action {
 	public static Instances loadKnowledge(String filepath) throws Exception {
 		File ftest = new File(filepath);
 		Instances knowledgeBase = null;
-		
+
 		if (!ftest.exists()) {
 			// create an empty ARFF and save it
 			DataSource source = new DataSource(filepath);
