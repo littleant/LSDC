@@ -3,11 +3,8 @@ package at.ac.tuwien.lsdc.actions;
 
 import java.util.LinkedList;
 
-import weka.classifiers.trees.J48;
-
-import weka.core.Instance;
+import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.mape.Monitor;
@@ -44,9 +41,9 @@ public class CreateVmInsertApp extends Action {
 
 		Instances data = CreateVmInsertApp.getKnowledgeBase();
 		
-		J48 tree = new J48();         // new instance of tree
+		MultilayerPerceptron mp = new MultilayerPerceptron();
 		try {
-			tree.buildClassifier(data);
+			mp.buildClassifier(data);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
