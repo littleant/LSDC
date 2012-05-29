@@ -107,30 +107,30 @@ public class CreateVmInsertApp extends Action {
 			int valuesStartAt = 10-beforeInsertionCount; //if machine doesn't have 10 values before insertion
 			for (int i = 0; i<10;i++) {
 				if(i>=valuesStartAt){
-					inst.setValue(knowledgeBase.attribute(i), clusterValue(cpuallhist.get(i)));
-					inst.setValue(knowledgeBase.attribute(i+10),clusterValue( memallhist.get(i)));
-					inst.setValue(knowledgeBase.attribute(i+20), clusterValue(storageallhist.get(i)));
+					inst.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
+					inst.setValue(getKnowledgeBase().attribute(i+10),clusterValue( memallhist.get(i)));
+					inst.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
 				}
 				else {
 					//TODO: replace NULL VALUE
-					inst.setValue(knowledgeBase.attribute(i), Instance.missingValue());
-					inst.setValue(knowledgeBase.attribute(i+10), Instance.missingValue());
-					inst.setValue(knowledgeBase.attribute(i+20), Instance.missingValue());
+					inst.setValue(getKnowledgeBase().attribute(i), Instance.missingValue());
+					inst.setValue(getKnowledgeBase().attribute(i+10), Instance.missingValue());
+					inst.setValue(getKnowledgeBase().attribute(i+20), Instance.missingValue());
 				}
 			}
 			
 			//SLAs
 			//CPU
-			inst.setValue(knowledgeBase.attribute(30), clusterValue(app.getCpu()));
+			inst.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
 			//Memory
-			inst.setValue(knowledgeBase.attribute(31),clusterValue( app.getMemory()));
+			inst.setValue(getKnowledgeBase().attribute(31),clusterValue( app.getMemory()));
 			//Storage
-			inst.setValue(knowledgeBase.attribute(32), clusterValue(app.getStorage()));
+			inst.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
 			
 			//Evaluation
-			inst.setValue(knowledgeBase.attribute(33), cpuratio+memoryratio+storageratio);
+			inst.setValue(getKnowledgeBase().attribute(33), cpuratio+memoryratio+storageratio);
 
-			knowledgeBase.add(inst);
+			getKnowledgeBase().add(inst);
 			
 			
 			
@@ -143,14 +143,12 @@ public class CreateVmInsertApp extends Action {
 	}
 	
 	private double calculateAllocationUsageRatio(LinkedList<Integer> allocation, LinkedList<Integer> usage, int beforeInsertionCount) {
-		
-		if (usage.size() == 0) {
-			System.out.println("zweiter Wert");
-		}
+
+		System.out.println (allocation.size() + ", usage " + usage.size());
 		
 		double ratioBefore =0;
 		double ratioAfter = 0;
-		for(int i=0; i<allocation.size();i++){ 
+		for(int i=0; i<usage.size();i++){ 
 			if(i<beforeInsertionCount) {
 				ratioBefore += usage.get(i)/allocation.get(i);
 			}
