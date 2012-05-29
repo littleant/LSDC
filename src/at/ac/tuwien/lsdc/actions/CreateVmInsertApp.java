@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import weka.classifiers.functions.MultilayerPerceptron;
+import weka.core.Instance;
 import weka.core.Instances;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
