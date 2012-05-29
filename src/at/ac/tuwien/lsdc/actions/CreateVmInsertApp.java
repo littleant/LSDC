@@ -12,6 +12,7 @@ import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class CreateVmInsertApp extends Action {
+	private static Instances knowledgeBase = null;
 	private App app;
 	private static int vmStartupCosts = 10;
 	private static int pmStartupCosts = 20;
@@ -20,6 +21,17 @@ public class CreateVmInsertApp extends Action {
 	private boolean preconditionsOk = false;
 	private int costs = 0;
 	
+	public static Instances getKnowledgeBase() {
+		if (knowledgeBase ==null ) {
+			try {
+				
+				CreateVmInsertApp.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return knowledgeBase;
+	}
 	
 	@Override
 	public int predict() {
@@ -52,6 +64,11 @@ public class CreateVmInsertApp extends Action {
 	@Override
 	public boolean preconditions() {
 		return preconditionsOk;
+	}
+	
+	@Override
+	public int evaluate() {
+		return 0;
 	}
 
 	

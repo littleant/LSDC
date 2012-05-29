@@ -8,23 +8,29 @@ import at.ac.tuwien.lsdc.actions.CreateVmInsertApp;
 import at.ac.tuwien.lsdc.resources.Resource;
 
 public class KISSPlanner extends Planner {
-	List<Action> knownActions = new LinkedList<Action>();
+	List<Class> knownActions = new LinkedList<Class>();
 	
 	public KISSPlanner() {
-		knownActions.add(new CreateVmInsertApp());
+		knownActions.add(CreateVmInsertApp.class);
 	}
 	
 	@Override
 	public Action selectAction(Resource problem) {
 		int currentFit=10000;
 		Action selectedAction = null;
-		for (Action a : knownActions) {
-			a.init(problem);
-			if (a.preconditions() && calculateFit(a)<currentFit) {
-				System.out.println("Current Problem: " + problem.getResourceId());
-				selectedAction= a;
-				currentFit = calculateFit(a);
+		for (Class ac : knownActions) {
+			try {
+				Action a = (Action) ac.newInstance();
+				a.init(problem);
+				if (a.preconditions() && calculateFit(a)<currentFit) {
+					System.out.println("Current Problem: " + problem.getResourceId());
+					selectedAction= a;
+					currentFit = calculateFit(a);
+				}
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
 			}
+			
 			
 		}
 		
