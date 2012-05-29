@@ -49,12 +49,14 @@ public class CreateVmInsertApp extends Action {
 	@Override
 	public int predict() {
 		// WEKA inputs: PM resource allocations, App SLAs
-
+		Instance input = new Instance(0);
+		
 		Instances data = CreateVmInsertApp.getKnowledgeBase();
 		
 		MultilayerPerceptron mp = new MultilayerPerceptron();
 		try {
 			mp.buildClassifier(data);
+			mp.classifyInstance(input);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
