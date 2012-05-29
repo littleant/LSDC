@@ -47,7 +47,7 @@ public abstract class Action {
 	}
 	
 	//saves the knowledgebase to an arff - file
-	//TODO: gst: Problem bei Zurückschreiben in die gleiche Datei 
+	//TODO: gst: Problem bei Zurï¿½ckschreiben in die gleiche Datei 
 	public void saveKnowledge(String filepath) throws IOException {
 		 ArffSaver saver = new ArffSaver();
 		 saver.setInstances(knowledgeBase);

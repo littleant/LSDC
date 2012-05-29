@@ -1,5 +1,8 @@
 package at.ac.tuwien.lsdc.actions;
 
+import weka.classifiers.trees.J48;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.mape.Monitor;
@@ -21,6 +24,23 @@ public class CreateVmInsertApp extends Action {
 	@Override
 	public int predict() {
 		// TODO: gst: Implement using WEKA
+		// WEKA inputs: PM resource allocations, App SLAs
+		DataSource source;
+		try {
+			source = new DataSource("/knowledge/createVmInsertApp.arff");
+			Instances data = source.getDataSet();
+			if (data.classIndex() == -1) {
+				data.setClassIndex(data.numAttributes() - 1);
+			}
+			
+			J48 tree = new J48();         // new instance of tree
+			tree.buildClassifier(data);   // build classifier
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return 100;
 	}
 
