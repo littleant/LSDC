@@ -205,7 +205,7 @@ public class App extends Resource {
 			
 			//terminate?
 			if(runningTicks>ticks){
-				vm.getApps().remove(this);
+				vm.getToRemoveList().add(this);
 			}
 		}
 	}

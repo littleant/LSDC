@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import weka.classifiers.trees.J48;
 
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import at.ac.tuwien.lsdc.Configuration;
@@ -80,6 +81,7 @@ public class CreateVmInsertApp extends Action {
 			LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(20);
 			LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(20);	
 				
+			 
 			double memoryratio = calculateAllocationUsageRatio(memallhist, memusagehist, beforeInsertionCount);
 				
 			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(20);

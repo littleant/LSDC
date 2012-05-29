@@ -10,6 +10,17 @@ public class VirtualMachine extends Resource {
 	private LinkedList<Integer> allocatedCpu = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedMemory = new LinkedList<Integer>();
 	private LinkedList<Integer> allocatedStorage = new LinkedList<Integer>();
+	
+	public LinkedList<App> getToRemoveList() {
+		return toRemoveList;
+	}
+
+	public void setToRemoveList(LinkedList<App> toRemoveList) {
+		this.toRemoveList = toRemoveList;
+	}
+
+
+	LinkedList<App> toRemoveList = new LinkedList<App>();
 	private PhysicalMachine pm;
 	
 	public PhysicalMachine getPm() {
@@ -126,6 +137,7 @@ public class VirtualMachine extends Resource {
 	
 	
 	public void nextTick(){
+		toRemoveList = new LinkedList<App>();
 		if(suspendedTicks>0) {
 			suspendedTicks--;
 		}
@@ -134,6 +146,10 @@ public class VirtualMachine extends Resource {
 			runningTicks++;
 			for (App a: apps) {
 				a.nextTick();
+			}
+			
+			for (App r: toRemoveList) {
+				apps.remove(r);
 			}
 		}
 	}
