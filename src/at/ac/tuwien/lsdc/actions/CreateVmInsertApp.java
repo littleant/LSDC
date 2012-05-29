@@ -63,7 +63,7 @@ public class CreateVmInsertApp extends Action {
 		for (int i = 0; i<10;i++) {
 			if(i < cpuallhist.size()){
 				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i+10),clusterValue( memallhist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+10), clusterValue( memallhist.get(i)));
 				instance.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
 			} else {
 				instance.setValue(getKnowledgeBase().attribute(i), Instance.missingValue());
@@ -76,7 +76,7 @@ public class CreateVmInsertApp extends Action {
 		//CPU
 		instance.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
 		//Memory
-		instance.setValue(getKnowledgeBase().attribute(31),clusterValue(app.getMemory()));
+		instance.setValue(getKnowledgeBase().attribute(31), clusterValue(app.getMemory()));
 		//Storage
 		instance.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
 		
@@ -96,7 +96,7 @@ public class CreateVmInsertApp extends Action {
 		Evaluation evaluation;
 		try {
 			evaluation = new Evaluation(CreateVmInsertApp.getKnowledgeBase());
-			output = (int) (evaluation.evaluateModelOnce(classifier, instance));
+			output = (int) (evaluation.evaluateModelOnce(classifier, instance) * 100);
 			
 			System.out.println("output: "+ output);
 		} catch (Exception e) {
@@ -148,7 +148,7 @@ public class CreateVmInsertApp extends Action {
 			for (int i = 0; i<10;i++) {
 				if(i>=valuesStartAt){
 					inst.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-					inst.setValue(getKnowledgeBase().attribute(i+10),clusterValue( memallhist.get(i)));
+					inst.setValue(getKnowledgeBase().attribute(i+10), clusterValue( memallhist.get(i)));
 					inst.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
 				}
 				else {
@@ -163,13 +163,15 @@ public class CreateVmInsertApp extends Action {
 			//CPU
 			inst.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
 			//Memory
-			inst.setValue(getKnowledgeBase().attribute(31),clusterValue( app.getMemory()));
+			inst.setValue(getKnowledgeBase().attribute(31), clusterValue(app.getMemory()));
 			//Storage
 			inst.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
 			
 			//Evaluation
-			inst.setValue(getKnowledgeBase().attribute(33), cpuratio+memoryratio+storageratio);
+			inst.setValue(getKnowledgeBase().attribute(33), (cpuratio+memoryratio+storageratio) * 100);
 
+			System.out.println((cpuratio+memoryratio+storageratio) * 100);
+			
 			getKnowledgeBase().add(inst);
 			
 			
@@ -199,8 +201,6 @@ public class CreateVmInsertApp extends Action {
 		return (ratioAfter/10) - (ratioBefore/Math.max(1, beforeInsertionCount));
 	}
 
-	
-	
 	//calculate if an App fits to a pm
 	//TODO: gst: use WEKA to calc fit factor!!
 	private int calculateFit(App app2, PhysicalMachine pm) {
