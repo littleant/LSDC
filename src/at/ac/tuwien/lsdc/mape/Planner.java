@@ -6,4 +6,7 @@ import at.ac.tuwien.lsdc.resources.Resource;
 public abstract class Planner {
 
 	public abstract Action selectAction(Resource resource);
+	
+	public abstract void terminate();
+
 }

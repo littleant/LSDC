@@ -3,6 +3,8 @@ package at.ac.tuwien.lsdc.mape;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import at.ac.tuwien.lsdc.actions.Action;
 import at.ac.tuwien.lsdc.actions.CreateVmInsertApp;
 import at.ac.tuwien.lsdc.resources.Resource;
@@ -10,8 +12,13 @@ import at.ac.tuwien.lsdc.resources.Resource;
 public class KISSPlanner extends Planner {
 	List<Class> knownActions = new LinkedList<Class>();
 	
+	
+	
+	
 	public KISSPlanner() {
 		knownActions.add(CreateVmInsertApp.class);
+		
+		
 	}
 	
 	@Override
@@ -19,6 +26,7 @@ public class KISSPlanner extends Planner {
 		int currentFit=10000;
 		Action selectedAction = null;
 		for (Class ac : knownActions) {
+			
 			try {
 				Action a = (Action) ac.newInstance();
 				a.init(problem);
@@ -38,6 +46,19 @@ public class KISSPlanner extends Planner {
 		}
 		
 		return selectedAction;
+	}
+	
+	public void terminate(){
+		
+		for (Class ac: knownActions) {
+			try {
+				((Action)ac.newInstance()).terminate();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private int calculateFit(Action a) {

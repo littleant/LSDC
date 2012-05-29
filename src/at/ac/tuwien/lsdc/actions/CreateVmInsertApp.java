@@ -1,6 +1,7 @@
 package at.ac.tuwien.lsdc.actions;
 
 
+import java.io.IOException;
 import java.util.LinkedList;
 
 import weka.classifiers.trees.J48;
@@ -38,6 +39,15 @@ public class CreateVmInsertApp extends Action {
 		return knowledgeBase;
 	}
 	
+	public void terminate() {
+		try {
+			Action.saveKnowledge(Configuration.getInstance().getKBCreateVmInsertApp(), CreateVmInsertApp.getKnowledgeBase());
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public int predict() {
 		// WEKA inputs: PM resource allocations, App SLAs
@@ -67,9 +77,10 @@ public class CreateVmInsertApp extends Action {
 	}
 	
 	@Override
-	public double evaluate() {
+	public boolean evaluate() {
 		if (waitForEvaluation>0) {
 			waitForEvaluation--;
+			return false;
 		}
 		else {
 			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(20);
@@ -89,10 +100,46 @@ public class CreateVmInsertApp extends Action {
 				
 			double storageratio = calculateAllocationUsageRatio(storageallhist, storageusagehist, beforeInsertionCount);
 			
-			return cpuratio+memoryratio+storageratio;
+			//Create new WEKA - instance
+			Instance inst = new Instance(34);
+			
+			//CPU/Memory/Storage - Allocation history before the new vm was created
+			int valuesStartAt = 10-beforeInsertionCount; //if machine doesn't have 10 values before insertion
+			for (int i = 0; i<10;i++) {
+				if(i>=valuesStartAt){
+					inst.setValue(knowledgeBase.attribute(i), clusterValue(cpuallhist.get(i)));
+					inst.setValue(knowledgeBase.attribute(i+10),clusterValue( memallhist.get(i)));
+					inst.setValue(knowledgeBase.attribute(i+20), clusterValue(storageallhist.get(i)));
+				}
+				else {
+					//TODO: replace NULL VALUE
+					inst.setValue(knowledgeBase.attribute(i), Instance.missingValue());
+					inst.setValue(knowledgeBase.attribute(i+10), Instance.missingValue());
+					inst.setValue(knowledgeBase.attribute(i+20), Instance.missingValue());
+				}
+			}
+			
+			//SLAs
+			//CPU
+			inst.setValue(knowledgeBase.attribute(30), clusterValue(app.getCpu()));
+			//Memory
+			inst.setValue(knowledgeBase.attribute(31),clusterValue( app.getMemory()));
+			//Storage
+			inst.setValue(knowledgeBase.attribute(32), clusterValue(app.getStorage()));
+			
+			//Evaluation
+			inst.setValue(knowledgeBase.attribute(33), cpuratio+memoryratio+storageratio);
+
+			knowledgeBase.add(inst);
+			
+			
 			
 		}
-		return 0;
+		return true;
+	}
+	
+	private int clusterValue (int value) {
+		return (int)(Math.ceil(value/10)*10);
 	}
 	
 	private double calculateAllocationUsageRatio(LinkedList<Integer> allocation, LinkedList<Integer> usage, int beforeInsertionCount) {
