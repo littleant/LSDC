@@ -4,6 +4,8 @@ package at.ac.tuwien.lsdc.actions;
 import java.util.LinkedList;
 
 import weka.classifiers.functions.MultilayerPerceptron;
+import weka.core.FastVector;
+import weka.core.Instance;
 import weka.core.Instances;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
@@ -38,12 +40,14 @@ public class CreateVmInsertApp extends Action {
 	@Override
 	public int predict() {
 		// WEKA inputs: PM resource allocations, App SLAs
-
+		Instance input = new Instance(0);
+		
 		Instances data = CreateVmInsertApp.getKnowledgeBase();
 		
 		MultilayerPerceptron mp = new MultilayerPerceptron();
 		try {
 			mp.buildClassifier(data);
+			mp.classifyInstance(input);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
