@@ -17,6 +17,18 @@ public class App extends Resource {
 	private int cpu;
 	private int memory;
 	private int storage;
+	
+	private int cpuSlaErrorcount;
+	public int getCpuSlaErrorcount() {
+		return cpuSlaErrorcount;
+	}
+
+	public void setCpuSlaErrorcount(int cpuSlaErrorcount) {
+		this.cpuSlaErrorcount = cpuSlaErrorcount;
+	}
+
+	private int memorySlaErrorcount;
+	private int storageSlaErrorcount;
 
 	// used resources per tick
 	private LinkedList<Integer> cpuUsage;
@@ -239,6 +251,17 @@ public class App extends Resource {
 		}
 		else {
 			runningTicks++;
+			if (isCpuSlaViolated()) {
+				cpuSlaErrorcount++;
+			}
+			
+			if (isMemorySlaViolated()) {
+				memorySlaErrorcount++;
+			}
+			
+			if (isStorageSlaViolated()) {
+				storageSlaErrorcount++;
+			}
 			
 			//terminate?
 			if(runningTicks>ticks){
@@ -263,6 +286,22 @@ public class App extends Resource {
 	//at app level equivalent to usage	
 	public LinkedList<Integer> getMemoryAllocationHistory(int maxEntries) {
 		return this.getMemoryUsageHistory(maxEntries);
+	}
+
+	public int getMemorySlaErrorcount() {
+		return memorySlaErrorcount;
+	}
+
+	public void setMemorySlaErrorcount(int memorySlaErrorcount) {
+		this.memorySlaErrorcount = memorySlaErrorcount;
+	}
+
+	public int getStorageSlaErrorcount() {
+		return storageSlaErrorcount;
+	}
+
+	public void setStorageSlaErrorcount(int storageSlaErrorcount) {
+		this.storageSlaErrorcount = storageSlaErrorcount;
 	}
 
 }
