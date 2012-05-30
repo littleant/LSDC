@@ -155,6 +155,10 @@ public class VirtualMachine extends Resource {
 			for (App r: toRemoveList) {
 				apps.remove(r);
 			}
+			
+			if(apps.size()==0) {
+				this.terminate();
+			}
 		}
 	}
 	
@@ -165,7 +169,7 @@ public class VirtualMachine extends Resource {
 	}
 	
 	public void terminate() {
-		pm.getVms().remove(this);
+		pm.getToRemoveList().add(this);
 	}
 
 

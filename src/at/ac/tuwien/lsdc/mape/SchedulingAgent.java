@@ -18,8 +18,8 @@ public class SchedulingAgent {
 	
 	private SchedulingAgent() {
 		analyser = new Analyser();
-		//planner = new KISSPlanner();
-		planner = new WekaPlanner();
+		planner = new KISSPlanner();
+		//planner = new WekaPlanner();
 		executor = new Executor();
 	}
 	
@@ -37,7 +37,7 @@ public class SchedulingAgent {
 	
 	public void start() throws NumberFormatException, IOException {
 		int i=0;
-		while (i<5000) { 
+		while (i<50000) { 
 			rmActionList = new LinkedList<Action>();
 			//Knowledge aquisition
 			for (Action a: executedActions) {

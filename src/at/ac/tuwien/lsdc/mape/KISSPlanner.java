@@ -16,6 +16,7 @@ public class KISSPlanner extends Planner {
 	
 	
 	public KISSPlanner() {
+		Action.setOnlyLearning(true);
 		knownActions.add(CreateVmInsertApp.class);
 		
 		

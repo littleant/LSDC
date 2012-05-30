@@ -34,7 +34,7 @@ public class CsvGenerator {
 			RandomData randomData = new RandomDataImpl();
 			
 
-			for(int k =0;k<10;k++){
+			for(int k =0;k<100;k++){
 			// Runtime
 			int value = randomData.nextInt(1, 1000);
 			out.write(value + ";");
