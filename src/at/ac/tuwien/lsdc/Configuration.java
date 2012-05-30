@@ -19,6 +19,16 @@ public class Configuration {
 	
 	private String KBCreateVmInsertApp = null;
 	
+	private boolean onlyLearning = false;
+	
+	public boolean isOnlyLearning() {
+		return onlyLearning;
+	}
+
+	public void setOnlyLearning(boolean onlyLearning) {
+		this.onlyLearning = onlyLearning;
+	}
+
 	public Integer getTopRegion() {
 		return topRegion;
 	}
@@ -57,6 +67,7 @@ public class Configuration {
 			this.maxPms = Integer.parseInt(properties.getProperty("maxPms"));
 			this.pmStartupCosts = Integer.parseInt(properties.getProperty("pmStartupCosts"));
 			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
+			this.onlyLearning = Boolean.parseBoolean(properties.getProperty("onlyLearning"));
 			
 			//knowledge
 			this.KBCreateVmInsertApp = properties.getProperty("KBCreateVmInsertApp");

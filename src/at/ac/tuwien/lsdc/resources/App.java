@@ -1,6 +1,7 @@
 package at.ac.tuwien.lsdc.resources;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import at.ac.tuwien.lsdc.generator.Request;
 
@@ -88,6 +89,42 @@ public class App extends Resource {
 
 	public void setMemory(int memory) {
 		this.memory = memory;
+	}
+	
+	public boolean isCpuSlaViolated() {
+		boolean result = false;
+		
+		if (this.getVm().getCurrentCpuAllocation() < this.getVm().getCurrentCpuUsage()) {
+			if (this.getCpu() > this.getCurrentCpuUsage()) {
+				result = true;
+			}
+		}
+		
+		return result;
+	}
+	
+	public boolean isMemorySlaViolated() {
+		boolean result = false;
+		
+		if (this.getVm().getCurrentMemoryAllocation() < this.getVm().getCurrentMemoryUsage()) {
+			if (this.getMemory() > this.getCurrentMemoryUsage()) {
+				result = true;
+			}
+		}
+		
+		return result;
+	}
+	
+	public boolean isStorageSlaViolated() {
+		boolean result = false;
+		
+		if (this.getVm().getCurrentStorageAllocation() < this.getVm().getCurrentStorageUsage()) {
+			if (this.getStorage() > this.getCurrentStorageUsage()) {
+				result = true;
+			}
+		}
+		
+		return result;
 	}
 
 	public int getStorage() {

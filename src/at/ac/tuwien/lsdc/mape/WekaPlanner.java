@@ -3,6 +3,7 @@ package at.ac.tuwien.lsdc.mape;
 import java.util.LinkedList;
 import java.util.List;
 
+import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.actions.Action;
 import at.ac.tuwien.lsdc.actions.CreateVmInsertApp;
 import at.ac.tuwien.lsdc.resources.Resource;
@@ -11,6 +12,7 @@ public class WekaPlanner extends Planner {
 	List<Class> knownActions = new LinkedList<Class>();
 	
 	public WekaPlanner() {
+		Action.setOnlyLearning(Configuration.getInstance().isOnlyLearning());
 		knownActions.add(CreateVmInsertApp.class);
 	}
 	
@@ -55,6 +57,6 @@ public class WekaPlanner extends Planner {
 	}
 	
 	public int calculateFit(Action a) {
-		return a.predict();
+		return a.estimate()+ a.predict();
 	}
 }

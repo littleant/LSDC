@@ -12,6 +12,8 @@ import at.ac.tuwien.lsdc.resources.Resource;
 
 public abstract class Action {
 	
+	private static boolean onlyLearning = false;
+	
 	//initialize the action
 	public abstract void init(Resource problemApp);
 	
@@ -85,6 +87,14 @@ public abstract class Action {
 		 
 		 saver.setFile(file);
 		 saver.writeBatch();
+	}
+	
+	public static boolean isOnlyLearning() {
+		return onlyLearning;
+	}
+
+	public static void setOnlyLearning(boolean onlyLearning) {
+		Action.onlyLearning = onlyLearning;
 	}
 	
 	

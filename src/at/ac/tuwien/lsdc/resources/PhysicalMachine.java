@@ -7,7 +7,16 @@ public class PhysicalMachine extends Resource {
 	//is the machine running? true=>yes
 	private boolean isRunning;
 	private final Integer STARTUPTIME = 20;
+	private LinkedList<VirtualMachine> toRemoveList = new LinkedList<VirtualMachine>();
 	
+	public LinkedList<VirtualMachine> getToRemoveList() {
+		return toRemoveList;
+	}
+
+	public void setToRemoveList(LinkedList<VirtualMachine> toRemoveList) {
+		this.toRemoveList = toRemoveList;
+	}
+
 	public PhysicalMachine(){
 		setNewPmId();
 	}
@@ -56,16 +65,23 @@ public class PhysicalMachine extends Resource {
 	
 	@Override
 	public void nextTick() {
+		
 		if (suspendedTicks>0) {
 			suspendedTicks--;
 		}
 		else if(isRunning==false ){
 			//machine is not running
+			
 		}
 		else {
+			toRemoveList = new LinkedList<VirtualMachine>();
 			runningTicks++;
 			for (VirtualMachine vm : vms ) {
 				vm.nextTick();
+			}
+			
+			for (VirtualMachine vm:toRemoveList) {
+				vms.remove(vm);
 			}
 		}
 		

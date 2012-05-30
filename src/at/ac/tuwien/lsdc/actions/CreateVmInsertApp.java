@@ -4,6 +4,9 @@ package at.ac.tuwien.lsdc.actions;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import org.apache.commons.math3.random.RandomData;
+import org.apache.commons.math3.random.RandomDataImpl;
+
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.MultilayerPerceptron;
@@ -19,6 +22,13 @@ import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class CreateVmInsertApp extends Action {
 	private static Instances knowledgeBase = null;
+	private static Classifier classifier = null;
+	private static Evaluation evaluation = null;
+	private static RandomData randomData = new RandomDataImpl();
+	
+	
+
+
 	private App app;
 	private static int vmStartupCosts = 10;
 	private static int pmStartupCosts = 20;
@@ -31,7 +41,17 @@ public class CreateVmInsertApp extends Action {
 	public static Instances getKnowledgeBase() {
 		if (knowledgeBase ==null ) {
 			try {
+				//load knowledgebase from file
 				CreateVmInsertApp.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
+				
+				//prediction is also performed therefore the classifier and the evaluator must be instantiated
+				if(!isOnlyLearning()) {
+					classifier = new MultilayerPerceptron();
+					classifier.buildClassifier(CreateVmInsertApp.getKnowledgeBase());
+					evaluation = new Evaluation(CreateVmInsertApp.getKnowledgeBase());
+					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+					
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -50,59 +70,53 @@ public class CreateVmInsertApp extends Action {
 	
 	@Override
 	public int predict() {
-		//Create new WEKA - instance
-		Instance instance = new Instance(34);
-
-		LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(10);
-
-		LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(10);
-			
-		LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(10);
-		
-		//CPU/Memory/Storage - Allocation history before the new vm was created
-		for (int i = 0; i<10;i++) {
-			if(i < cpuallhist.size()){
-				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i+10), clusterValue( memallhist.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
-			} else {
-				instance.setValue(getKnowledgeBase().attribute(i), Instance.missingValue());
-				instance.setValue(getKnowledgeBase().attribute(i+10), Instance.missingValue());
-				instance.setValue(getKnowledgeBase().attribute(i+20), Instance.missingValue());
-			}
-		}
-		
-		//SLAs
-		//CPU
-		instance.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
-		//Memory
-		instance.setValue(getKnowledgeBase().attribute(31), clusterValue(app.getMemory()));
-		//Storage
-		instance.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
-		
-		//Evaluation
-		instance.setValue(getKnowledgeBase().attribute(33), Instance.missingValue());
-
-		instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
-		
-		Classifier classifier = new MultilayerPerceptron();
-		try {
-			classifier.buildClassifier(CreateVmInsertApp.getKnowledgeBase());
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		
 		int output = 0;
-		Evaluation evaluation;
-		try {
-			evaluation = new Evaluation(CreateVmInsertApp.getKnowledgeBase());
-			output = (int) (evaluation.evaluateModelOnce(classifier, instance) * 100);
-			
-			System.out.println("output: "+ output);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (isOnlyLearning()) { //Randomized predictions for learning
+			return randomData.nextInt(0, 100);
 		}
-		
+		else { //Use WEKA - evaluation for prediction
+			//Create new WEKA - instance
+			Instance instance = new Instance(34);
+	
+			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(10);
+	
+			LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(10);
+				
+			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(10);
+			
+			//CPU/Memory/Storage - Allocation history before the new vm was created
+			for (int i = 0; i<10;i++) {
+				if(i < cpuallhist.size()){
+					instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
+					instance.setValue(getKnowledgeBase().attribute(i+10),clusterValue( memallhist.get(i)));
+					instance.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
+				} else {
+					instance.setValue(getKnowledgeBase().attribute(i), Instance.missingValue());
+					instance.setValue(getKnowledgeBase().attribute(i+10), Instance.missingValue());
+					instance.setValue(getKnowledgeBase().attribute(i+20), Instance.missingValue());
+				}
+			}
+			
+			//SLAs
+			//CPU
+			instance.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
+			//Memory
+			instance.setValue(getKnowledgeBase().attribute(31),clusterValue(app.getMemory()));
+			//Storage
+			instance.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
+			
+			//Evaluation
+			instance.setValue(getKnowledgeBase().attribute(33), Instance.missingValue());
+	
+			instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
+			
+			try {
+				output = (int) (evaluation.evaluateModelOnce(classifier, instance));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}			
 		return output;
 	}
 
@@ -118,11 +132,15 @@ public class CreateVmInsertApp extends Action {
 	
 	@Override
 	public boolean evaluate() {
-		if (waitForEvaluation>0) {
+		if (app.getSuspendedTicks()>0 || app.getVm().getSuspendedTicks()>0 || app.getVm().getPm().getSuspendedTicks()>0) {
+			return false;
+		}
+		else if (waitForEvaluation>0) {
 			waitForEvaluation--;
 			return false;
 		}
 		else {
+			System.out.println("APP - Running Ticks: " + app.getRunningTicks());
 			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(20);
 			LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(20);	
 			int beforeInsertionCount = cpuallhist.size()-10;	
