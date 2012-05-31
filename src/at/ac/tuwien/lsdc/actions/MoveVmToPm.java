@@ -14,7 +14,6 @@ import weka.core.Instance;
 import weka.core.Instances;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.mape.Monitor;
-import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
@@ -146,7 +145,6 @@ public class MoveVmToPm extends Action {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
 		}
 		
 		return output;
@@ -188,6 +186,26 @@ public class MoveVmToPm extends Action {
 			return false;
 		} else {
 			// PM history
+			List<Integer> pmCpuUsageHistory = this.selectedPm.getCpuUsageHistory(10);
+			List<Integer> pmMemoryUsageHistory = this.selectedPm.getMemoryUsageHistory(10);
+			List<Integer> pmStorageUsageHistory = this.selectedPm.getStorageUsageHistory(10);
+			
+			// VM history
+			List<Integer> vmCpuUsageHistory = this.vm.getCpuUsageHistory(10);
+			List<Integer> vmMemoryUsageHistory = this.vm.getMemoryUsageHistory(10);
+			List<Integer> vmStorageUsageHistory = this.vm.getStorageUsageHistory(10);	
+			
+			// evaluate usage 
+			// (510-(abs(85-pmcpu)-abs(85-pmmem)-abs(85-pmstor)-abs(85-vmcpu)-abs(85-vmmem)-abs(85-vmstor)))/510
+			double evaluation = (510 - calculateUsageRatio(pmCpuUsageHistory, 85) - calculateUsageRatio(pmMemoryUsageHistory, 85) - calculateUsageRatio(pmStorageUsageHistory, 85) - calculateUsageRatio(vmCpuUsageHistory, 85) - calculateUsageRatio(vmMemoryUsageHistory, 85) - calculateUsageRatio(vmStorageUsageHistory, 85)) / 510;
+			
+			// minimum of 0
+			//evaluation = Math.max(0, evaluation);
+			
+			// create new WEKA - instance
+			Instance instance = new Instance(61);
+			
+			/// PM history
 			List<Integer> pmCpuHistory = this.selectedPm.getCpuAllocationHistory(10);
 			List<Integer> pmMemoryHistory = this.selectedPm.getMemoryAllocationHistory(10);
 			List<Integer> pmStorageHistory = this.selectedPm.getStorageAllocationHistory(10);
@@ -195,40 +213,25 @@ public class MoveVmToPm extends Action {
 			// VM history
 			List<Integer> vmCpuHistory = this.vm.getCpuAllocationHistory(10);
 			List<Integer> vmMemoryHistory = this.vm.getMemoryAllocationHistory(10);
-			List<Integer> vmStorageHistory = this.vm.getStorageAllocationHistory(10);	
+			List<Integer> vmStorageHistory = this.vm.getStorageAllocationHistory(10);
 			
-			//evaluate usage 
-			//(510-(abs(85-pmcpu)-abs(85-pmmem)-abs(85-pmstor)-abs(85-vmcpu)-abs(85-vmmem)-abs(85-vmstor)))/510
-			double evaluation = (510 - calculateUsageRatio(pmCpuHistory, 85) - calculateUsageRatio(pmMemoryHistory, 85) - calculateUsageRatio(pmStorageHistory, 85) - calculateUsageRatio(vmCpuHistory, 85) - calculateUsageRatio(vmMemoryHistory, 85) - calculateUsageRatio(vmStorageHistory, 85)) / 510 ;
-			
-			//subtract SLA Violations
-			List<App> apps = this.vm.getApps();
-			for (App app : apps) {
-				evaluation -= (app.getCpuSlaErrorcount()+app.getMemorySlaErrorcount()+app.getStorageSlaErrorcount())/10;
-			}
-			
-			//minimum of 0
-			evaluation = Math.max(0, evaluation);
-			
-			//Create new WEKA - instance
-			Instance inst = new Instance(34);
-			
-			//CPU/Memory/Storage - Allocation history before the new vm was created
-			//int valuesStartAt = 10-beforeInsertionCount; //if machine doesn't have 10 values before insertion
-			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(40);
-			LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(40);
-			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(40);
-			
-			for (int i = 0; i<10;i++) {
-				inst.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-				inst.setValue(getKnowledgeBase().attribute(i+10), clusterValue( memallhist.get(i)));
-				inst.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
+			// CPU/Memory/Storage - Allocation history before the VM is moved
+			for (int i = 0; i < 10; i++) {
+				// VM history
+				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i), clusterValue(vmCpuHistory.get(i)));
+				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i + 10), clusterValue(vmMemoryHistory.get(i)));
+				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i + 20), clusterValue(vmStorageHistory.get(i)));
+				
+				// PM history
+				instance.setValue(getKnowledgeBase().attribute(i + 30), clusterValue(pmCpuHistory.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i + 40), clusterValue(pmMemoryHistory.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i + 50), clusterValue(pmStorageHistory.get(i)));
 			}
 			
 			//Evaluation
-			inst.setValue(getKnowledgeBase().attribute(33), evaluation);
+			instance.setValue(getKnowledgeBase().attribute(33), evaluation);
 
-			getKnowledgeBase().add(inst);
+			getKnowledgeBase().add(instance);
 		}
 		return true;
 	}
