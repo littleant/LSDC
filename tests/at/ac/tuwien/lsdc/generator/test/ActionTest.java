@@ -12,10 +12,11 @@ public class ActionTest {
 	public void testArffReader() {
 		CreateVmInsertApp action = new CreateVmInsertApp();
 		try {
-			action.loadKnowledge("knowledge/cpu.arff");
-//			System.out.println(action.getKnowledgeBase().firstInstance());
-			Thread.sleep(1000);
-//			System.out.println(action.getKnowledgeBase());
+			String filepath = "knowledge/cpu.arff";
+			action.loadKnowledge(filepath);
+			System.out.println("loading complete!");
+			action.saveKnowledge(filepath, action.getKnowledgeBase());
+			System.out.println("saving complete!");
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());

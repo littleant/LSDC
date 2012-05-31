@@ -77,16 +77,19 @@ public abstract class Action {
 	//saves the knowledgebase to an arff - file
 	//TODO: gst: Problem bei Zur�ckschreiben in die gleiche Datei 
 	public static void saveKnowledge(String filepath, Instances knowledgeBase) throws IOException {
-		 ArffSaver saver = new ArffSaver();
-		 saver.setInstances(knowledgeBase);
-		 File file = new File(filepath);
-		 if(file.exists()) {
-			 System.out.println("delete");
-			 System.out.println(file.delete());
-		 }
+		ArffSaver saver = new ArffSaver();
+		saver.setInstances(knowledgeBase);
+		File file = new File(filepath);
+		if(file.exists()) {
+			System.out.println("deleting file...");
+			System.out.println(file.delete());
+			
+			System.out.println("creating new, empty file...");
+			System.out.println(file.createNewFile());
+		}
 		 
-		 saver.setFile(file);
-		 saver.writeBatch();
+		saver.setFile(file);
+		saver.writeBatch();
 	}
 	
 	public static boolean isOnlyLearning() {
