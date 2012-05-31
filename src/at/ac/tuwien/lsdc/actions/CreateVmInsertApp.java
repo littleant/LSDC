@@ -26,9 +26,6 @@ public class CreateVmInsertApp extends Action {
 	private static Evaluation evaluation = null;
 	private static RandomData randomData = new RandomDataImpl();
 	
-	
-
-
 	private App app;
 	private static int vmStartupCosts = 10;
 	private static int pmStartupCosts = 20;
