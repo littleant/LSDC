@@ -19,6 +19,7 @@ public class WekaPlanner extends Planner {
 		knownActions.add(CreateVmInsertApp.class);
 		knownActions.add(CreateAppInsertIntoVm.class);
 		knownActions.add(MoveApp.class);
+		knownActions.add(MoveVm.class);
 	}
 	
 	@Override
