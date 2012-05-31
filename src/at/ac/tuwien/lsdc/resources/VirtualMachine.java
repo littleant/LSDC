@@ -69,6 +69,7 @@ public class VirtualMachine extends Resource {
 	//returns the last n cpu - usage parameters
 	public LinkedList<Integer> getCpuUsageHistory(int maxNumberOfEntries) {
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		values.add(dummyList(maxNumberOfEntries));
 		for (App a: apps) {
 			values.add(a.getCpuUsageHistory(maxNumberOfEntries));
 		}
@@ -79,6 +80,7 @@ public class VirtualMachine extends Resource {
 	//returns the last n memory - usage parameters
 	public LinkedList<Integer> getMemoryUsageHistory(int maxNumberOfEntries) {
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		values.add(dummyList(maxNumberOfEntries));
 		for (App a: apps) {
 			values.add(a.getMemoryUsageHistory(maxNumberOfEntries));
 		}
@@ -89,6 +91,7 @@ public class VirtualMachine extends Resource {
 	//returns the last n storage - usage parameters
 	public LinkedList<Integer> getStorageUsageHistory(int maxNumberOfEntries) {
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
+		values.add(dummyList(maxNumberOfEntries));
 		for (App a: apps) {
 			values.add(a.getStorageUsageHistory(maxNumberOfEntries));
 		}

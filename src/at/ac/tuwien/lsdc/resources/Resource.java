@@ -104,6 +104,16 @@ public abstract class Resource {
 		return aggregated;
 	}
 	
+	//returns a list filled with 0 - values
+	protected LinkedList<Integer> dummyList (int maxEntries)  {
+		LinkedList<Integer> vmachine = new LinkedList<Integer>();
+		for (int i = 0 ; i<maxEntries; i++) {
+			vmachine.add(0);
+		}
+		
+		return vmachine;
+	}
+	
 	
 	public abstract Integer getCurrentCpuUsage();
 	

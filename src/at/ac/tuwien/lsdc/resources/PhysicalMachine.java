@@ -232,14 +232,7 @@ public class PhysicalMachine extends Resource {
 		return vm;
 	}
 	
-	private LinkedList<Integer> dummyList (int maxEntries)  {
-		LinkedList<Integer> vmachine = new LinkedList<Integer>();
-		for (int i = 0 ; i<maxEntries; i++) {
-			vmachine.add(0);
-		}
-		
-		return vmachine;
-	}
+
 	
 }
 

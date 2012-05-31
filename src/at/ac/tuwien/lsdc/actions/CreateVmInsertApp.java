@@ -141,17 +141,23 @@ public class CreateVmInsertApp extends Action {
 	//calculate if an App fits to a pm
 	//TODO: gst: use WEKA to calc fit factor!!
 	private int calculateFit(App app2, PhysicalMachine pm) {
-		//is free space available in the VM
 		int output = 0;
-		//is space available
-		if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {		
-			Instance instance = createInstance(Instance.missingValue());
-			instance.setDataset(CreateAppInsertIntoVm.getKnowledgeBase());
-			
-			try {
-				output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
-			} catch (Exception e) {
-				e.printStackTrace();
+		if (Action.isOnlyLearning()== false ){
+			//is space available
+			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {		
+				Instance instance = createInstance(Instance.missingValue());
+				instance.setDataset(CreateAppInsertIntoVm.getKnowledgeBase());
+				
+				try {
+					output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else {
+			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {
+				return randomData.nextInt(1, 100);
 			}
 		}
 		return output;
