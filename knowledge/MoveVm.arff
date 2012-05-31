@@ -1,4 +1,4 @@
-@relation MoveVmToPm
+@relation 'MoveVm'
 
 @attribute CPU1 numeric
 @attribute CPU2 numeric

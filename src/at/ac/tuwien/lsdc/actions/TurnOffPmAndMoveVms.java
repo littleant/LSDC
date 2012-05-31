@@ -39,7 +39,7 @@ public class TurnOffPmAndMoveVms extends Action {
 	private int prediction = 0;
 	private int waitForEvaluation = 10;
 	private Instance curInstance;
-	private LinkedList<MoveVmToPm> moveactions;
+	private LinkedList<MoveVm> moveactions;
 	
 	
 	public static Instances getKnowledgeBase() {
@@ -170,7 +170,7 @@ public class TurnOffPmAndMoveVms extends Action {
 	@Override
 	public void execute() {
 		//remove the app from the old vm and insert it into the new vm 
-		for (MoveVmToPm move: moveactions) {
+		for (MoveVm move: moveactions) {
 			move.execute();
 		}
 		pm.stopMachine();
@@ -190,10 +190,10 @@ public class TurnOffPmAndMoveVms extends Action {
 			if (pm.isRunning()){
 				preconditionsOk=true;
 				prediction = 0;
-				MoveVmToPm movevmaction;
-				moveactions = new LinkedList<MoveVmToPm>();
+				MoveVm movevmaction;
+				moveactions = new LinkedList<MoveVm>();
 				for (VirtualMachine vm : pm.getVms()) { //move existing VMs
-					movevmaction = new MoveVmToPm();
+					movevmaction = new MoveVm();
 					movevmaction.init(vm);
 					prediction +=(int) (movevmaction.predict() / pm.getVms().size()*100);
 					costs += movevmaction.estimate();
