@@ -153,7 +153,7 @@ public class PhysicalMachine extends Resource {
 	public LinkedList<Integer> getStorageUsageHistory(int maxEntries) {
 
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
-		
+		values.add(this.dummyList(maxEntries)); // if no vms are running
 		for (VirtualMachine vm: vms) {
 			values.add(vm.getStorageUsageHistory(maxEntries));
 		}
@@ -165,7 +165,7 @@ public class PhysicalMachine extends Resource {
 	//get and aggregate the usage values for all vms
 	public LinkedList<Integer> getMemoryUsageHistory(int maxEntries) {
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
-		
+		values.add(this.dummyList(maxEntries)); // if no vms are running
 		for (VirtualMachine vm: vms) {
 			values.add(vm.getMemoryUsageHistory(maxEntries));
 		}
@@ -178,8 +178,11 @@ public class PhysicalMachine extends Resource {
 	public LinkedList<Integer> getCpuUsageHistory(int maxEntries) {
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
 		
+		
+		values.add(this.dummyList(maxEntries)); // if no vms are running
 		for (VirtualMachine vm: vms) {
 			values.add(vm.getCpuUsageHistory(maxEntries));
+			System.out.println("value - size: " + values.size());
 		}
 		
 		return this.aggregateValues(values);
@@ -189,7 +192,7 @@ public class PhysicalMachine extends Resource {
 	//get and aggregate the allocation values for all vms
 	public LinkedList<Integer> getStorageAllocationHistory(int maxEntries) {
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
-		
+		values.add(this.dummyList(maxEntries)); // if no vms are running
 		for (VirtualMachine vm: vms) {
 			values.add(vm.getStorageAllocationHistory(maxEntries));
 		}
@@ -201,7 +204,7 @@ public class PhysicalMachine extends Resource {
 	//get and aggregate the allocation values for all vms
 	public LinkedList<Integer> getCpuAllocationHistory(int maxEntries) {
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
-		
+		values.add(this.dummyList(maxEntries)); // if no vms are running
 		for (VirtualMachine vm: vms) {
 			values.add(vm.getCpuAllocationHistory(maxEntries));
 		}
@@ -214,6 +217,7 @@ public class PhysicalMachine extends Resource {
 	public LinkedList<Integer> getMemoryAllocationHistory(int maxEntries) {
 		LinkedList<LinkedList<Integer>> values = new LinkedList<LinkedList<Integer>>();
 		
+		values.add(this.dummyList(maxEntries)); // if no vms are running
 		for (VirtualMachine vm: vms) {
 			values.add(vm.getMemoryAllocationHistory(maxEntries));
 		}
@@ -226,6 +230,15 @@ public class PhysicalMachine extends Resource {
 		vm.setPm(this);
 		this.getVms().add(vm);
 		return vm;
+	}
+	
+	private LinkedList<Integer> dummyList (int maxEntries)  {
+		LinkedList<Integer> vmachine = new LinkedList<Integer>();
+		for (int i = 0 ; i<maxEntries; i++) {
+			vmachine.add(0);
+		}
+		
+		return vmachine;
 	}
 	
 }
