@@ -6,6 +6,7 @@ import java.util.List;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.actions.Action;
 import at.ac.tuwien.lsdc.actions.CreateVmInsertApp;
+import at.ac.tuwien.lsdc.actions.MoveVm;
 import at.ac.tuwien.lsdc.resources.Resource;
 
 public class WekaPlanner extends Planner {
@@ -14,6 +15,7 @@ public class WekaPlanner extends Planner {
 	public WekaPlanner() {
 		Action.setOnlyLearning(Configuration.getInstance().isOnlyLearning());
 		knownActions.add(CreateVmInsertApp.class);
+		knownActions.add(MoveVm.class);
 	}
 	
 	@Override

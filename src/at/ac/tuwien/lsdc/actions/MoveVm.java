@@ -18,7 +18,7 @@ import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
-public class MoveVmToPm extends Action {
+public class MoveVm extends Action {
 	private static Instances knowledgeBase = null;
 	private static Classifier classifier = null;
 	private static Evaluation evaluation = null;
@@ -36,13 +36,13 @@ public class MoveVmToPm extends Action {
 		if (knowledgeBase == null) {
 			try {
 				//load knowledgebase from file
-				MoveVmToPm.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
+				MoveVm.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBMoveVm());
 				
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				if(!isOnlyLearning()) {
 					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(MoveVmToPm.getKnowledgeBase());
-					evaluation = new Evaluation(MoveVmToPm.getKnowledgeBase());
+					classifier.buildClassifier(MoveVm.getKnowledgeBase());
+					evaluation = new Evaluation(MoveVm.getKnowledgeBase());
 					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
 				}
 			} catch (Exception e) {
@@ -60,7 +60,7 @@ public class MoveVmToPm extends Action {
 		this.costs = 0;
 		this.vm = null;
 		
-		MoveVmToPm.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
+		MoveVm.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
 		
 		if (problemVm instanceof VirtualMachine){
 			this.vm = (VirtualMachine) problemVm;
@@ -83,7 +83,7 @@ public class MoveVmToPm extends Action {
 			preconditionsOk = found;
 		}
 		else {
-			preconditionsOk= false;
+			preconditionsOk = false;
 		}
 	}
 	
@@ -125,9 +125,9 @@ public class MoveVmToPm extends Action {
 			// CPU/Memory/Storage - Allocation history before the VM is moved
 			for (int i = 0; i < 10; i++) {
 				// VM history
-				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i), clusterValue(vmCpuHistory.get(i)));
-				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i + 10), clusterValue(vmMemoryHistory.get(i)));
-				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i + 20), clusterValue(vmStorageHistory.get(i)));
+				instance.setValue(MoveVm.getKnowledgeBase().attribute(i), clusterValue(vmCpuHistory.get(i)));
+				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 10), clusterValue(vmMemoryHistory.get(i)));
+				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 20), clusterValue(vmStorageHistory.get(i)));
 				
 				// PM history
 				instance.setValue(getKnowledgeBase().attribute(i + 30), clusterValue(pmCpuHistory.get(i)));
@@ -166,8 +166,8 @@ public class MoveVmToPm extends Action {
 
 	@Override
 	public void execute() {
-		VirtualMachine vm = this.vm;
 		// remove VM from old PM
+		VirtualMachine vm = this.vm;
 		this.vm.getPm().getVms().remove(this.vm);
 		
 		// insert VM into new PM
@@ -218,9 +218,9 @@ public class MoveVmToPm extends Action {
 			// CPU/Memory/Storage - Allocation history before the VM is moved
 			for (int i = 0; i < 10; i++) {
 				// VM history
-				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i), clusterValue(vmCpuHistory.get(i)));
-				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i + 10), clusterValue(vmMemoryHistory.get(i)));
-				instance.setValue(MoveVmToPm.getKnowledgeBase().attribute(i + 20), clusterValue(vmStorageHistory.get(i)));
+				instance.setValue(MoveVm.getKnowledgeBase().attribute(i), clusterValue(vmCpuHistory.get(i)));
+				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 10), clusterValue(vmMemoryHistory.get(i)));
+				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 20), clusterValue(vmStorageHistory.get(i)));
 				
 				// PM history
 				instance.setValue(getKnowledgeBase().attribute(i + 30), clusterValue(pmCpuHistory.get(i)));
@@ -247,7 +247,7 @@ public class MoveVmToPm extends Action {
 	@Override
 	public void terminate() {
 		try {
-			Action.saveKnowledge(Configuration.getInstance().getKBCreateVmInsertApp(), MoveVmToPm.getKnowledgeBase());
+			Action.saveKnowledge(Configuration.getInstance().getKBMoveVm(), MoveVm.getKnowledgeBase());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
