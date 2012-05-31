@@ -122,7 +122,7 @@ public class CreateAppInsertIntoVm extends Action {
 			//minimum of 0
 			evaluation = Math.max(0, evaluation);
 			
-			curInstance.setValue(getKnowledgeBase().attribute(33), evaluation);
+			curInstance.setValue(getKnowledgeBase().attribute(63), evaluation);
 			getKnowledgeBase().add(curInstance);
 		}
 		return true;
@@ -187,7 +187,7 @@ public class CreateAppInsertIntoVm extends Action {
 			app = (App)problemApp;
 			if(app.getVm()==null) { //only new apps can be inserted
 				boolean found = false;
-				int prediction = 0;
+			    prediction = 0;
 				int curFitFactor =0;
 				
 				for (PhysicalMachine pm : Monitor.getInstance().getPms()) {

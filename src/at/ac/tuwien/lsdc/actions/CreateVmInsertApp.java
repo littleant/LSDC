@@ -33,6 +33,8 @@ public class CreateVmInsertApp extends Action {
 	private boolean preconditionsOk = false;
 	private int costs = 0;
 	private int waitForEvaluation = 10;
+	private Instance curInstance;
+	private int prediction;
 	
 	
 	public static Instances getKnowledgeBase() {
@@ -73,42 +75,10 @@ public class CreateVmInsertApp extends Action {
 		}
 		else { //Use WEKA - evaluation for prediction
 			//Create new WEKA - instance
-			Instance instance = new Instance(34);
-	
-			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(10);
-	
-			LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(10);
-				
-			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(10);
-			
-			//CPU/Memory/Storage - Allocation history before the new vm was created
-			for (int i = 0; i<10;i++) {
-				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i+10), clusterValue(memallhist.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
-			}
-			
-			//SLAs
-			//CPU
-			instance.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
-			//Memory
-			instance.setValue(getKnowledgeBase().attribute(31), clusterValue(app.getMemory()));
-			//Storage
-			instance.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
-			
-			//Evaluation
-			instance.setValue(getKnowledgeBase().attribute(33), Instance.missingValue());
-	
-			instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
-			
-			try {
-				output = (int) (evaluation.evaluateModelOnce(classifier, instance));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			return prediction; 
 			
 		}			
-		return output;
+		
 	}
 
 	@Override
@@ -123,6 +93,10 @@ public class CreateVmInsertApp extends Action {
 	
 	@Override
 	public boolean evaluate() {
+		if (curInstance == null) {
+			curInstance = createInstance(0); // create a Instance with the past values
+		}
+		
 		if (app.getSuspendedTicks()>0 || app.getVm().getSuspendedTicks()>0 || app.getVm().getPm().getSuspendedTicks()>0) {
 			return false;
 		}
@@ -137,11 +111,7 @@ public class CreateVmInsertApp extends Action {
 			LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(10);	
 				
 			LinkedList<Integer> storageusagehist = selectedPm.getStorageUsageHistory(10);	
-			
-			//TODO: gst replace fixed values
-			
-			//evaluate usage 
-			//(255-(abs(85-cpu)+abs(85-mem)+abs(85-stor)))/255
+
 			double evaluation =(255- calculateUsageRatio(cpuusagehist, 85) - calculateUsageRatio(memusagehist, 85) - calculateUsageRatio(storageusagehist, 85))/255 ;
 			
 			//subtract SLA Violations
@@ -150,33 +120,8 @@ public class CreateVmInsertApp extends Action {
 			//minimum of 0
 			evaluation = Math.max(0, evaluation);
 			
-			//Create new WEKA - instance
-			Instance inst = new Instance(34);
-			
-			//CPU/Memory/Storage - Allocation history before the new vm was created
-			//int valuesStartAt = 10-beforeInsertionCount; //if machine doesn't have 10 values before insertion
-			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(40);
-			LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(40);
-			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(40);
-			
-			for (int i = 0; i<10;i++) {
-				inst.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-				inst.setValue(getKnowledgeBase().attribute(i+10), clusterValue( memallhist.get(i)));
-				inst.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
-			}
-			
-			//SLAs
-			//CPU
-			inst.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
-			//Memory
-			inst.setValue(getKnowledgeBase().attribute(31), clusterValue(app.getMemory()));
-			//Storage
-			inst.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
-			
-			//Evaluation
-			inst.setValue(getKnowledgeBase().attribute(33), evaluation);
-
-			getKnowledgeBase().add(inst);
+			curInstance.setValue(getKnowledgeBase().attribute(63), evaluation);
+			getKnowledgeBase().add(curInstance);
 		}
 		return true;
 	}
@@ -196,11 +141,20 @@ public class CreateVmInsertApp extends Action {
 	//calculate if an App fits to a pm
 	//TODO: gst: use WEKA to calc fit factor!!
 	private int calculateFit(App app2, PhysicalMachine pm) {
-		int cpuFit = pm.getCurrentCpuAllocation()-app2.getCpu();
-		int memFit = pm.getCurrentMemoryAllocation()-app2.getMemory();
-		//int storageFit = pm.getCurrentStorageAllocation()-app2.getStorage();
-		
-		return (100-cpuFit)+(100-memFit);
+		//is free space available in the VM
+		int output = 0;
+		//is space available
+		if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {		
+			Instance instance = createInstance(Instance.missingValue());
+			instance.setDataset(CreateAppInsertIntoVm.getKnowledgeBase());
+			
+			try {
+				output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return output;
 	}
 
 	@Override
@@ -248,15 +202,17 @@ public class CreateVmInsertApp extends Action {
 			app = (App)problemApp;
 			boolean found = false;
 			int fitFactor = 0;
+			int curFit = 0;
 			
 			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
 				if(pm.isRunning())  {
 					if((100-pm.getCurrentCpuAllocation())>=app.getCpu() && (100-pm.getCurrentMemoryAllocation())>=app.getMemory() && (100-pm.getCurrentCpuAllocation())>app.getStorage()) {
 						found=true;
 						costs = vmStartupCosts;
-						
-						if(selectedPm == null || calculateFit(app, pm)>fitFactor) {
+						curFit = calculateFit(app, pm);
+						if(selectedPm == null || curFit>fitFactor) {
 							selectedPm = pm;
+							prediction = curFit;
 						}
 					}
 				}
@@ -272,6 +228,7 @@ public class CreateVmInsertApp extends Action {
 						found=true;
 						costs += pmStartupCosts;
 						selectedPm = pm;
+						prediction  =calculateFit(app, pm);
 						break;
 					}
 					
@@ -282,6 +239,52 @@ public class CreateVmInsertApp extends Action {
 		else {
 			preconditionsOk= false;
 		}
+	}
+	
+	
+	private Instance createInstance(double eval) {
+		Instance instance = new Instance(64);
+		
+		LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(10);
+		LinkedList<Integer> cpuusehist = selectedPm.getCpuUsageHistory(10);
+
+		LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(10);
+		LinkedList<Integer> memusehist = selectedPm.getMemoryUsageHistory(10);
+		
+			
+		LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(10);
+		LinkedList<Integer> storageusehist = selectedPm.getStorageUsageHistory(10);
+		
+		//CPU/Memory/Storage - Allocation history before the new vm was created
+		for (int i = 0; i<10;i++) {
+				//cpu allocation
+				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
+				//cpu usage
+				instance.setValue(getKnowledgeBase().attribute(i+10), clusterValue(cpuusehist.get(i)));
+				
+				//memory allocation
+				instance.setValue(getKnowledgeBase().attribute(i+20),clusterValue( memallhist.get(i)));
+				//memory usage
+				instance.setValue(getKnowledgeBase().attribute(i+30),clusterValue( memusehist.get(i)));
+				
+				//storage allocation
+				instance.setValue(getKnowledgeBase().attribute(i+40), clusterValue(storageallhist.get(i)));
+				//storage usage 
+				instance.setValue(getKnowledgeBase().attribute(i+50),clusterValue( storageusehist.get(i)));
+		}
+		
+		//SLAs
+		//CPU
+		instance.setValue(getKnowledgeBase().attribute(60), clusterValue(app.getCpu()));
+		//Memory
+		instance.setValue(getKnowledgeBase().attribute(61),clusterValue(app.getMemory()));
+		//Storage
+		instance.setValue(getKnowledgeBase().attribute(62), clusterValue(app.getStorage()));
+		
+		//Evaluation
+		instance.setValue(getKnowledgeBase().attribute(63), eval);
+
+		return instance;
 	}
 
 }

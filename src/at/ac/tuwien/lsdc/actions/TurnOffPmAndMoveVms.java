@@ -33,12 +33,13 @@ public class TurnOffPmAndMoveVms extends Action {
 	private static int vmStartupCosts = 10;
 	private static int pmStartupCosts = 20;
 	
-	private VirtualMachine selectedVm = null;
+	
 	private boolean preconditionsOk = false;
 	private int costs = 0;
 	private int prediction = 0;
 	private int waitForEvaluation = 10;
 	private Instance curInstance;
+	private LinkedList<MoveVmToPm> moveactions;
 	
 	
 	public static Instances getKnowledgeBase() {
@@ -95,7 +96,10 @@ public class TurnOffPmAndMoveVms extends Action {
 	
 	@Override
 	public boolean evaluate() {
-		if (curInstance == null) {
+		//TODO: gst how to evaluate this action???
+		
+		
+		/*if (curInstance == null) {
 			curInstance = createInstance(0); // create a Instance with the past values
 		}
 		
@@ -125,6 +129,7 @@ public class TurnOffPmAndMoveVms extends Action {
 			curInstance.setValue(getKnowledgeBase().attribute(33), evaluation);
 			getKnowledgeBase().add(curInstance);
 		}
+		return true;*/
 		return true;
 	}
 
@@ -165,17 +170,16 @@ public class TurnOffPmAndMoveVms extends Action {
 	@Override
 	public void execute() {
 		//remove the app from the old vm and insert it into the new vm 
-		app.getVm().getApps().remove(app);
-		selectedVm.getApps().add(app);
-		app.setSuspendedTicks(this.costs); // suspend the app with costs x
-		
+		for (MoveVmToPm move: moveactions) {
+			move.execute();
+		}
+		pm.stopMachine();
 	}
 
 	@Override
 	public void init(Resource problemPm) {
 		this.preconditionsOk=false;
 		this.curInstance = null;
-		this.selectedVm=null;
 		this.costs=0;
 		this.pm=null;
 		
@@ -184,44 +188,29 @@ public class TurnOffPmAndMoveVms extends Action {
 		if (problemPm instanceof PhysicalMachine){ //only pms can be turned off
 			pm = (PhysicalMachine)problemPm;
 			if (pm.isRunning()){
-				
-				int prediction = 0;
-				int curFitFactor =0;
-				
-				for (VirtualMachine vm : pm.getVms()) {
-					
-					
-					//TODO: gst change to real Action
-					
-				}
-			}
-				
-				for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
-					if(pm.isRunning())  {
-						for (VirtualMachine vm : pm.getVms()) {
-							curFitFactor = calculateFit(app, vm);
-							if(curFitFactor>prediction && vm != app.getVm()) { // better fitness & not the same VM as the existing one
-								preconditionsOk=true;
-								prediction = curFitFactor;
-								this.selectedVm = vm;
-								
-							}
-						}
-					}
+				preconditionsOk=true;
+				prediction = 0;
+				MoveVmToPm movevmaction;
+				moveactions = new LinkedList<MoveVmToPm>();
+				for (VirtualMachine vm : pm.getVms()) { //move existing VMs
+					movevmaction = new MoveVmToPm();
+					movevmaction.init(vm);
+					prediction +=(int) (movevmaction.predict() / pm.getVms().size()*100);
+					costs += movevmaction.estimate();
+					moveactions.add(movevmaction);
 				}
 			}
 		}
-		
-		
 	}
 	
 	
 	//create an instance in the format of CreateAppInsertIntoVm.arff
-	//eval can either be a Instance - MissingValue or the evaluation value 
+	//eval can either be a Instance - MissingValue or the evaluation value
+	//TODO: gst What is the right instance data?
 	private Instance createInstance(double eval) {
 		Instance instance = new Instance(64);
-		
-		LinkedList<Integer> cpuallhist = selectedVm.getCpuAllocationHistory(10);
+		/*
+		LinkedList<Integer> cpuallhist = pm.getCpuAllocationHistory(10);
 		LinkedList<Integer> cpuusehist = selectedVm.getCpuUsageHistory(10);
 
 		LinkedList<Integer> memallhist = selectedVm.getMemoryAllocationHistory(10);
@@ -259,7 +248,7 @@ public class TurnOffPmAndMoveVms extends Action {
 		
 		//Evaluation
 		instance.setValue(getKnowledgeBase().attribute(63), eval);
-
+*/
 		return instance;
 	}
 
