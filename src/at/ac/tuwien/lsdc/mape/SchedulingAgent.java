@@ -18,8 +18,8 @@ public class SchedulingAgent {
 	
 	private SchedulingAgent() {
 		analyser = new Analyser();
-		planner = new KISSPlanner();
-		//planner = new WekaPlanner();
+		//planner = new KISSPlanner();
+		planner = new WekaPlanner();
 		executor = new Executor();
 	}
 	

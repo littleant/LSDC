@@ -35,6 +35,7 @@ public class CreateVmInsertApp extends Action {
 	private int costs = 0;
 	private int waitForEvaluation = 10;
 	
+	
 	public static Instances getKnowledgeBase() {
 		if (knowledgeBase ==null ) {
 			try {
@@ -138,40 +139,37 @@ public class CreateVmInsertApp extends Action {
 		}
 		else {
 			System.out.println("APP - Running Ticks: " + app.getRunningTicks());
-			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(20);
-			LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(20);	
-			int beforeInsertionCount = cpuallhist.size()-10;	
+			LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(10);	
 			
-			double cpuratio = calculateAllocationUsageRatio(cpuallhist, cpuusagehist, beforeInsertionCount);
+			LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(10);	
+				
+			LinkedList<Integer> storageusagehist = selectedPm.getStorageUsageHistory(10);	
 			
-			LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(20);
-			LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(20);	
-				
-			 
-			double memoryratio = calculateAllocationUsageRatio(memallhist, memusagehist, beforeInsertionCount);
-				
-			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(20);
-			LinkedList<Integer> storageusagehist = selectedPm.getStorageUsageHistory(20);	
-				
-			double storageratio = calculateAllocationUsageRatio(storageallhist, storageusagehist, beforeInsertionCount);
+			//TODO: gst replace fixed values
+			
+			//evaluate usage 
+			//(255-(abs(85-cpu)+abs(85-mem)+abs(85-stor)))/255
+			double evaluation =(255- calculateUsageRatio(cpuusagehist, 85) - calculateUsageRatio(memusagehist, 85) - calculateUsageRatio(storageusagehist, 85))/255 ;
+			
+			//subtract SLA Violations
+			evaluation -= (app.getCpuSlaErrorcount()+app.getMemorySlaErrorcount()+app.getStorageSlaErrorcount())/10;
+			
+			//minimum of 0
+			evaluation = Math.max(0, evaluation);
 			
 			//Create new WEKA - instance
 			Instance inst = new Instance(34);
 			
 			//CPU/Memory/Storage - Allocation history before the new vm was created
-			int valuesStartAt = 10-beforeInsertionCount; //if machine doesn't have 10 values before insertion
+			//int valuesStartAt = 10-beforeInsertionCount; //if machine doesn't have 10 values before insertion
+			LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(40);
+			LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(40);
+			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(40);
+			
 			for (int i = 0; i<10;i++) {
-				if(i>=valuesStartAt){
 					inst.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
 					inst.setValue(getKnowledgeBase().attribute(i+10), clusterValue( memallhist.get(i)));
 					inst.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
-				}
-				else {
-					//TODO: replace NULL VALUE
-					inst.setValue(getKnowledgeBase().attribute(i), Instance.missingValue());
-					inst.setValue(getKnowledgeBase().attribute(i+10), Instance.missingValue());
-					inst.setValue(getKnowledgeBase().attribute(i+20), Instance.missingValue());
-				}
 			}
 			
 			//SLAs
@@ -183,9 +181,9 @@ public class CreateVmInsertApp extends Action {
 			inst.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
 			
 			//Evaluation
-			inst.setValue(getKnowledgeBase().attribute(33), (cpuratio+memoryratio+storageratio) * 100);
+			inst.setValue(getKnowledgeBase().attribute(33), evaluation);
 
-			System.out.println((cpuratio+memoryratio+storageratio) * 100);
+			
 			
 			getKnowledgeBase().add(inst);
 			
@@ -199,21 +197,12 @@ public class CreateVmInsertApp extends Action {
 		return (int)(Math.ceil(value/10)*10);
 	}
 	
-	private double calculateAllocationUsageRatio(LinkedList<Integer> allocation, LinkedList<Integer> usage, int beforeInsertionCount) {
-
-		System.out.println (allocation.size() + ", usage " + usage.size());
-		
-		double ratioBefore =0;
-		double ratioAfter = 0;
+	private double calculateUsageRatio(LinkedList<Integer> usage, int goal) {
+		double result = 0;
 		for(int i=0; i<usage.size();i++){ 
-			if(i<beforeInsertionCount) {
-				ratioBefore += usage.get(i)/Math.max(allocation.get(i), 1);
-			}
-			else {
-				ratioAfter += usage.get(i)/Math.max(allocation.get(i), 1);
-			}
+			result += Math.abs(85-usage.get(i))/usage.size();
 		}
-		return (ratioAfter/10) - (ratioBefore/Math.max(1, beforeInsertionCount));
+		return result;
 	}
 
 	//calculate if an App fits to a pm
