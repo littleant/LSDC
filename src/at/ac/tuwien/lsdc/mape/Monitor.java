@@ -366,10 +366,14 @@ public class Monitor {
 			// DestinationPmId
 			if (action instanceof MoveVm) {
 				MoveVm moveVmAction = (MoveVm) action;
-				sb.append(moveVmAction.getSelectedPm().getResourceId());
+				if (moveVmAction.getSelectedPm() != null) {
+					sb.append(moveVmAction.getSelectedPm().getResourceId());
+				}
 			} else if (action instanceof CreateVmInsertApp) {
 				CreateVmInsertApp a = (CreateVmInsertApp) action;
-				sb.append(a.getSelectedPm().getResourceId());
+				if (a.getSelectedPm() != null) {
+					sb.append(a.getSelectedPm().getResourceId());
+				}
 			}
 			sb.append(";");
 			// DestinationVmId
