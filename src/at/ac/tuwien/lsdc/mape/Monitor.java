@@ -268,19 +268,28 @@ public class Monitor {
 					sb.append(";");
 					sb.append(a.getVm().getResourceId());
 					sb.append(";");
+				}
+				else {
+					sb.append(";;");
+				}
 					
-					
+				sb.append(a.getResourceId());
+				sb.append(";");
+				
+				if(a.getVm()!=null) {
 					sb.append(a.getVm().getCurrentCpuAllocation());
 					sb.append(";");
 					sb.append(a.getVm().getCurrentMemoryAllocation());
 					sb.append(";");
 					sb.append(a.getVm().getCurrentStorageAllocation());
 					sb.append(";");
-					
 				}
 				else {
-					sb.append(";;;;;");
+					sb.append(";;;");
 				}
+					
+				
+				
 				sb.append(a.getCurrentCpuUsage());
 				sb.append(";");
 				sb.append(a.getCurrentMemoryUsage());

@@ -145,18 +145,25 @@ public class MoveApp extends Action {
 	//TODO: gst: use WEKA to calc fit factor!!
 	private int calculateFit(App app2, VirtualMachine vm) {
 		int output = 0;
-		
-		//is free space available in the VM
-		if (app2.getCpu()+vm.getCurrentCpuUsage() < vm.getCurrentCpuAllocation() && app2.getMemory()+vm.getCurrentMemoryUsage() < vm.getCurrentMemoryAllocation() && app2.getStorage() + vm.getCurrentStorageUsage() < vm.getCurrentCpuAllocation()) {
-		
-			Instance instance = createInstance(Instance.missingValue(), vm);
-			instance.setDataset(MoveApp.getKnowledgeBase());
+		if (isOnlyLearning()!=false) {
 			
+			//is free space available in the VM
+			if (app2.getCpu()+vm.getCurrentCpuUsage() < vm.getCurrentCpuAllocation() && app2.getMemory()+vm.getCurrentMemoryUsage() < vm.getCurrentMemoryAllocation() && app2.getStorage() + vm.getCurrentStorageUsage() < vm.getCurrentCpuAllocation()) {
 			
-			try {
-				output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
-			} catch (Exception e) {
-				e.printStackTrace();
+				Instance instance = createInstance(Instance.missingValue(), vm);
+				instance.setDataset(MoveApp.getKnowledgeBase());
+				
+				
+				try {
+					output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else {
+			if (app2.getCpu()+vm.getCurrentCpuUsage() < vm.getCurrentCpuAllocation() && app2.getMemory()+vm.getCurrentMemoryUsage() < vm.getCurrentMemoryAllocation() && app2.getStorage() + vm.getCurrentStorageUsage() < vm.getCurrentCpuAllocation()) {
+				output = randomData.nextInt(0, 100);
 			}
 		}
 		return output;
