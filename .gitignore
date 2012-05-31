@@ -1,14 +1,19 @@
 *.class
 input.csv
-log/pmlog.txt
-log/vmlog.txt
+log/analysis.txt
 log/applog.txt
+log/executions.txt
+log/pmlog.txt
+log/possibilities.txt
+log/vmlog.txt
+*.arff
 
 # Package Files #
 #*.jar
 *.war
 *.ear
 input.csv
+<<<<<<< HEAD
 analyse/lsdc.qvw
 log/analysis.txt
 log/executions.txt
@@ -21,3 +26,16 @@ knowledge/CreateVmInsertApp.arff
 log/analysis.txt
 knowledge/CreateAppInsertIntoVm.arff
 knowledge/CreateVmInsertApp.arff
+=======
+analyse/lsdc.qvw
+log/analysis.txt
+log/executions.txt
+log/possibilities.txt
+log/analysis.txt
+log/executions.txt
+log/possibilities.txt
+knowledge/CreateAppInsertIntoVm.arff
+knowledge/CreateVmInsertApp.arff
+>>>>>>> 03bcedf51845994fddaf0637482992c9f5d92e73
+knowledge/CreateVmInsertApp.arff
+log/possibilities.txt~

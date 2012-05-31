@@ -257,6 +257,6 @@ public class MoveVm extends Action {
 	}
 	
 	public PhysicalMachine getSelectedPm() {
-		return this.getSelectedPm();
+		return this.selectedPm;
 	}
 }
