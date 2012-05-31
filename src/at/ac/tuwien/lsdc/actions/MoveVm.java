@@ -83,7 +83,7 @@ public class MoveVm extends Action {
 			preconditionsOk = found;
 		}
 		else {
-			preconditionsOk = false;
+			preconditionsOk= false;
 		}
 	}
 	
