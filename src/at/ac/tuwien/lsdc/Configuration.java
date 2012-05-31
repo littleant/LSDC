@@ -19,7 +19,12 @@ public class Configuration {
 	
 	private String KBCreateVmInsertApp = null;
 	
+	private String KBCreateAppInsertIntoVm = null;
+	
+	
 	private boolean onlyLearning = false;
+
+	private int appInsertIntoVmCosts;
 	
 	public boolean isOnlyLearning() {
 		return onlyLearning;
@@ -67,10 +72,12 @@ public class Configuration {
 			this.maxPms = Integer.parseInt(properties.getProperty("maxPms"));
 			this.pmStartupCosts = Integer.parseInt(properties.getProperty("pmStartupCosts"));
 			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
+			this.setAppInsertIntoVmCosts(Integer.parseInt(properties.getProperty("appInsertIntoVmCosts")));
 			this.onlyLearning = Boolean.parseBoolean(properties.getProperty("onlyLearning"));
 			
 			//knowledge
 			this.KBCreateVmInsertApp = properties.getProperty("KBCreateVmInsertApp");
+			this.KBCreateAppInsertIntoVm = properties.getProperty("KBCreateAppInsertIntoVm");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -112,5 +119,21 @@ public class Configuration {
 
 	public void setKBCreateVmInsertApp(String kBCreateVmInsertApp) {
 		KBCreateVmInsertApp = kBCreateVmInsertApp;
+	}
+
+	public String getKBCreateAppInsertIntoVm() {
+		return KBCreateAppInsertIntoVm;
+	}
+
+	public void setKBCreateAppInsertIntoVm(String kBCreateAppInsertIntoVm) {
+		KBCreateAppInsertIntoVm = kBCreateAppInsertIntoVm;
+	}
+
+	public int getAppInsertIntoVmCosts() {
+		return appInsertIntoVmCosts;
+	}
+
+	public void setAppInsertIntoVmCosts(int appInsertIntoVmCosts) {
+		this.appInsertIntoVmCosts = appInsertIntoVmCosts;
 	}
 }
