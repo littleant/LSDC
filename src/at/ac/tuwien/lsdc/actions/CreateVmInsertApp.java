@@ -1,6 +1,5 @@
 package at.ac.tuwien.lsdc.actions;
 
-
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -26,9 +25,6 @@ public class CreateVmInsertApp extends Action {
 	private static Evaluation evaluation = null;
 	private static RandomData randomData = new RandomDataImpl();
 	
-	
-
-
 	private App app;
 	private static int vmStartupCosts = 10;
 	private static int pmStartupCosts = 20;
@@ -87,22 +83,16 @@ public class CreateVmInsertApp extends Action {
 			
 			//CPU/Memory/Storage - Allocation history before the new vm was created
 			for (int i = 0; i<10;i++) {
-				if(i < cpuallhist.size()){
-					instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-					instance.setValue(getKnowledgeBase().attribute(i+10),clusterValue( memallhist.get(i)));
-					instance.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
-				} else {
-					instance.setValue(getKnowledgeBase().attribute(i), Instance.missingValue());
-					instance.setValue(getKnowledgeBase().attribute(i+10), Instance.missingValue());
-					instance.setValue(getKnowledgeBase().attribute(i+20), Instance.missingValue());
-				}
+				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+10), clusterValue(memallhist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
 			}
 			
 			//SLAs
 			//CPU
 			instance.setValue(getKnowledgeBase().attribute(30), clusterValue(app.getCpu()));
 			//Memory
-			instance.setValue(getKnowledgeBase().attribute(31),clusterValue(app.getMemory()));
+			instance.setValue(getKnowledgeBase().attribute(31), clusterValue(app.getMemory()));
 			//Storage
 			instance.setValue(getKnowledgeBase().attribute(32), clusterValue(app.getStorage()));
 			
@@ -170,9 +160,9 @@ public class CreateVmInsertApp extends Action {
 			LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(40);
 			
 			for (int i = 0; i<10;i++) {
-					inst.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-					inst.setValue(getKnowledgeBase().attribute(i+10), clusterValue( memallhist.get(i)));
-					inst.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
+				inst.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
+				inst.setValue(getKnowledgeBase().attribute(i+10), clusterValue( memallhist.get(i)));
+				inst.setValue(getKnowledgeBase().attribute(i+20), clusterValue(storageallhist.get(i)));
 			}
 			
 			//SLAs
@@ -186,12 +176,7 @@ public class CreateVmInsertApp extends Action {
 			//Evaluation
 			inst.setValue(getKnowledgeBase().attribute(33), evaluation);
 
-			
-			
 			getKnowledgeBase().add(inst);
-			
-			
-			
 		}
 		return true;
 	}
@@ -221,12 +206,10 @@ public class CreateVmInsertApp extends Action {
 	@Override
 	public void execute() {
 		VirtualMachine oldVm = null;
-		PhysicalMachine oldPm = null;
 		
 		//if the App existed before
 		if (app.getVm()!=null) {
 			oldVm = app.getVm();
-			oldPm = oldVm.getPm();
 		}
 		
 		//remove the app from the request- queue??? 
@@ -278,7 +261,6 @@ public class CreateVmInsertApp extends Action {
 					}
 				}
 			}
-		
 		
 			//no running machine found => search for a stopped machine
 			//TODO: gst: replace by real action
