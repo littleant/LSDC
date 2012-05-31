@@ -255,4 +255,8 @@ public class MoveVm extends Action {
 			e.printStackTrace();
 		}
 	}
+	
+	public PhysicalMachine getSelectedPm() {
+		return this.getSelectedPm();
+	}
 }

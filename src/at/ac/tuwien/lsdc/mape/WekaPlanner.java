@@ -19,7 +19,6 @@ public class WekaPlanner extends Planner {
 		knownActions.add(CreateVmInsertApp.class);
 		knownActions.add(CreateAppInsertIntoVm.class);
 		knownActions.add(MoveApp.class);
-
 	}
 	
 	@Override
@@ -27,7 +26,6 @@ public class WekaPlanner extends Planner {
 		int currentFit=10000;
 		Action selectedAction = null;
 		for (Class ac : knownActions) {
-			
 			try {
 				Action a = (Action) ac.newInstance();
 				a.init(problem);
@@ -36,14 +34,15 @@ public class WekaPlanner extends Planner {
 					selectedAction= a;
 					currentFit = calculateFit(a);
 				}
+				
+				// logging
+				Monitor.getInstance().logPossibilities(problem, a);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
 		}
 		
 		return selectedAction;

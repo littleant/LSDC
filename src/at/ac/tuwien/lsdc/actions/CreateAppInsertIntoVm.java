@@ -263,4 +263,7 @@ public class CreateAppInsertIntoVm extends Action {
 		return instance;
 	}
 
+	public VirtualMachine getSelectedVm() {
+		return this.selectedVm;
+	}
 }

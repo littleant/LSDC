@@ -254,4 +254,7 @@ public class MoveApp extends Action {
 		return instance;
 	}
 
+	public VirtualMachine getSelectedVm() {
+		return this.selectedVm;
+	}
 }

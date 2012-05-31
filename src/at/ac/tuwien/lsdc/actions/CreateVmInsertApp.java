@@ -293,4 +293,7 @@ public class CreateVmInsertApp extends Action {
 		return instance;
 	}
 
+	public PhysicalMachine getSelectedPm() {
+		return this.selectedPm;
+	}
 }

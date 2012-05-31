@@ -1,13 +1,16 @@
 package at.ac.tuwien.lsdc.mape;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import at.ac.tuwien.lsdc.generator.RequestGenerator;
+import at.ac.tuwien.lsdc.actions.Action;
+import at.ac.tuwien.lsdc.actions.CreateAppInsertIntoVm;
+import at.ac.tuwien.lsdc.actions.CreateVmInsertApp;
+import at.ac.tuwien.lsdc.actions.MoveApp;
+import at.ac.tuwien.lsdc.actions.MoveVm;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
@@ -235,6 +238,82 @@ public class Monitor {
 	//	this.possibilitiesLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId");
 	//	this.executionsLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId;Evaluation");
 		
+	}
+
+	public void logPossibilities(Resource problem, Action action) {
+		// GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId
+		if (problem != null) {
+			StringBuffer sb = new StringBuffer();
+			// global tick
+			sb.append(this.globalTicks);
+			sb.append(";");
+			// PM, VM, App
+			if (problem instanceof PhysicalMachine) {
+				sb.append(problem.getResourceId());
+				sb.append(";;;");
+			} else if (problem instanceof VirtualMachine) {
+				sb.append(((VirtualMachine) problem).getPm().getResourceId());
+				sb.append(";");
+				// VM
+				sb.append(problem.getResourceId());
+				sb.append(";;");				
+			} else if (problem instanceof App) {
+				VirtualMachine vm = ((App) problem).getVm();
+				
+				if (vm != null) {
+					// PM
+					if (vm.getPm() != null) {
+						sb.append(vm.getPm().getResourceId());
+					}
+					sb.append(";");
+					// VM
+					sb.append(vm.getResourceId());
+					sb.append(";");
+				} else {
+					sb.append(";;");
+				}
+				// App
+				sb.append(problem.getResourceId());
+				sb.append(";");
+			}
+			// Action
+			sb.append(action.getClass().getSimpleName());
+			sb.append(";");
+			// Precondition
+			sb.append(action.preconditions());
+			sb.append(";");
+			// Estimation
+			sb.append(action.estimate());
+			sb.append(";");
+			// Prediction
+			sb.append(action.predict());
+			sb.append(";");
+			// DestinationPmId
+			if (action instanceof MoveVm) {
+				MoveVm moveVmAction = (MoveVm) action;
+				sb.append(moveVmAction.getSelectedPm().getResourceId());
+			} else if (action instanceof CreateVmInsertApp) {
+				CreateVmInsertApp a = (CreateVmInsertApp) action;
+				sb.append(a.getSelectedPm().getResourceId());
+			}
+			sb.append(";");
+			// DestinationVmId
+			if (action instanceof CreateAppInsertIntoVm) {
+				CreateAppInsertIntoVm a = (CreateAppInsertIntoVm) action;
+				if (a.getSelectedVm() != null) {
+					sb.append(a.getSelectedVm().getResourceId());
+				}
+			} else if (action instanceof MoveApp) {
+				MoveApp a = (MoveApp) action;
+				if (a.getSelectedVm() != null) {
+					sb.append(a.getSelectedVm().getResourceId());
+				}
+			}
+			sb.append(";");
+			
+			possibilitiesLog.println(sb.toString());
+			possibilitiesLog.flush();
+		}
 	}
 	
 	public void log (PrintWriter logfile, String text){
