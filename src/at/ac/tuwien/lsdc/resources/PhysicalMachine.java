@@ -158,7 +158,7 @@ public class PhysicalMachine extends Resource {
 			values.add(vm.getStorageUsageHistory(maxEntries));
 		}
 		
-		return this.aggregateValues(values);
+		return Resource.aggregateValues(values);
 	}
 
 	@Override

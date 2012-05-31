@@ -1,66 +1,74 @@
-@relation MoveVmToPm
-
-@attribute CPU1 numeric
-@attribute CPU2 numeric
-@attribute CPU3 numeric
-@attribute CPU4 numeric
-@attribute CPU5 numeric
-@attribute CPU6 numeric
-@attribute CPU7 numeric
-@attribute CPU8 numeric
-@attribute CPU9 numeric
-@attribute CPU10 numeric
-@attribute MEM1 numeric
-@attribute MEM2 numeric
-@attribute MEM3 numeric
-@attribute MEM4 numeric
-@attribute MEM5 numeric
-@attribute MEM6 numeric
-@attribute MEM7 numeric
-@attribute MEM8 numeric
-@attribute MEM9 numeric
-@attribute MEM10 numeric
-@attribute STOR1 numeric
-@attribute STOR2 numeric
-@attribute STOR3 numeric
-@attribute STOR4 numeric
-@attribute STOR5 numeric
-@attribute STOR6 numeric
-@attribute STOR7 numeric
-@attribute STOR8 numeric
-@attribute STOR9 numeric
-@attribute STOR10 numeric
-@attribute PMCPU1 numeric
-@attribute PMCPU2 numeric
-@attribute PMCPU3 numeric
-@attribute PMCPU4 numeric
-@attribute PMCPU5 numeric
-@attribute PMCPU6 numeric
-@attribute PMCPU7 numeric
-@attribute PMCPU8 numeric
-@attribute PMCPU9 numeric
-@attribute PMCPU10 numeric
-@attribute PMMEM1 numeric
-@attribute PMMEM2 numeric
-@attribute PMMEM3 numeric
-@attribute PMMEM4 numeric
-@attribute PMMEM5 numeric
-@attribute PMMEM6 numeric
-@attribute PMMEM7 numeric
-@attribute PMMEM8 numeric
-@attribute PMMEM9 numeric
-@attribute PMMEM10 numeric
-@attribute PMSTOR1 numeric
-@attribute PMSTOR2 numeric
-@attribute PMSTOR3 numeric
-@attribute PMSTOR4 numeric
-@attribute PMSTOR5 numeric
-@attribute PMSTOR6 numeric
-@attribute PMSTOR7 numeric
-@attribute PMSTOR8 numeric
-@attribute PMSTOR9 numeric
-@attribute PMSTOR10 numeric
-@attribute EVAL numeric
-
+%This file contains the values for the CreateAppInsertIntoVm - Action
+% CPU1ALL - CPU10ALL Contains the allocation history of the destination VM
+% CPU1USE - CPU10USE Contains the usage history of the destination VM
+% MEM1USE - MEM10USE Contains the usage history of the destination VM
+% STOR1USE - STOR10USE Contains the usage history of the destination VM
+%...
+% SLACPU,.... Contains the SLAs of the new app
+% EVAL Contains the evaluated value after the execution
+@relation 'cpu'
+@attribute CPU1ALL real
+@attribute CPU2ALL real
+@attribute CPU3ALL real
+@attribute CPU4ALL real
+@attribute CPU5ALL real
+@attribute CPU6ALL real
+@attribute CPU7ALL real
+@attribute CPU8ALL real
+@attribute CPU9ALL real
+@attribute CPU10ALL real
+@attribute CPU1USE real
+@attribute CPU2USE real
+@attribute CPU3USE real
+@attribute CPU4USE real
+@attribute CPU5USE real
+@attribute CPU6USE real
+@attribute CPU7USE real
+@attribute CPU8USE real
+@attribute CPU9USE real
+@attribute CPU10USE real
+@attribute MEM1ALL real
+@attribute MEM2ALL real
+@attribute MEM3ALL real
+@attribute MEM4ALL real
+@attribute MEM5ALL real
+@attribute MEM6ALL real
+@attribute MEM7ALL real
+@attribute MEM8ALL real
+@attribute MEM9ALL real
+@attribute MEM10ALL real
+@attribute MEM1USE real
+@attribute MEM2USE real
+@attribute MEM3USE real
+@attribute MEM4USE real
+@attribute MEM5USE real
+@attribute MEM6USE real
+@attribute MEM7USE real
+@attribute MEM8USE real
+@attribute MEM9USE real
+@attribute MEM10USE real
+@attribute STOR1ALL real
+@attribute STOR2ALL real
+@attribute STOR3ALL real
+@attribute STOR4ALL real
+@attribute STOR5ALL real
+@attribute STOR6ALL real
+@attribute STOR7ALL real
+@attribute STOR8ALL real
+@attribute STOR9ALL real
+@attribute STOR10ALL real
+@attribute STOR1USE real
+@attribute STOR2USE real
+@attribute STOR3USE real
+@attribute STOR4USE real
+@attribute STOR5USE real
+@attribute STOR6USE real
+@attribute STOR7USE real
+@attribute STOR8USE real
+@attribute STOR9USE real
+@attribute STOR10USE real
+@attribute SLACpu real
+@attribute SLAMemory real
+@attribute SLAStorage real
+@attribute EVAL real
 @data
-
