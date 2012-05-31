@@ -119,7 +119,27 @@ public class VirtualMachine extends Resource {
 		return memusage;
 	}
 	
-	//get storage usage produced by apps 
+			//set cpu allocation
+			public void setCurrentCpuAlloction(int newCpuConfiguration) {
+				int newCpuAllocation = allocatedCpu.getLast().intValue() + newCpuConfiguration;
+				allocatedCpu.set(allocatedCpu.size()-1, newCpuAllocation);
+			}
+		
+		//set Memory allocation
+		public void setCurrentMemoryAlloction(int newMemoryConfiguration) {
+			int newMemoryAllocation = allocatedMemory.getLast().intValue() + newMemoryConfiguration;
+			allocatedMemory.set(allocatedMemory.size()-1, newMemoryAllocation);
+		}
+	
+		//set storage allocation
+		public void setCurrentStorageAlloction(int newStorageConfiguration) {
+			int newStorageAllocation = allocatedStorage.getLast().intValue() + newStorageConfiguration;
+			allocatedStorage.set(allocatedStorage.size()-1, newStorageAllocation);
+		}
+	
+
+		
+		//get storage usage produced by apps 
 	public Integer getCurrentStorageUsage() {
 		int storusage =0 ;
 		for (App a : apps) {
