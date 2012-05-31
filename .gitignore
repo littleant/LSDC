@@ -10,3 +10,11 @@ log/applog.txt
 *.ear
 input.csv
 analyse/lsdc.qvw
+log/analysis.txt
+log/executions.txt
+log/possibilities.txt
+log/analysis.txt
+log/executions.txt
+log/possibilities.txt
+knowledge/CreateAppInsertIntoVm.arff
+knowledge/CreateVmInsertApp.arff

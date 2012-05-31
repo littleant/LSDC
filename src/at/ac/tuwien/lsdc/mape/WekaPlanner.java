@@ -36,7 +36,7 @@ public class WekaPlanner extends Planner {
 				}
 				
 				// logging
-				Monitor.getInstance().logPossibilities(problem, a);
+ 
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
