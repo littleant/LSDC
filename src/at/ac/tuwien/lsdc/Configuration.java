@@ -18,9 +18,8 @@ public class Configuration {
 	private Integer vmStartupCosts = null;
 	
 	private String KBCreateVmInsertApp = null;
-	
 	private String KBCreateAppInsertIntoVm = null;
-	
+	private String KBMoveVm = null;
 	
 	private boolean onlyLearning = false;
 
@@ -83,6 +82,7 @@ public class Configuration {
 			//knowledge
 			this.KBCreateVmInsertApp = properties.getProperty("KBCreateVmInsertApp");
 			this.KBCreateAppInsertIntoVm = properties.getProperty("KBCreateAppInsertIntoVm");
+			this.KBMoveVm = properties.getProperty("KBMoveVm");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -148,5 +148,13 @@ public class Configuration {
 
 	public void setAppMovingCosts(int appMovingCosts) {
 		this.appMovingCosts = appMovingCosts;
+	}
+
+	public String getKBMoveVm() {
+		return KBMoveVm;
+	}
+
+	public void setKBMoveVm(String kBMoveVm) {
+		KBMoveVm = kBMoveVm;
 	}
 }
