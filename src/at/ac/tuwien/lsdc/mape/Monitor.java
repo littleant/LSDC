@@ -48,7 +48,7 @@ public class Monitor {
 			this.possibilitiesLog = new PrintWriter("log/possibilities.txt");
 			this.executionsLog = new PrintWriter("log/executions.txt");
 			
-			this.analysisLog.println ("GlobalTick;ResourceType;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;");
+			this.analysisLog.println ("GlobalTick;ProblemType;ResourceType;PmId;VmId;AppId;CPUAll;CPUUse;MEMAll;MEMUse;STORAll;STORUse");
 			this.possibilitiesLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId");
 			this.executionsLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId;Evaluation");
 			
@@ -207,31 +207,106 @@ public class Monitor {
 	
 	public void logAnalysis(Resource problem, String problemtype) {
 		if(problem!=null){
-			this.analysisLog.println ("GlobalTick;ResourceType;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;");
 			StringBuffer sb = new StringBuffer();
 			sb.append(this.globalTicks);
 			sb.append(";");
+			sb.append(problemtype);
+			sb.append(";");
+			
 			if (problem instanceof PhysicalMachine) {
+				PhysicalMachine pm = (PhysicalMachine) problem;
+				sb.append("PM");
+				sb.append(";");
 				sb.append(problem.getResourceId());
 				sb.append(";;;");
+				sb.append(pm.getCurrentCpuAllocation());
+				sb.append(";");
+				sb.append(pm.getCurrentMemoryAllocation());
+				sb.append(";");
+				sb.append(pm.getCurrentStorageAllocation());
+				sb.append(";");
+				sb.append(pm.getCurrentCpuUsage());
+				sb.append(";");
+				sb.append(pm.getCurrentMemoryUsage());
+				sb.append(";");
+				sb.append(pm.getCurrentStorageUsage());
+				sb.append(";");
 			}
 			else if (problem instanceof VirtualMachine) {
 				VirtualMachine vm = (VirtualMachine) problem;
 				if (vm.getPm()!=null){
+					sb.append("VM");
+					sb.append(";");
 					sb.append(vm.getPm().getResourceId());
+				}
+				else {
+					sb.append(";");
+				}
 					sb.append(";");
 					sb.append(vm.getResourceId());
 					sb.append(";;");
-				}
+					sb.append(vm.getCurrentCpuAllocation());
+					sb.append(";");
+					sb.append(vm.getCurrentMemoryAllocation());
+					sb.append(";");
+					sb.append(vm.getCurrentStorageAllocation());
+					sb.append(";");
+					sb.append(vm.getCurrentCpuUsage());
+					sb.append(";");
+					sb.append(vm.getCurrentMemoryUsage());
+					sb.append(";");
+					sb.append(vm.getCurrentStorageUsage());
+					sb.append(";");
+				
 			}
 			else {
+				sb.append("APP");
+				sb.append(";");
 				App a = (App) problem;
 				if(a.getVm()!=null) {
 					if(a.getVm().getPm()!=null){
-						sb.append("");
+						sb.append(a.getVm().getPm().getResourceId());
 					}
+					
+					sb.append(";");
+					sb.append(a.getVm().getResourceId());
+					sb.append(";");
 				}
+				else {
+					sb.append(";;");
+				}
+					
+				sb.append(a.getResourceId());
+				sb.append(";");
+				
+				if(a.getVm()!=null) {
+					sb.append(a.getVm().getCurrentCpuAllocation());
+					sb.append(";");
+					sb.append(a.getVm().getCurrentMemoryAllocation());
+					sb.append(";");
+					sb.append(a.getVm().getCurrentStorageAllocation());
+					sb.append(";");
+				}
+				else {
+					sb.append(";;;");
+				}
+					
+				
+				
+				sb.append(a.getCurrentCpuUsage());
+				sb.append(";");
+				sb.append(a.getCurrentMemoryUsage());
+				sb.append(";");
+				sb.append(a.getCurrentStorageUsage());
+				
+				
 			}
+			
+			this.analysisLog.println(sb.toString());
+			
+			
+			
+			
 			
 		}
 		

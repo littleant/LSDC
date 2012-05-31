@@ -1,6 +1,5 @@
 package at.ac.tuwien.lsdc.actions;
 
-
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -20,38 +19,42 @@ import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
-public class CreateAppInsertIntoVm extends Action {
+public class ChangeVmConfiguration extends Action {
 	private static Instances knowledgeBase = null;
 	private static Classifier classifier = null;
 	private static Evaluation evaluation = null;
 	private static RandomData randomData = new RandomDataImpl();
 	
-	
-
-
 	private App app;
+	private VirtualMachine vm;
 	private static int vmStartupCosts = 10;
-	private static int pmStartupCosts = 20;
+	private static int pmStartupCosts = 20;	
+	private static int vmChangeConfigurationCosts = 20;
+
 	
-	private VirtualMachine selectedVm = null;
+	private int newCpuConfiguration;
+	private int newMemorayConfiguration;
+	private int newStorageConfiguration;
+	
+	private PhysicalMachine selectedPm = null;
 	private boolean preconditionsOk = false;
 	private int costs = 0;
-	private int prediction = 0;
 	private int waitForEvaluation = 10;
 	private Instance curInstance;
+	private int prediction;
 	
 	
 	public static Instances getKnowledgeBase() {
 		if (knowledgeBase ==null ) {
 			try {
 				//load knowledgebase from file
-				CreateAppInsertIntoVm.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateAppInsertIntoVm());
+				ChangeVmConfiguration.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
 				
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				if(!isOnlyLearning()) {
 					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(CreateAppInsertIntoVm.getKnowledgeBase());
-					evaluation = new Evaluation(CreateAppInsertIntoVm.getKnowledgeBase());
+					classifier.buildClassifier(ChangeVmConfiguration.getKnowledgeBase());
+					evaluation = new Evaluation(ChangeVmConfiguration.getKnowledgeBase());
 					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
 					
 				}
@@ -64,7 +67,7 @@ public class CreateAppInsertIntoVm extends Action {
 	
 	public void terminate() {
 		try {
-			Action.saveKnowledge(Configuration.getInstance().getKBCreateAppInsertIntoVm(), CreateAppInsertIntoVm.getKnowledgeBase());
+			Action.saveKnowledge(Configuration.getInstance().getKBCreateVmInsertApp(), ChangeVmConfiguration.getKnowledgeBase());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -73,15 +76,17 @@ public class CreateAppInsertIntoVm extends Action {
 	
 	@Override
 	public int predict() {
+		int output = 0;
 		if (isOnlyLearning()) { //Randomized predictions for learning
 			return randomData.nextInt(0, 100);
 		}
 		else { //Use WEKA - evaluation for prediction
 			//Create new WEKA - instance
-			return prediction;
+			return prediction; 
+			
 		}			
+		
 	}
-
 
 	@Override
 	public int estimate() {
@@ -96,7 +101,7 @@ public class CreateAppInsertIntoVm extends Action {
 	@Override
 	public boolean evaluate() {
 		if (curInstance == null) {
-			curInstance = createInstance(0, selectedVm); // create a Instance with the past values
+			curInstance = createInstance(0); // create a Instance with the past values
 		}
 		
 		if (app.getSuspendedTicks()>0 || app.getVm().getSuspendedTicks()>0 || app.getVm().getPm().getSuspendedTicks()>0) {
@@ -107,12 +112,12 @@ public class CreateAppInsertIntoVm extends Action {
 			return false;
 		}
 		else {
-			//System.out.println("APP - Running Ticks: " + app.getRunningTicks());
-			LinkedList<Integer> cpuusagehist = selectedVm.getPm().getCpuUsageHistory(10);	
+			System.out.println("APP - Running Ticks: " + app.getRunningTicks());
+			LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(10);	
 			
-			LinkedList<Integer> memusagehist = selectedVm.getPm().getMemoryUsageHistory(10);	
+			LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(10);	
 				
-			LinkedList<Integer> storageusagehist = selectedVm.getPm().getStorageUsageHistory(10);	
+			LinkedList<Integer> storageusagehist = selectedPm.getStorageUsageHistory(10);	
 
 			double evaluation =(255- calculateUsageRatio(cpuusagehist, 85) - calculateUsageRatio(memusagehist, 85) - calculateUsageRatio(storageusagehist, 85))/255 ;
 			
@@ -127,8 +132,7 @@ public class CreateAppInsertIntoVm extends Action {
 		}
 		return true;
 	}
-
-
+	
 	private int clusterValue (int value) {
 		return (int)(Math.ceil(value/10)*10);
 	}
@@ -140,18 +144,24 @@ public class CreateAppInsertIntoVm extends Action {
 		}
 		return result;
 	}
+	
+	private void createConfiguration(VirtualMachine vm){
+		
+		newCpuConfiguration=vm.getCurrentCpuAllocation()-vm.getCurrentCpuUsage();
+		newMemorayConfiguration=vm.getCurrentMemoryAllocation()-vm.getCurrentMemoryUsage();
+		newStorageConfiguration=vm.getCurrentStorageAllocation()-vm.getCurrentStorageUsage();
+				
+	}
 
 	//calculate if an App fits to a pm
 	//TODO: gst: use WEKA to calc fit factor!!
-	private int calculateFit(App app2, VirtualMachine vm) {
+	private int calculateFit(App app2, PhysicalMachine pm) {
 		int output = 0;
 		if (Action.isOnlyLearning()== false ){
-			//is free space available in the VM
-			if (app2.getCpu()+vm.getCurrentCpuUsage() < vm.getCurrentCpuAllocation() && app2.getMemory()+vm.getCurrentMemoryUsage() < vm.getCurrentMemoryAllocation() && app2.getStorage() + vm.getCurrentStorageUsage() < vm.getCurrentCpuAllocation()) {
-			
-				Instance instance = createInstance(Instance.missingValue(), vm);
+			//is space available
+			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {		
+				Instance instance = createInstance(Instance.missingValue());
 				instance.setDataset(CreateAppInsertIntoVm.getKnowledgeBase());
-				
 				
 				try {
 					output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
@@ -161,8 +171,8 @@ public class CreateAppInsertIntoVm extends Action {
 			}
 		}
 		else {
-			if (app2.getCpu()+vm.getCurrentCpuUsage() < vm.getCurrentCpuAllocation() && app2.getMemory()+vm.getCurrentMemoryUsage() < vm.getCurrentMemoryAllocation() && app2.getStorage() + vm.getCurrentStorageUsage() < vm.getCurrentCpuAllocation()) {
-				output =  randomData.nextInt(1, 100);
+			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {
+				return randomData.nextInt(1, 100);
 			}
 		}
 		return output;
@@ -170,66 +180,76 @@ public class CreateAppInsertIntoVm extends Action {
 
 	@Override
 	public void execute() {
+		VirtualMachine oldVm = null;
+		
+		//if the App existed before
+		if (app.getVm()!=null) {
+			oldVm = app.getVm();
+		}
 		
 		//remove the app from the request- queue??? 
 		if(app.getOriginalRequest()!=null) {
 			RequestGenerator.getInstance().removeRequestFromQueue(app.getOriginalRequest());
 		}
-
-		selectedVm.createApp(this.app);
+		
+		if (selectedPm.isRunning()==false) {
+			selectedPm.startMachine();
+		}
+		
+		//TODO: gst: hard - coded startup value!!
+		VirtualMachine vm = selectedPm.createNewVm(app.getCpu(), app.getMemory(), app.getStorage(), 10);
+		vm.createApp(this.app);
+		
+		if(oldVm!=null) {
+			oldVm.getApps().remove(app);
+			//TODO: gst: what happens if the VM is now empty??
+			if(oldVm.getApps().size()==0) {
+				oldVm.terminate();
+			}
+		}
 	}
 
 	@Override
-	public void init(Resource problemApp) {
+	public void init(Resource problemVm) {
 		this.preconditionsOk=false;
-		this.curInstance = null;
-		this.selectedVm=null;
+		this.selectedPm=null;
 		this.costs=0;
 		this.app=null;
 		
-		this.costs = Configuration.getInstance().getAppInsertIntoVmCosts();
+		ChangeVmConfiguration.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
+		ChangeVmConfiguration.pmStartupCosts = Configuration.getInstance().getPmStartupCosts();
+		ChangeVmConfiguration.vmChangeConfigurationCosts = Configuration.getInstance().getPmStartupCosts();
 		
-		if (problemApp instanceof App){ //only apps can be inserted
-			app = (App)problemApp;
-			if(app.getVm()==null) { //only new apps can be inserted
-				boolean found = false;
-			    prediction = 0;
-				int curFitFactor =0;
-				
-				for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
-					if(pm.isRunning())  {
-						for (VirtualMachine vm : pm.getVms()) {
-							curFitFactor = calculateFit(app, vm);
-							if(curFitFactor>prediction) {
-								preconditionsOk=true;
-								prediction = curFitFactor;
-								this.selectedVm = vm;
-								
-							}
-						}
-					}
-				}
+		
+		if (problemVm instanceof VirtualMachine){
+			vm = (VirtualMachine)problemVm;
+			boolean found = false;
+			int fitFactor = 0;
+			int curFit = 0;
+			
+			if((100 - vm.getPm().getCurrentCpuAllocation())>=newCpuConfiguration &&(100 - vm.getPm().getCurrentMemoryAllocation())>=newMemorayConfiguration&&(100 - vm.getPm().getCurrentStorageAllocation())>=newStorageConfiguration){
+				preconditionsOk = true;
+				costs += pmStartupCosts;
+				selectedPm = vm.getPm();
+				prediction  =calculateFit(app, vm.getPm());
+		
 			}
-		}
-		
-		
+			
 	}
 	
-	
-	//create an instance in the format of CreateAppInsertIntoVm.arff
-	//eval can either be a Instance - MissingValue or the evaluation value 
-	private Instance createInstance(double eval, VirtualMachine vm) {
+	}
+	private Instance createInstance(double eval) {
 		Instance instance = new Instance(64);
 		
-		LinkedList<Integer> cpuallhist = vm.getCpuAllocationHistory(10);
-		LinkedList<Integer> cpuusehist = vm.getCpuUsageHistory(10);
+		LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(10);
+		LinkedList<Integer> cpuusehist = selectedPm.getCpuUsageHistory(10);
 
-		LinkedList<Integer> memallhist = vm.getMemoryAllocationHistory(10);
-		LinkedList<Integer> memusehist = vm.getMemoryUsageHistory(10);
+		LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(10);
+		LinkedList<Integer> memusehist = selectedPm.getMemoryUsageHistory(10);
 		
 			
-		LinkedList<Integer> storageallhist = vm.getStorageAllocationHistory(10);
-		LinkedList<Integer> storageusehist = vm.getStorageUsageHistory(10);
+		LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(10);
+		LinkedList<Integer> storageusehist = selectedPm.getStorageUsageHistory(10);
 		
 		//CPU/Memory/Storage - Allocation history before the new vm was created
 		for (int i = 0; i<10;i++) {
@@ -263,7 +283,4 @@ public class CreateAppInsertIntoVm extends Action {
 		return instance;
 	}
 
-	public VirtualMachine getSelectedVm() {
-		return this.selectedVm;
-	}
 }

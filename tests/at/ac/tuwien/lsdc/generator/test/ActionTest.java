@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import at.ac.tuwien.lsdc.actions.CreateVmInsertApp;
 
-public class ActionTest {
+public class ActionTest { 
 
 	@Test
 	public void testArffReader() {
