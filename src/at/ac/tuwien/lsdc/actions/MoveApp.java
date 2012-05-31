@@ -184,7 +184,7 @@ public class MoveApp extends Action {
 		if (problemApp instanceof App){ //only apps can be inserted
 			app = (App)problemApp;
 			if(app.getVm()!=null) { //only existing apps can be moved
-				int prediction = 0;
+			    prediction = 0;
 				int curFitFactor =0;
 				
 				for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
