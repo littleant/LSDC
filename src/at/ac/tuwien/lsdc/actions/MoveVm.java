@@ -18,6 +18,9 @@ import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
+/**
+ * Action to move a VM to a different PM
+ */
 public class MoveVm extends Action {
 	private static Instances knowledgeBase = null;
 	private static Classifier classifier = null;
