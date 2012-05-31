@@ -145,7 +145,7 @@ public class MoveApp extends Action {
 	//TODO: gst: use WEKA to calc fit factor!!
 	private int calculateFit(App app2, VirtualMachine vm) {
 		int output = 0;
-		if (isOnlyLearning()!=false) {
+		if (isOnlyLearning()==false) {
 			
 			//is free space available in the VM
 			if (app2.getCpu()+vm.getCurrentCpuUsage() < vm.getCurrentCpuAllocation() && app2.getMemory()+vm.getCurrentMemoryUsage() < vm.getCurrentMemoryAllocation() && app2.getStorage() + vm.getCurrentStorageUsage() < vm.getCurrentCpuAllocation()) {

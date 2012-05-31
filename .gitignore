@@ -1,8 +1,12 @@
 *.class
 input.csv
-log/pmlog.txt
-log/vmlog.txt
+log/analysis.txt
 log/applog.txt
+log/executions.txt
+log/pmlog.txt
+log/possibilities.txt
+log/vmlog.txt
+*.arff
 
 # Package Files #
 #*.jar
@@ -10,3 +14,11 @@ log/applog.txt
 *.ear
 input.csv
 analyse/lsdc.qvw
+log/analysis.txt
+log/executions.txt
+log/possibilities.txt
+log/analysis.txt
+log/executions.txt
+log/possibilities.txt
+knowledge/CreateAppInsertIntoVm.arff
+knowledge/CreateVmInsertApp.arff
