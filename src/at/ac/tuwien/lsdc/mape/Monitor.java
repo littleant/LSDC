@@ -10,6 +10,7 @@ import java.util.UUID;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
+import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class Monitor {
@@ -17,6 +18,9 @@ public class Monitor {
 	private PrintWriter pmLog;
 	private PrintWriter vmLog;
 	private PrintWriter appLog;
+	private PrintWriter analysisLog;
+	private PrintWriter possibilitiesLog;
+	private PrintWriter executionsLog;
 	private UUID executionUuid;
 	
 	public int getGlobalTicks() {
@@ -37,6 +41,14 @@ public class Monitor {
 			pmLog = new PrintWriter("log/pmlog.txt");
 			vmLog = new PrintWriter("log/vmlog.txt");
 			appLog = new PrintWriter("log/applog.txt");
+			this.analysisLog = new PrintWriter("log/analysis.txt");
+			this.possibilitiesLog = new PrintWriter("log/possibilities.txt");
+			this.executionsLog = new PrintWriter("log/executions.txt");
+			
+			this.analysisLog.println ("GlobalTick;ResourceType;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;");
+			this.possibilitiesLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId");
+			this.executionsLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId;Evaluation");
+			
 			pmLog.println(getLogHeader());
 			vmLog.println(getLogHeader());
 			appLog.println(getLogHeader());
@@ -187,6 +199,50 @@ public class Monitor {
 				}
 			}
 		}
+		
+	}
+	
+	public void logAnalysis(Resource problem, String problemtype) {
+		if(problem!=null){
+			this.analysisLog.println ("GlobalTick;ResourceType;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;");
+			StringBuffer sb = new StringBuffer();
+			sb.append(this.globalTicks);
+			sb.append(";");
+			if (problem instanceof PhysicalMachine) {
+				sb.append(problem.getResourceId());
+				sb.append(";;;");
+			}
+			else if (problem instanceof VirtualMachine) {
+				VirtualMachine vm = (VirtualMachine) problem;
+				if (vm.getPm()!=null){
+					sb.append(vm.getPm().getResourceId());
+					sb.append(";");
+					sb.append(vm.getResourceId());
+					sb.append(";;");
+				}
+			}
+			else {
+				App a = (App) problem;
+				if(a.getVm()!=null) {
+					if(a.getVm().getPm()!=null){
+						sb.append("");
+					}
+				}
+			}
+			
+		}
+		
+	//	this.possibilitiesLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId");
+	//	this.executionsLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId;Evaluation");
+		
+	}
+	
+	public void log (PrintWriter logfile, String text){
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(this.globalTicks);
+		sb.append(";");
+		
 		
 	}
 	
