@@ -1,0 +1,74 @@
+%This file contains the values for the CreateAppInsertIntoVm - Action
+% CPU1ALL - CPU10ALL Contains the allocation history of the destination VM
+% CPU1USE - CPU10USE Contains the usage history of the destination VM
+% MEM1USE - MEM10USE Contains the usage history of the destination VM
+% STOR1USE - STOR10USE Contains the usage history of the destination VM
+%...
+% SLACPU,.... Contains the SLAs of the new app
+% EVAL Contains the evaluated value after the execution
+@relation 'cpu'
+@attribute CPU1ALL real
+@attribute CPU2ALL real
+@attribute CPU3ALL real
+@attribute CPU4ALL real
+@attribute CPU5ALL real
+@attribute CPU6ALL real
+@attribute CPU7ALL real
+@attribute CPU8ALL real
+@attribute CPU9ALL real
+@attribute CPU10ALL real
+@attribute CPU1USE real
+@attribute CPU2USE real
+@attribute CPU3USE real
+@attribute CPU4USE real
+@attribute CPU5USE real
+@attribute CPU6USE real
+@attribute CPU7USE real
+@attribute CPU8USE real
+@attribute CPU9USE real
+@attribute CPU10USE real
+@attribute MEM1ALL real
+@attribute MEM2ALL real
+@attribute MEM3ALL real
+@attribute MEM4ALL real
+@attribute MEM5ALL real
+@attribute MEM6ALL real
+@attribute MEM7ALL real
+@attribute MEM8ALL real
+@attribute MEM9ALL real
+@attribute MEM10ALL real
+@attribute MEM1USE real
+@attribute MEM2USE real
+@attribute MEM3USE real
+@attribute MEM4USE real
+@attribute MEM5USE real
+@attribute MEM6USE real
+@attribute MEM7USE real
+@attribute MEM8USE real
+@attribute MEM9USE real
+@attribute MEM10USE real
+@attribute STOR1ALL real
+@attribute STOR2ALL real
+@attribute STOR3ALL real
+@attribute STOR4ALL real
+@attribute STOR5ALL real
+@attribute STOR6ALL real
+@attribute STOR7ALL real
+@attribute STOR8ALL real
+@attribute STOR9ALL real
+@attribute STOR10ALL real
+@attribute STOR1USE real
+@attribute STOR2USE real
+@attribute STOR3USE real
+@attribute STOR4USE real
+@attribute STOR5USE real
+@attribute STOR6USE real
+@attribute STOR7USE real
+@attribute STOR8USE real
+@attribute STOR9USE real
+@attribute STOR10USE real
+@attribute SLACpu real
+@attribute SLAMemory real
+@attribute SLAStorage real
+@attribute EVAL real
+@data

@@ -25,6 +25,8 @@ public class Configuration {
 	private boolean onlyLearning = false;
 
 	private int appInsertIntoVmCosts;
+
+	private int appMovingCosts;
 	
 	public boolean isOnlyLearning() {
 		return onlyLearning;
@@ -72,8 +74,11 @@ public class Configuration {
 			this.maxPms = Integer.parseInt(properties.getProperty("maxPms"));
 			this.pmStartupCosts = Integer.parseInt(properties.getProperty("pmStartupCosts"));
 			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
+			this.setAppMovingCosts(Integer.parseInt(properties.getProperty("appMovingCosts")));
 			this.setAppInsertIntoVmCosts(Integer.parseInt(properties.getProperty("appInsertIntoVmCosts")));
 			this.onlyLearning = Boolean.parseBoolean(properties.getProperty("onlyLearning"));
+			
+			
 			
 			//knowledge
 			this.KBCreateVmInsertApp = properties.getProperty("KBCreateVmInsertApp");
@@ -135,5 +140,13 @@ public class Configuration {
 
 	public void setAppInsertIntoVmCosts(int appInsertIntoVmCosts) {
 		this.appInsertIntoVmCosts = appInsertIntoVmCosts;
+	}
+
+	public int getAppMovingCosts() {
+		return appMovingCosts;
+	}
+
+	public void setAppMovingCosts(int appMovingCosts) {
+		this.appMovingCosts = appMovingCosts;
 	}
 }
