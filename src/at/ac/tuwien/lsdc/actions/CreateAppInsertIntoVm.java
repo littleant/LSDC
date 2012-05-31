@@ -107,7 +107,7 @@ public class CreateAppInsertIntoVm extends Action {
 			return false;
 		}
 		else {
-			System.out.println("APP - Running Ticks: " + app.getRunningTicks());
+			//System.out.println("APP - Running Ticks: " + app.getRunningTicks());
 			LinkedList<Integer> cpuusagehist = selectedVm.getPm().getCpuUsageHistory(10);	
 			
 			LinkedList<Integer> memusagehist = selectedVm.getPm().getMemoryUsageHistory(10);	

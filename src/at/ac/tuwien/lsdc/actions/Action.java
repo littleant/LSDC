@@ -81,15 +81,27 @@ public abstract class Action {
 		saver.setInstances(knowledgeBase);
 		File file = new File(filepath);
 		if(file.exists()) {
-			System.out.println("deleting file...");
+			System.out.println("deleting file..." + file.getAbsolutePath());
 			System.out.println(file.delete());
 			
-			System.out.println("creating new, empty file...");
+			System.out.println("creating new, empty file..." + file.getAbsolutePath());
 			System.out.println(file.createNewFile());
 		}
-		 
-		saver.setFile(file);
-		saver.writeBatch();
+		if(file.exists() && file.canWrite()) {
+			System.out.println("Exists and can write");
+		}
+		else {
+			System.out.println("Not exists or not writeable");
+		}
+		synchronized (System.out) {
+			saver.setFile(file);
+			System.out.println("save file..." + file.getAbsolutePath());
+			saver.writeBatch();
+			
+		}
+		
+		
+		
 	}
 	
 	public static boolean isOnlyLearning() {

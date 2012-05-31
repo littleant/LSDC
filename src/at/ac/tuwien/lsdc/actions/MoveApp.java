@@ -96,7 +96,7 @@ public class MoveApp extends Action {
 	@Override
 	public boolean evaluate() {
 		if (curInstance == null) {
-			curInstance = createInstance(0); // create a Instance with the past values
+			curInstance = createInstance(0, selectedVm); // create a Instance with the past values
 		}
 		
 		if (app.getSuspendedTicks()>0 || app.getVm().getSuspendedTicks()>0 || app.getVm().getPm().getSuspendedTicks()>0) {
@@ -149,7 +149,7 @@ public class MoveApp extends Action {
 		//is free space available in the VM
 		if (app2.getCpu()+vm.getCurrentCpuUsage() < vm.getCurrentCpuAllocation() && app2.getMemory()+vm.getCurrentMemoryUsage() < vm.getCurrentMemoryAllocation() && app2.getStorage() + vm.getCurrentStorageUsage() < vm.getCurrentCpuAllocation()) {
 		
-			Instance instance = createInstance(Instance.missingValue());
+			Instance instance = createInstance(Instance.missingValue(), vm);
 			instance.setDataset(MoveApp.getKnowledgeBase());
 			
 			
@@ -209,18 +209,18 @@ public class MoveApp extends Action {
 	
 	//create an instance in the format of CreateAppInsertIntoVm.arff
 	//eval can either be a Instance - MissingValue or the evaluation value 
-	private Instance createInstance(double eval) {
+	private Instance createInstance(double eval, VirtualMachine vm) {
 		Instance instance = new Instance(64);
 		
-		LinkedList<Integer> cpuallhist = selectedVm.getCpuAllocationHistory(10);
-		LinkedList<Integer> cpuusehist = selectedVm.getCpuUsageHistory(10);
+		LinkedList<Integer> cpuallhist = vm.getCpuAllocationHistory(10);
+		LinkedList<Integer> cpuusehist = vm.getCpuUsageHistory(10);
 
-		LinkedList<Integer> memallhist = selectedVm.getMemoryAllocationHistory(10);
-		LinkedList<Integer> memusehist = selectedVm.getMemoryUsageHistory(10);
+		LinkedList<Integer> memallhist = vm.getMemoryAllocationHistory(10);
+		LinkedList<Integer> memusehist = vm.getMemoryUsageHistory(10);
 		
 			
-		LinkedList<Integer> storageallhist = selectedVm.getStorageAllocationHistory(10);
-		LinkedList<Integer> storageusehist = selectedVm.getStorageUsageHistory(10);
+		LinkedList<Integer> storageallhist = vm.getStorageAllocationHistory(10);
+		LinkedList<Integer> storageusehist = vm.getStorageUsageHistory(10);
 		
 		//CPU/Memory/Storage - Allocation history before the new vm was created
 		for (int i = 0; i<10;i++) {

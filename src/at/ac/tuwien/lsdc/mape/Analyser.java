@@ -12,6 +12,7 @@ import at.ac.tuwien.lsdc.resources.Resource;
 
 public class Analyser {
 	public Resource getTopProblem() {
+		String problemType="";
 		// Check SLAs against SLA violation regions (red, orange, green)
 		List<PhysicalMachine> pms = Monitor.getInstance().getPms();
 		List<App> apps = new LinkedList<App>();
@@ -62,6 +63,7 @@ public class Analyser {
 		
 		if (criticalAppPercentage >= topRegion) {
 			System.out.println("Top problem is critical app: " + criticalApp.getResourceId());
+			problemType = "CriticalApp";
 			problem = criticalApp;
 		}
 		
@@ -71,6 +73,7 @@ public class Analyser {
 			
 			if (requests.size() > 0) {
 				// take first request and define it as the top problem
+				problemType = "NewApp";
 				problem = requests.get(0).createApp();
 			}
 			
@@ -79,8 +82,12 @@ public class Analyser {
 		if (problem == null) {
 			// take the top problem if there is one that's not in the "green" region
 			if (criticalAppPercentage >= bottomRegion) {
+				problemType = "MediumCriticalApp";
 				problem = criticalApp;
 			}
+		}
+		if(problem!=null){  
+			Monitor.getInstance().logAnalysis(problem, problemType);
 		}
 		
 		return problem;

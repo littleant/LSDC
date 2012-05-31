@@ -182,7 +182,7 @@ public class PhysicalMachine extends Resource {
 		values.add(this.dummyList(maxEntries)); // if no vms are running
 		for (VirtualMachine vm: vms) {
 			values.add(vm.getCpuUsageHistory(maxEntries));
-			System.out.println("value - size: " + values.size());
+			
 		}
 		
 		return this.aggregateValues(values);
