@@ -21,3 +21,5 @@ knowledge/CreateAppInsertIntoVm.arff
 knowledge/CreateVmInsertApp.arff
 log/possibilities.txt
 log
+log/executions.txt
+log/possibilities.txt
