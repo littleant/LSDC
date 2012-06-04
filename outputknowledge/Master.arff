@@ -1,0 +1,10 @@
+@relation masterevaluation
+
+@attribute problemtype {newApp,slaViolation,shortageOfPms,wasteOfResources}
+@attribute resourcetype {pm,vm,app}
+@attribute actiontype string
+@attribute estimationvalue numeric
+@attribute predictionvalue numeric
+@attribute evaluation numeric
+
+@data

@@ -1,0 +1,10 @@
+%This file contains the master evaluation
+@relation 'masterevaluation'
+@attribute problemtype {newApp, slaViolation, shortageOfPms, wasteOfResources}
+@attribute resourcetype {pm, vm, app}
+@attribute estimationvalue NUMERIC
+@attribute predictionvalue NUMERIC
+@attribute evaluation NUMERIC
+
+@data
+newApp,app,10,10,10
