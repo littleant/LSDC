@@ -97,7 +97,7 @@ public class Analyser {
 		}
 		
 		//look for VMs that are over-allocating
-		/*double lowUsagePercentage = 0.2;
+		double lowUsagePercentage = 0.2;
 		if(problem == null) {
 			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
 				if (pm.isRunning()){
@@ -115,7 +115,7 @@ public class Analyser {
 					}
 				}
 			}
-		}*/
+		}
 		
 		
 	   if (problem == null) {
