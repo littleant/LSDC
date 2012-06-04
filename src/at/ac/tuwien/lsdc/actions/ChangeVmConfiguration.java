@@ -43,8 +43,21 @@ public class ChangeVmConfiguration extends Action {
 	public int predict() {
 		this.calculateBetterAllocationValues();
 		
-		// decide how urgent a configurationchange is neccessary
-		// TODO
+		// decide how urgent a configurationchange is 0-100, 100 = urgent
+		int prediction = 0;
+		
+		prediction = (Math.abs(this.vm.getCurrentCpuAllocation() - this.optimizedCpuAllocation) + Math.abs(this.vm.getCurrentMemoryAllocation() - this.optimizedMemoryAllocation) + Math.abs(this.vm.getCurrentStorageAllocation() - this.optimizedStorageAllocation)) / 3;
+		
+		int slaViolationUrgency = 10;
+		int slaViolationCount = this.vm.getNumberOfSlaViolations(this.tickCount);
+		if (prediction < slaViolationUrgency && slaViolationCount > 0) {
+			// reallocation should be neccessary, chose 10% importance
+			prediction = slaViolationUrgency + slaViolationCount;
+			
+			if (prediction > 100) {
+				prediction = 100;
+			}
+		}
 			
 		return 0;
 	}
@@ -150,19 +163,19 @@ public class ChangeVmConfiguration extends Action {
 
 	@Override
 	public boolean preconditions() {
-		// TODO Auto-generated method stub
-		return false;
+		// VMs can always be changed
+		return true;
 	}
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-
+		// TODO
 	}
 
 	@Override
 	public boolean evaluate() {
-		// TODO Auto-generated method stub
+		// TODO
+		
 		return false;
 	}
 
@@ -186,5 +199,4 @@ public class ChangeVmConfiguration extends Action {
 	public static void setTopRegion(int topRegion) {
 		ChangeVmConfiguration.topRegion = topRegion;
 	}
-
 }
