@@ -82,7 +82,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @return The optimized CPU allocation value
 	 */
 	private int calculateOptimizedCpuAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getCurrentCpuAllocation(), this.vm.getCpuAllocationHistory(this.tickCount), this.vm.getCpuUsageHistory(this.tickCount), VirtualMachine.getCpuOverhead());
+		return this.calculateOptimizedAllocation(this.vm.getCpuAllocationHistory(this.tickCount), this.vm.getCpuUsageHistory(this.tickCount), VirtualMachine.getCpuOverhead());
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @return The optimized memory allocation value
 	 */
 	private int calculateOptimizedMemoryAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getCurrentMemoryAllocation(), this.vm.getMemoryAllocationHistory(this.tickCount), this.vm.getMemoryUsageHistory(this.tickCount), VirtualMachine.getMemoryOverhead());
+		return this.calculateOptimizedAllocation(this.vm.getMemoryAllocationHistory(this.tickCount), this.vm.getMemoryUsageHistory(this.tickCount), VirtualMachine.getMemoryOverhead());
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @return The optimized storage allocation value
 	 */
 	private int calculateOptimizedStorageAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getCurrentStorageAllocation(), this.vm.getStorageAllocationHistory(this.tickCount), this.vm.getStorageUsageHistory(this.tickCount), VirtualMachine.getStorageOverhead());
+		return this.calculateOptimizedAllocation(this.vm.getStorageAllocationHistory(this.tickCount), this.vm.getStorageUsageHistory(this.tickCount), VirtualMachine.getStorageOverhead());
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @param usageHistory
 	 * @return Optimized allocation value
 	 */
-	private int calculateOptimizedAllocation(int currentAllocation, List<Integer> allocationHistory, List<Integer> usageHistory, int overhead) {
+	private int calculateOptimizedAllocation(List<Integer> allocationHistory, List<Integer> usageHistory, int overhead) {
 		int allocation = overhead;
 
 		int optimizedAllocation = 0;
