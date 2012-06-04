@@ -228,4 +228,19 @@ public class VirtualMachine extends Resource {
 	public List<App> getApps() {
 		return this.apps;
 	}
+	
+	/**
+	 * Get the number of SLA violations of the apps in this VM for the last n ticks
+	 * 
+	 * @param ticks How many ticks to look in the past
+	 * @return number of SLA violations
+	 */
+	public int getNumberOfSlaViolations(int ticks) {
+		int violations = 0;
+		for (App app : this.apps) {
+			violations += app.getNumberOfSlaViolations(ticks);
+		}
+		
+		return violations;
+	}
 }

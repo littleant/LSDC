@@ -229,5 +229,21 @@ public class PhysicalMachine extends Resource {
 		this.getVms().add(vm);
 		return vm;
 	}
+	
+	/**
+	 * Gets the number of SLA violations for all apps in all VMs on this PM for the last n ticks.
+	 * 
+	 * @param ticks How many ticks to look in the past
+	 * @return number of violations for the last n ticks
+	 */
+	public int getNumberOfSlaViolations(int ticks) {
+		int violations = 0;
+		
+		for (VirtualMachine vm : this.getVms()) {
+			violations += vm.getNumberOfSlaViolations(ticks);
+		}
+		
+		return violations;
+	}
 }
 
