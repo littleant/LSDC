@@ -114,7 +114,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @return Optimized allocation value
 	 */
 	private int calculateOptimizedAllocation(int currentAllocation, List<Integer> allocationHistory, List<Integer> usageHistory, int overhead) {
-		int allocation = currentAllocation;
+		int allocation = 0;
 		
 		int optimizedAllocation = 0;
 		
@@ -179,17 +179,17 @@ public class ChangeVmConfiguration extends Action {
 		
 		// change CPU allocation
 		if (this.vm.getCurrentCpuAllocation() != this.optimizedCpuAllocation) {
-			this.vm.setCurrentCpuAlloction(this.optimizedCpuAllocation + VirtualMachine.getCpuOverhead());
+			this.vm.setCurrentCpuAlloction(this.optimizedCpuAllocation);
 		}
 		
 		// change memory allocation
 		if (this.vm.getCurrentMemoryAllocation() != this.optimizedMemoryAllocation) {
-			this.vm.setCurrentMemoryAlloction(this.optimizedMemoryAllocation + VirtualMachine.getMemoryOverhead());
+			this.vm.setCurrentMemoryAlloction(this.optimizedMemoryAllocation);
 		}
 		
 		// change storage allocation
 		if (this.vm.getCurrentStorageAllocation() != this.optimizedStorageAllocation) {
-			this.vm.setCurrentStorageAlloction(this.optimizedStorageAllocation + VirtualMachine.getStorageOverhead());
+			this.vm.setCurrentStorageAlloction(this.optimizedStorageAllocation);
 		}
 	}
 
