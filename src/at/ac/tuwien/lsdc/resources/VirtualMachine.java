@@ -3,6 +3,8 @@ package at.ac.tuwien.lsdc.resources;
 import java.util.LinkedList;
 import java.util.List;
 
+import at.ac.tuwien.lsdc.Configuration;
+
 public class VirtualMachine extends Resource {
 	private static int cpuOverhead;
 	private static int memoryOverhead;
@@ -60,6 +62,11 @@ public class VirtualMachine extends Resource {
 	}
 	
 	public VirtualMachine(int initialCpu, int initialMemory, int initialStorage, int startupTime) {
+		// set init values
+		VirtualMachine.setCpuOverhead(Configuration.getInstance().getVmCpuOverhead());
+		VirtualMachine.setMemoryOverhead(Configuration.getInstance().getVmMemoryOverhead());
+		VirtualMachine.setStorageOverhead(Configuration.getInstance().getVmStorageOverhead());
+		
 		setNewVmId();
 		this.allocatedCpu.addLast(initialCpu + getCpuOverhead());
 		this.allocatedMemory.addLast(initialMemory + getMemoryOverhead());

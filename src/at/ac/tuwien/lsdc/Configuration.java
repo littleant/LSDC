@@ -38,8 +38,54 @@ public class Configuration {
 	private int vmCpuOverhead;
 	private int vmMemoryOverhead;
 	private int vmStorageOverhead;
+	private int vmConfigurationChangeCosts;
 	
 	private int outsourceCosts;
+	
+	private Configuration() {
+		// read lsdc.properties file
+		Properties properties = new Properties();
+		BufferedInputStream stream;
+		try {
+			stream = new BufferedInputStream(new FileInputStream("lsdc.properties"));
+			properties.load(stream);
+			stream.close();
+			
+			this.topRegion = Integer.parseInt(properties.getProperty("topRegion"));
+			this.bottomRegion = Integer.parseInt(properties.getProperty("bottomRegion"));
+			this.maxPms = Integer.parseInt(properties.getProperty("maxPms"));
+			this.pmStartupCosts = Integer.parseInt(properties.getProperty("pmStartupCosts"));
+			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
+			this.setAppMovingCosts(Integer.parseInt(properties.getProperty("appMovingCosts")));
+			this.setAppInsertIntoVmCosts(Integer.parseInt(properties.getProperty("appInsertIntoVmCosts")));
+			this.setActionOnlyLearning("true".equals(properties.getProperty("actionOnlyLearning").trim()));
+			System.out.println("CONFIG1: " + "true".equals(properties.getProperty("plannerOnlyLearning").trim()));
+			this.setPlannerOnlyLearning("true".equals(properties.getProperty("plannerOnlyLearning").trim()));
+			
+			//evaluation factors for global evaluation
+			this.setFactorSlaViolations(Integer.parseInt(properties.getProperty("factorSlaViolations")));
+			this.setFactorUsageEvaluation(Integer.parseInt(properties.getProperty("factorUsageEvaluation")));
+			this.setFactorCostsEvaluation(Double.parseDouble(properties.getProperty("factorCostsEvaluation")));
+			//knowledge
+			this.KBCreateVmInsertApp = properties.getProperty("KBCreateVmInsertApp");
+			this.KBCreateAppInsertIntoVm = properties.getProperty("KBCreateAppInsertIntoVm");
+			this.KBMoveVm = properties.getProperty("KBMoveVm");
+			this.setKBMaster(properties.getProperty("KBMaster"));
+			
+			// VM Overhead
+			this.vmCpuOverhead = Integer.parseInt(properties.getProperty("vmCpuOverhead"));
+			this.vmMemoryOverhead = Integer.parseInt(properties.getProperty("vmMemoryOverhead"));
+			this.vmStorageOverhead = Integer.parseInt(properties.getProperty("vmStorageOverhead"));
+			
+			this.setVmConfigurationChangeCosts(Integer.parseInt(properties.getProperty("vmConfigurationChangeCosts")));
+			
+			this.setOutsourceCosts(Integer.parseInt(properties.getProperty("outsourceCosts")));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public int getVmCpuOverhead() {
 		return vmCpuOverhead;
@@ -87,49 +133,6 @@ public class Configuration {
 
 	public void setMaxPms(Integer maxPms) {
 		this.maxPms = maxPms;
-	}
-	
-	private Configuration() {
-		// read lsdc.properties file
-		Properties properties = new Properties();
-		BufferedInputStream stream;
-		try {
-			stream = new BufferedInputStream(new FileInputStream("lsdc.properties"));
-			properties.load(stream);
-			stream.close();
-			
-			this.topRegion = Integer.parseInt(properties.getProperty("topRegion"));
-			this.bottomRegion = Integer.parseInt(properties.getProperty("bottomRegion"));
-			this.maxPms = Integer.parseInt(properties.getProperty("maxPms"));
-			this.pmStartupCosts = Integer.parseInt(properties.getProperty("pmStartupCosts"));
-			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
-			this.setAppMovingCosts(Integer.parseInt(properties.getProperty("appMovingCosts")));
-			this.setAppInsertIntoVmCosts(Integer.parseInt(properties.getProperty("appInsertIntoVmCosts")));
-			this.setActionOnlyLearning("true".equals(properties.getProperty("actionOnlyLearning").trim()));
-			this.setPlannerOnlyLearning("true".equals(properties.getProperty("plannerOnlyLearning").trim()));
-			
-			this.setDifferentOutputDirectory("true".equals(properties.getProperty("differentOutputDirectory").trim()));
-			//evaluation factors for global evaluation
-			this.setFactorSlaViolations(Integer.parseInt(properties.getProperty("factorSlaViolations")));
-			this.setFactorUsageEvaluation(Integer.parseInt(properties.getProperty("factorUsageEvaluation")));
-			this.setFactorCostsEvaluation(Double.parseDouble(properties.getProperty("factorCostsEvaluation")));
-			//knowledge
-			this.KBCreateVmInsertApp = properties.getProperty("KBCreateVmInsertApp");
-			this.KBCreateAppInsertIntoVm = properties.getProperty("KBCreateAppInsertIntoVm");
-			this.KBMoveVm = properties.getProperty("KBMoveVm");
-			this.setKBMaster(properties.getProperty("KBMaster"));
-			
-			// VM Overhead
-			this.vmCpuOverhead = Integer.parseInt(properties.getProperty("vmCpuOverhead"));
-			this.vmMemoryOverhead = Integer.parseInt(properties.getProperty("vmMemoryOverhead"));
-			this.vmStorageOverhead = Integer.parseInt(properties.getProperty("vmStorageOverhead"));
-			
-			this.setOutsourceCosts(Integer.parseInt(properties.getProperty("outsourceCosts")));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public Integer getPmStartupCosts() {
@@ -256,6 +259,14 @@ public class Configuration {
 		this.outsourceCosts = outsourceCosts;
 	}
 
+	public int getVmConfigurationChangeCosts() {
+		return vmConfigurationChangeCosts;
+	}
+
+	public void setVmConfigurationChangeCosts(int vmConfigurationChangeCosts) {
+		this.vmConfigurationChangeCosts = vmConfigurationChangeCosts;
+	}
+	
 	public boolean isDifferentOutputDirectory() {
 		return differentOutputDirectory;
 	}
