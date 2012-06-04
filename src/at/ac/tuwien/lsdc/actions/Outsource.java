@@ -1,5 +1,6 @@
 package at.ac.tuwien.lsdc.actions;
 
+import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.Resource;
 
@@ -21,6 +22,9 @@ public class Outsource extends Action {
 		if (problemApp instanceof App) {
 			problem = (App) problemApp;
 		}
+		
+		// set init values
+		Outsource.setCosts(Configuration.getInstance().getOutsourceCosts());
 	}
 
 	@Override

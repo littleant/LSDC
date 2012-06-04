@@ -36,13 +36,26 @@ public abstract class Action {
 	protected long globalTickExecution=0;
 	
 	private String problemType ;
-	// initialize the action
-	public abstract void init(Resource problemApp);
 	
-	// predict the outcome of the actions over the next ticks
+	/**
+	 * Initialize the action
+	 * 
+	 * @param problem Problem the action should solve
+	 */
+	public abstract void init(Resource problem);
+	
+	/**
+	 * Predict the outcome of the action if it would be used and try to calculate how good the action would perform
+	 * 
+	 * @return A value that evaluates the action
+	 */
 	public abstract int predict();
 	
-	// estimate the direct costs of the action
+	/**
+	 * Estimate the direct costs of the action
+	 * 
+	 * @return cost value
+	 */
 	public abstract int estimate();
 	
 	// are the preconditions fulfilled?

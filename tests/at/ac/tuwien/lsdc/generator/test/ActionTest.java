@@ -1,6 +1,7 @@
 package at.ac.tuwien.lsdc.generator.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -21,6 +22,14 @@ public class ActionTest {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
+	}
+	
+	@Test
+	public void testIntegerToFloat() {
+		int a = 10;
+		int b = 20;
+		
+		assertSame(50, (int) (a / (float) b * 100));
 	}
 
 }

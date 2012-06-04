@@ -1,290 +1,177 @@
 package at.ac.tuwien.lsdc.actions;
 
-import java.io.IOException;
-import java.util.LinkedList;
+import java.util.List;
 
-import org.apache.commons.math3.random.RandomData;
-import org.apache.commons.math3.random.RandomDataImpl;
-
-import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
-import weka.classifiers.functions.MultilayerPerceptron;
-import weka.core.Instance;
-import weka.core.Instances;
 import at.ac.tuwien.lsdc.Configuration;
-import at.ac.tuwien.lsdc.generator.RequestGenerator;
-import at.ac.tuwien.lsdc.mape.Monitor;
-import at.ac.tuwien.lsdc.resources.App;
-import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class ChangeVmConfiguration extends Action {
-	private static Instances knowledgeBase = null;
-	private static Classifier classifier = null;
-	private static Evaluation evaluation = null;
-	private static RandomData randomData = new RandomDataImpl();
-	
-	private App app;
 	private VirtualMachine vm;
-	private static int vmStartupCosts = 10;
-	private static int pmStartupCosts = 20;	
-	private static int vmChangeConfigurationCosts = 20;
+	private int optimizedCpuAllocation;
+	private int optimizedMemoryAllocation;
+	private int optimizedStorageAllocation;
+	
+	private static int configurationChangeCosts;
+	private static int topRegion;
+	private static int bottomRegion;
+	
+	// tick count to look in the past
+	private final int tickCount = 10;
+	
+	@Override
+	public void init(Resource problem) {
+		if (problem instanceof VirtualMachine) {
+			this.vm = (VirtualMachine) problem;
+		}
+		
+		// set init values
+		ChangeVmConfiguration.setConfigurationChangeCosts(Configuration.getInstance().getVmConfigurationChangeCosts());
+		ChangeVmConfiguration.setTopRegion(Configuration.getInstance().getTopRegion());
+		ChangeVmConfiguration.setBottomRegion(Configuration.getInstance().getBottomRegion());
+	}
 
-	
-	private int newCpuConfiguration;
-	private int newMemorayConfiguration;
-	private int newStorageConfiguration;
-	
-	private PhysicalMachine selectedPm = null;
-	private boolean preconditionsOk = false;
-	private int costs = 0;
-	private int waitForEvaluation = 10;
-	private Instance curInstance;
-	private int prediction;
-	
-	
-	public static Instances getKnowledgeBase() {
-		if (knowledgeBase ==null ) {
-			try {
-				//load knowledgebase from file
-				ChangeVmConfiguration.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
-				
-				//prediction is also performed therefore the classifier and the evaluator must be instantiated
-				if(!isOnlyLearning()) {
-					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(ChangeVmConfiguration.getKnowledgeBase());
-					evaluation = new Evaluation(ChangeVmConfiguration.getKnowledgeBase());
-					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
-					
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return knowledgeBase;
+	public static int getBottomRegion() {
+		return bottomRegion;
 	}
-	
-	public void terminate() {
-		try {
-			Action.saveKnowledge(Configuration.getInstance().getKBCreateVmInsertApp(), ChangeVmConfiguration.getKnowledgeBase());
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
+
+	public static void setBottomRegion(int bottomRegion) {
+		ChangeVmConfiguration.bottomRegion = bottomRegion;
 	}
-	
+
 	@Override
 	public int predict() {
-		int output = 0;
-		if (isOnlyLearning()) { //Randomized predictions for learning
-			return randomData.nextInt(0, 100);
-		}
-		else { //Use WEKA - evaluation for prediction
-			//Create new WEKA - instance
-			return prediction; 
-			
-		}			
+		this.calculateBetterAllocationValues();
 		
+		// decide how urgent a configurationchange is neccessary
+		// TODO
+			
+		return 0;
 	}
 
+	/**
+	 * Calculates better VM allocation values for the given VM, depending in which zone it's currently in.
+	 */
+	private void calculateBetterAllocationValues() {
+		this.optimizedCpuAllocation = this.calculateOptimizedCpuAllocation(this.tickCount);
+		this.optimizedMemoryAllocation = this.calculateOptimizedMemoryAllocation(this.tickCount);
+		this.optimizedStorageAllocation = this.calculateOptimizedStorageAllocation(this.tickCount);
+	}
+	
+	/**
+	 * Calculates an optimized allocation value for the VM
+	 * 
+	 * @param ticks Based on the last n ticks
+	 * @return The optimized allocation value
+	 */
+	public int calculateOptimizedCpuAllocation(int ticks) {
+		int allocation = this.vm.getCurrentCpuAllocation();
+		
+		List<Integer> cpuAllocationHistory = this.vm.getCpuAllocationHistory(this.tickCount);
+		List<Integer> cpuUsageHistory = this.vm.getCpuUsageHistory(this.tickCount);
+		
+		int optimizedAllocation = 0;
+		
+		int topRegionReached = 0;
+		int bottomRegionReached = 0;
+		
+		// calculate how often the VM went into a dangerous zone in the last n ticks (compare allocated to used resources)
+		for (int i = 0; i < cpuAllocationHistory.size(); i++) {
+			Integer allocated = cpuAllocationHistory.get(i);
+			Integer used = cpuUsageHistory.get(i);
+			
+			// calculate percentage of the used resources vs. the allocated resources
+			int ratio = (int) ((used / (float) allocated) * 100);
+			if (ratio > ChangeVmConfiguration.topRegion) {
+				// need more resources
+				topRegionReached++;
+			} else if (ratio < ChangeVmConfiguration.bottomRegion) {
+				// need less resources
+				bottomRegionReached++;
+			} else {
+				// resource allocation is perfect
+				// do nothing
+			}
+			
+			// calculate allocation so that "used" is 95% of the allocation
+			optimizedAllocation = (int) ((float) used / ChangeVmConfiguration.topRegion * 100);
+			
+			if (topRegionReached > 1 || bottomRegionReached > 1) {
+				// need to change the allocation
+				if (allocation < optimizedAllocation) {
+					allocation = optimizedAllocation;
+				}
+			}
+		}
+		
+		if (allocation > 100) {
+			allocation = 100;
+		} else if (allocation < 0) {
+			allocation = 0;
+		}
+		
+		return allocation;
+	}
+	
+	public int calculateOptimizedMemoryAllocation(int ticks) {
+		int allocation = this.vm.getCurrentMemoryAllocation();
+		
+		// TODO
+		
+		return allocation;
+	}
+	
+	public int calculateOptimizedStorageAllocation(int ticks) {
+		int allocation = this.vm.getCurrentStorageAllocation();
+		
+		// TODO
+		
+		return allocation;
+	}
+	
 	@Override
 	public int estimate() {
-		return costs;
+		// TODO: no costs if we shrink the VM?
+		return ChangeVmConfiguration.configurationChangeCosts;
 	}
 
 	@Override
 	public boolean preconditions() {
-		return preconditionsOk;
-	}
-	
-	@Override
-	public boolean evaluate() {
-		if (curInstance == null) {
-			curInstance = createInstance(0,vm); // create a Instance with the past values
-		}
-		
-		if (app.getSuspendedTicks()>0 || app.getVm().getSuspendedTicks()>0 || app.getVm().getPm().getSuspendedTicks()>0) {
-			return false;
-		}
-		else if (waitForEvaluation>0) {
-			waitForEvaluation--;
-			return false;
-		}
-		else {
-			System.out.println("APP - Running Ticks: " + app.getRunningTicks());
-			LinkedList<Integer> cpuusagehist =  vm.getCpuUsageHistory(10);	
-			
-			LinkedList<Integer> memusagehist = vm.getMemoryUsageHistory(10);	
-				
-			LinkedList<Integer> storageusagehist = vm.getStorageUsageHistory(10);	
-
-			double evaluation =(255- calculateUsageRatio(cpuusagehist, 85) - calculateUsageRatio(memusagehist, 85) - calculateUsageRatio(storageusagehist, 85))/255 ;
-			
-			//subtract SLA Violations
-			evaluation -= (app.getCpuSlaErrorcount()+app.getMemorySlaErrorcount()+app.getStorageSlaErrorcount())/10;
-			
-			//minimum of 0
-			evaluation = Math.max(0, evaluation);
-			Monitor.getInstance().logExecution(vm, this, evaluation, this.globalTickExecution);
-			curInstance.setValue(getKnowledgeBase().attribute(63), evaluation);
-			this.setLocalEvaluation(evaluation);
-			getKnowledgeBase().add(curInstance);
-		}
-		return true;
-	}
-	
-	private int clusterValue (int value) {
-		return (int)(Math.ceil(value/10)*10);
-	}
-	
-	private double calculateUsageRatio(LinkedList<Integer> usage, int goal) {
-		double result = 0;
-		for(int i=0; i<usage.size();i++){ 
-			result += Math.abs(85-usage.get(i))/usage.size();
-		}
-		return result;
-	}
-	
-	private void createConfiguration(VirtualMachine vm){
-		
-		newCpuConfiguration=vm.getCurrentCpuAllocation()-vm.getCurrentCpuUsage();
-		newMemorayConfiguration=vm.getCurrentMemoryAllocation()-vm.getCurrentMemoryUsage();
-		newStorageConfiguration=vm.getCurrentStorageAllocation()-vm.getCurrentStorageUsage(); 
-				
-	}
-
-	//calculate if an App fits to a pm
-	//TODO: gst: use WEKA to calc fit factor!!
-	private int calculateFit(App app2, PhysicalMachine pm) {
-		int output = 0;
-		if (Action.isOnlyLearning()== false ){
-			//is space available
-			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {		
-				Instance instance = createInstance(Instance.missingValue(), vm);
-				instance.setDataset(CreateAppInsertIntoVm.getKnowledgeBase());
-				
-				try {
-					output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		else {
-			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {
-				return randomData.nextInt(1, 100);
-			}
-		}
-		return output;
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
 	public void execute() {
-		globalTickExecution = Monitor.getInstance().getGlobalTicks();
-		VirtualMachine oldVm = null;
-		
-		//if the App existed before
-		if (app.getVm()!=null) {
-			oldVm = app.getVm();
-		}
-		
-		//remove the app from the request- queue??? 
-		if(app.getOriginalRequest()!=null) {
-			RequestGenerator.getInstance().removeRequestFromQueue(app.getOriginalRequest());
-		}
-		
-		if (selectedPm.isRunning()==false) {
-			selectedPm.startMachine();
-		}
-		
-		//TODO: gst: hard - coded startup value!!
-		VirtualMachine vm = selectedPm.createNewVm(app.getCpu(), app.getMemory(), app.getStorage(), 10);
-		vm.createApp(this.app);
-		
-		if(oldVm!=null) {
-			oldVm.getApps().remove(app);
-			//TODO: gst: what happens if the VM is now empty??
-			if(oldVm.getApps().size()==0) {
-				oldVm.terminate();
-			}
-		}
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void init(Resource problemVm) {
-		this.preconditionsOk=false;
-		this.selectedPm=null;
-		this.costs=0;
-		this.app=null;
-		this.setProblemResource(problemVm);
-		this.setProblemType(problemVm.getProblemType());
-		problemVm.setProblemType("");
-		
-		ChangeVmConfiguration.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
-		ChangeVmConfiguration.pmStartupCosts = Configuration.getInstance().getPmStartupCosts();
-		ChangeVmConfiguration.vmChangeConfigurationCosts = Configuration.getInstance().getPmStartupCosts();
-		
-		
-		if (problemVm instanceof VirtualMachine){
-			vm = (VirtualMachine)problemVm;
-			boolean found = false;
-			int fitFactor = 0;
-			int curFit = 0;
-			
-			if((100 - vm.getPm().getCurrentCpuAllocation())>=newCpuConfiguration &&(100 - vm.getPm().getCurrentMemoryAllocation())>=newMemorayConfiguration&&(100 - vm.getPm().getCurrentStorageAllocation())>=newStorageConfiguration){
-				preconditionsOk = true;
-				costs += pmStartupCosts;
-				selectedPm = vm.getPm();
-				prediction  =calculateFit(app, vm.getPm());
-			}
-			
+	public boolean evaluate() {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
+
+	@Override
+	public void terminate() {
+		// unused
 	}
-	private Instance createInstance(double eval, VirtualMachine vm) {
-		Instance instance = new Instance(64);
-		
-		LinkedList<Integer> cpuallhist = vm.getCpuAllocationHistory(10);
-		LinkedList<Integer> cpuusehist = vm.getCpuUsageHistory(10);
 
-		LinkedList<Integer> memallhist = vm.getMemoryAllocationHistory(10);
-		LinkedList<Integer> memusehist = vm.getMemoryUsageHistory(10);
-		
-			
-		LinkedList<Integer> storageallhist = vm.getStorageAllocationHistory(10);
-		LinkedList<Integer> storageusehist = vm.getStorageUsageHistory(10);
-		
-		//CPU/Memory/Storage - Allocation history before the new vm was created
-		for (int i = 0; i<10;i++) {
-				//cpu allocation
-				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
-				//cpu usage
-				instance.setValue(getKnowledgeBase().attribute(i+10), clusterValue(cpuusehist.get(i)));
-				
-				//memory allocation
-				instance.setValue(getKnowledgeBase().attribute(i+20),clusterValue( memallhist.get(i)));
-				//memory usage
-				instance.setValue(getKnowledgeBase().attribute(i+30),clusterValue( memusehist.get(i)));
-				
-				//storage allocation
-				instance.setValue(getKnowledgeBase().attribute(i+40), clusterValue(storageallhist.get(i)));
-				//storage usage 
-				instance.setValue(getKnowledgeBase().attribute(i+50),clusterValue( storageusehist.get(i)));
-		}
-		
-		//SLAs
-		//CPU
-		instance.setValue(getKnowledgeBase().attribute(60), clusterValue(app.getCpu()));
-		//Memory
-		instance.setValue(getKnowledgeBase().attribute(61),clusterValue(app.getMemory()));
-		//Storage
-		instance.setValue(getKnowledgeBase().attribute(62), clusterValue(app.getStorage()));
-		
-		//Evaluation
-		instance.setValue(getKnowledgeBase().attribute(63), eval);
+	public static int getConfigurationChangeCosts() {
+		return configurationChangeCosts;
+	}
 
-		return instance;
+	public static void setConfigurationChangeCosts(int configurationChangeCosts) {
+		ChangeVmConfiguration.configurationChangeCosts = configurationChangeCosts;
+	}
+
+	public static int getTopRegion() {
+		return topRegion;
+	}
+
+	public static void setTopRegion(int topRegion) {
+		ChangeVmConfiguration.topRegion = topRegion;
 	}
 
 }

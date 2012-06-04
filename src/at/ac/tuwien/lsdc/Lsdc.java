@@ -3,23 +3,14 @@ package at.ac.tuwien.lsdc;
 import java.io.IOException;
 import java.util.List;
 
-import at.ac.tuwien.lsdc.actions.Outsource;
 import at.ac.tuwien.lsdc.generator.Request;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.mape.Monitor;
 import at.ac.tuwien.lsdc.mape.SchedulingAgent;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
-import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class Lsdc {
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		// Initialize values
-		VirtualMachine.setCpuOverhead(Configuration.getInstance().getVmCpuOverhead());
-		VirtualMachine.setMemoryOverhead(Configuration.getInstance().getVmMemoryOverhead());
-		VirtualMachine.setStorageOverhead(Configuration.getInstance().getVmStorageOverhead());
-		
-		Outsource.setCosts(Configuration.getInstance().getOutsourceCosts());
-		
 		// add a request to request queue
 		List<Request> requests = RequestGenerator.getInstance().generateRequests();
 		RequestGenerator.getInstance().setRequests(requests);
