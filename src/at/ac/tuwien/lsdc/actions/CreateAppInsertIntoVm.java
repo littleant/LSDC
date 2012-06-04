@@ -26,9 +26,6 @@ public class CreateAppInsertIntoVm extends Action {
 	private static Evaluation evaluation = null;
 	private static RandomData randomData = new RandomDataImpl();
 	
-	
-
-
 	private App app;
 	private static int vmStartupCosts = 10;
 	private static int pmStartupCosts = 20;
@@ -39,7 +36,6 @@ public class CreateAppInsertIntoVm extends Action {
 	private int prediction = 0;
 	private int waitForEvaluation = 10;
 	private Instance curInstance;
-	
 	
 	public static Instances getKnowledgeBase() {
 		if (knowledgeBase ==null ) {
@@ -81,7 +77,6 @@ public class CreateAppInsertIntoVm extends Action {
 			return prediction;
 		}			
 	}
-
 
 	@Override
 	public int estimate() {

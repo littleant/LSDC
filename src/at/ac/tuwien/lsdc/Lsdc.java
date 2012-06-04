@@ -3,6 +3,7 @@ package at.ac.tuwien.lsdc;
 import java.io.IOException;
 import java.util.List;
 
+import at.ac.tuwien.lsdc.actions.Outsource;
 import at.ac.tuwien.lsdc.generator.Request;
 import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.mape.Monitor;
@@ -16,6 +17,8 @@ public class Lsdc {
 		VirtualMachine.setCpuOverhead(Configuration.getInstance().getVmCpuOverhead());
 		VirtualMachine.setMemoryOverhead(Configuration.getInstance().getVmMemoryOverhead());
 		VirtualMachine.setStorageOverhead(Configuration.getInstance().getVmStorageOverhead());
+		
+		Outsource.setCosts(Configuration.getInstance().getOutsourceCosts());
 		
 		// add a request to request queue
 		List<Request> requests = RequestGenerator.getInstance().generateRequests();

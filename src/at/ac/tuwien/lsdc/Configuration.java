@@ -36,6 +36,8 @@ public class Configuration {
 	private int vmCpuOverhead;
 	private int vmMemoryOverhead;
 	private int vmStorageOverhead;
+	
+	private int outsourceCosts;
 
 	public int getVmCpuOverhead() {
 		return vmCpuOverhead;
@@ -119,6 +121,8 @@ public class Configuration {
 			this.vmCpuOverhead = Integer.parseInt(properties.getProperty("vmCpuOverhead"));
 			this.vmMemoryOverhead = Integer.parseInt(properties.getProperty("vmMemoryOverhead"));
 			this.vmStorageOverhead = Integer.parseInt(properties.getProperty("vmStorageOverhead"));
+			
+			this.setOutsourceCosts(Integer.parseInt(properties.getProperty("outsourceCosts")));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -240,5 +244,13 @@ public class Configuration {
 
 	public void setPlannerOnlyLearning(boolean plannerOnlyLearning) {
 		this.plannerOnlyLearning = plannerOnlyLearning;
+	}
+
+	public int getOutsourceCosts() {
+		return outsourceCosts;
+	}
+
+	public void setOutsourceCosts(int outsourceCosts) {
+		this.outsourceCosts = outsourceCosts;
 	}
 }
