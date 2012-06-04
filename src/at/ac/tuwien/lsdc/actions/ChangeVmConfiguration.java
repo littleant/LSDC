@@ -157,7 +157,6 @@ public class ChangeVmConfiguration extends Action {
 	
 	@Override
 	public int estimate() {
-		// TODO: no costs if we shrink the VM?
 		return ChangeVmConfiguration.configurationChangeCosts;
 	}
 
@@ -169,14 +168,27 @@ public class ChangeVmConfiguration extends Action {
 
 	@Override
 	public void execute() {
-		// TODO
+		// change CPU allocation
+		if (this.vm.getCurrentCpuAllocation() != this.optimizedCpuAllocation) {
+			this.vm.setCurrentCpuAlloction(this.optimizedCpuAllocation);
+		}
+		
+		// change memory allocation
+		if (this.vm.getCurrentMemoryAllocation() != this.optimizedMemoryAllocation) {
+			this.vm.setCurrentMemoryAlloction(this.optimizedMemoryAllocation);
+		}
+		
+		// change storage allocation
+		if (this.vm.getCurrentStorageAllocation() != this.optimizedStorageAllocation) {
+			this.vm.setCurrentStorageAlloction(this.optimizedStorageAllocation);
+		}
 	}
 
 	@Override
 	public boolean evaluate() {
-		// TODO
+		// nothing to do here		
 		
-		return false;
+		return true;
 	}
 
 	@Override
