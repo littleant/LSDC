@@ -27,8 +27,6 @@ public class CreateAppInsertIntoVm extends Action {
 	private static RandomData randomData = new RandomDataImpl();
 	
 	private App app;
-	private static int vmStartupCosts = 10;
-	private static int pmStartupCosts = 20;
 	
 	private VirtualMachine selectedVm = null;
 	private boolean preconditionsOk = false;
@@ -179,7 +177,6 @@ public class CreateAppInsertIntoVm extends Action {
 	public void init(Resource problemApp) {
 		this.setProblemResource(problemApp);
 		this.setProblemType(problemApp.getProblemType());
-		problemApp.setProblemType("");
 		this.preconditionsOk=false;
 		this.curInstance = null;
 		this.selectedVm=null;
@@ -191,7 +188,6 @@ public class CreateAppInsertIntoVm extends Action {
 		if (problemApp instanceof App){ //only apps can be inserted
 			app = (App)problemApp;
 			if(app.getVm()==null) { //only new apps can be inserted
-				boolean found = false;
 			    prediction = 0;
 				int curFitFactor =0;
 				
@@ -203,7 +199,6 @@ public class CreateAppInsertIntoVm extends Action {
 								preconditionsOk=true;
 								prediction = curFitFactor;
 								this.selectedVm = vm;
-								
 							}
 						}
 					}

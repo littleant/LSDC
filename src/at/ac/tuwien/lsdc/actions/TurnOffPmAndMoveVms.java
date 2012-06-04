@@ -184,14 +184,12 @@ public class TurnOffPmAndMoveVms extends Action {
 	public void init(Resource problemPm) {
 		this.setProblemResource(problemPm);
 		this.setProblemType(problemPm.getProblemType());
-		problemPm.setProblemType("");
 		
 		this.preconditionsOk=false;
 		this.curInstance = null;
-		this.costs=0;
 		this.pm=null;
 		
-		this.costs = Configuration.getInstance().getAppMovingCosts();
+		this.costs = 0; //Configuration.getInstance().getAppMovingCosts();
 		
 		if (problemPm instanceof PhysicalMachine){ //only pms can be turned off
 			pm = (PhysicalMachine)problemPm;

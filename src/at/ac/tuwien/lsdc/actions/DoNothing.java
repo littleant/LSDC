@@ -13,6 +13,8 @@ public class DoNothing extends Action {
 	
 	@Override
 	public void init(Resource problemApp) {
+		this.setProblemResource(problemApp);
+		this.setProblemType(problemApp.getProblemType());
 		this.setProblem(problemApp);
 	}
 

@@ -13,7 +13,6 @@ import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
 import weka.core.Instances;
 import at.ac.tuwien.lsdc.Configuration;
-import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.mape.Monitor;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
@@ -30,8 +29,6 @@ public class MoveApp extends Action {
 
 
 	private App app;
-	private static int vmStartupCosts = 10;
-	private static int pmStartupCosts = 20;
 	
 	private VirtualMachine selectedVm = null;
 	private boolean preconditionsOk = false;
@@ -184,7 +181,6 @@ public class MoveApp extends Action {
 	public void init(Resource problemApp) {
 		this.setProblemResource(problemApp);
 		this.setProblemType(problemApp.getProblemType());
-		problemApp.setProblemType("");
 		this.preconditionsOk=false;
 		this.curInstance = null;
 		this.selectedVm=null;

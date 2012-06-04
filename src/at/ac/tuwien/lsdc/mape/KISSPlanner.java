@@ -30,7 +30,6 @@ public class KISSPlanner extends Planner {
 				Action a = (Action) ac.newInstance();
 				a.init(problem);
 				if (a.preconditions() && calculateFit(a)<currentFit) {
-					System.out.println("Current Problem: " + problem.getResourceId());
 					selectedAction= a;
 					currentFit = calculateFit(a);
 				}

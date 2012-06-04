@@ -28,6 +28,8 @@ public class Configuration {
 	
 	private boolean actionOnlyLearning = false;
 	private boolean plannerOnlyLearning = false;
+	
+	private boolean differentOutputDirectory = false;
 
 	private int appInsertIntoVmCosts;
 
@@ -263,5 +265,13 @@ public class Configuration {
 
 	public void setVmConfigurationChangeCosts(int vmConfigurationChangeCosts) {
 		this.vmConfigurationChangeCosts = vmConfigurationChangeCosts;
+	}
+	
+	public boolean isDifferentOutputDirectory() {
+		return differentOutputDirectory;
+	}
+
+	public void setDifferentOutputDirectory(boolean differentOutputDirectory) {
+		this.differentOutputDirectory = differentOutputDirectory;
 	}
 }

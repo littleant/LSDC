@@ -63,7 +63,6 @@ public class Analyser {
 		Resource problem = null;
 		
 		if (criticalAppPercentage >= topRegion) {
-			System.out.println("Top problem is critical app: " + criticalApp.getResourceId());
 			problem = criticalApp;
 			problem.setProblemType("slaViolation");
 		}
@@ -80,7 +79,7 @@ public class Analyser {
 			
 		}
 		
-		int lowUsageBenchmark = 20;
+		int lowUsageBenchmark = 10;
 		//look for PMs that are not really used
 		if (problem == null) {
 			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
@@ -98,7 +97,7 @@ public class Analyser {
 		}
 		
 		//look for VMs that are over-allocating
-		double lowUsagePercentage = 0.2;
+		/*double lowUsagePercentage = 0.2;
 		if(problem == null) {
 			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
 				if (pm.isRunning()){
@@ -116,7 +115,7 @@ public class Analyser {
 					}
 				}
 			}
-		}
+		}*/
 		
 		
 	   if (problem == null) {
