@@ -39,6 +39,9 @@ public class ActionTest {
 		cpuUsage.add(20);
 		cpuUsage.add(25);
 		cpuUsage.add(30);
+		cpuUsage.add(10);
+		cpuUsage.add(5);
+		cpuUsage.add(0);
 		
 		LinkedList<Integer> memoryUsage = cpuUsage;
 		LinkedList<Integer> storageUsage = cpuUsage;
