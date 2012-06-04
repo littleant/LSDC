@@ -101,7 +101,7 @@ public class ChangeVmConfiguration extends Action {
 	@Override
 	public boolean evaluate() {
 		if (curInstance == null) {
-			curInstance = createInstance(0); // create a Instance with the past values
+			curInstance = createInstance(0,vm); // create a Instance with the past values
 		}
 		
 		if (app.getSuspendedTicks()>0 || app.getVm().getSuspendedTicks()>0 || app.getVm().getPm().getSuspendedTicks()>0) {
@@ -113,11 +113,11 @@ public class ChangeVmConfiguration extends Action {
 		}
 		else {
 			System.out.println("APP - Running Ticks: " + app.getRunningTicks());
-			LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(10);	
+			LinkedList<Integer> cpuusagehist =  vm.getCpuUsageHistory(10);	
 			
-			LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(10);	
+			LinkedList<Integer> memusagehist = vm.getMemoryUsageHistory(10);	
 				
-			LinkedList<Integer> storageusagehist = selectedPm.getStorageUsageHistory(10);	
+			LinkedList<Integer> storageusagehist = vm.getStorageUsageHistory(10);	
 
 			double evaluation =(255- calculateUsageRatio(cpuusagehist, 85) - calculateUsageRatio(memusagehist, 85) - calculateUsageRatio(storageusagehist, 85))/255 ;
 			
@@ -161,7 +161,7 @@ public class ChangeVmConfiguration extends Action {
 		if (Action.isOnlyLearning()== false ){
 			//is space available
 			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {		
-				Instance instance = createInstance(Instance.missingValue());
+				Instance instance = createInstance(Instance.missingValue(), vm);
 				instance.setDataset(CreateAppInsertIntoVm.getKnowledgeBase());
 				
 				try {
@@ -242,18 +242,18 @@ public class ChangeVmConfiguration extends Action {
 	}
 	
 	}
-	private Instance createInstance(double eval) {
+	private Instance createInstance(double eval, VirtualMachine vm) {
 		Instance instance = new Instance(64);
 		
-		LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(10);
-		LinkedList<Integer> cpuusehist = selectedPm.getCpuUsageHistory(10);
+		LinkedList<Integer> cpuallhist = vm.getCpuAllocationHistory(10);
+		LinkedList<Integer> cpuusehist = vm.getCpuUsageHistory(10);
 
-		LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(10);
-		LinkedList<Integer> memusehist = selectedPm.getMemoryUsageHistory(10);
+		LinkedList<Integer> memallhist = vm.getMemoryAllocationHistory(10);
+		LinkedList<Integer> memusehist = vm.getMemoryUsageHistory(10);
 		
 			
-		LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(10);
-		LinkedList<Integer> storageusehist = selectedPm.getStorageUsageHistory(10);
+		LinkedList<Integer> storageallhist = vm.getStorageAllocationHistory(10);
+		LinkedList<Integer> storageusehist = vm.getStorageUsageHistory(10);
 		
 		//CPU/Memory/Storage - Allocation history before the new vm was created
 		for (int i = 0; i<10;i++) {

@@ -36,28 +36,31 @@ public abstract class Action {
 	protected long globalTickExecution=0;
 	
 	private String problemType ;
-	//initialize the action
+	// initialize the action
 	public abstract void init(Resource problemApp);
 	
-	//predict the outcome of the actions over the next ticks
+	// predict the outcome of the actions over the next ticks
 	public abstract int predict();
 	
-	//estimate the direct costs of the action
+	// estimate the direct costs of the action
 	public abstract int estimate();
 	
-	//are the preconditions fulfilled?
+	// are the preconditions fulfilled?
 	public abstract boolean preconditions();
 	
-	//execute the action 
+	// execute the action 
 	public abstract void execute();
 	
-	//evaluate the action after the execution and add an entry to the knowledgebase
+	// evaluate the action after the execution and add an entry to the knowledgebase
 	public abstract boolean evaluate();
 	
+	/**
+	 * used to save the knowledgebase
+	 */
 	public abstract void terminate();
 	
 	
-	//read the knowledgebase to an arff - file
+	// read the knowledgebase to an arff - file
 	public static Instances loadKnowledge(String filepath) throws Exception {
 		File ftest = new File(filepath);
 		Instances knowledgeBase = null;

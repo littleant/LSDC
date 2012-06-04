@@ -9,7 +9,7 @@ public class App extends Resource {
 	private int ticks;
 	
 	// extra ticks that the App cannot run.
-	// If this is > 0 the App is suspendend and the extraTicks should be decremented.
+	// If this is > 0 the App is suspended and the extraTicks should be decremented.
 	private int extraTicks = 0;
 	
 	// SLAs
