@@ -21,6 +21,8 @@ public class ChangeVmConfiguration extends Action {
 	
 	@Override
 	public void init(Resource problem) {
+		this.setProblemResource(problem);
+		this.setProblemType(problem.getProblemType());
 		if (problem instanceof VirtualMachine) {
 			this.vm = (VirtualMachine) problem;
 		}
