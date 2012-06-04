@@ -37,19 +37,21 @@ public class SchedulingAgent {
 	
 	public void start() throws NumberFormatException, IOException {
 		int i=0;
-		while (i<50000) { 
+		while (i<100000) { 
 			
 			
-			//System.out.println ("SchedulingAgent - Tick " + Monitor.getInstance().getGlobalTicks());
+			if(i%1000 ==0){
+				System.out.println ("Tick " + i);
+			}
+			
 			planner.evaluatePastActions();
 			Resource problem = analyser.getTopProblem();
 			if(problem!=null) {
-				System.out.println ("Problem " + problem.getProblemType());
 				Action solution = planner.selectAction(problem);
+				System.out.println("Problem: " + problem.getProblemType());
 				if(solution!=null){
-					System.out.println ("Selected Action " + solution.getClass().getName()); 
+					System.out.println("Solution: " + solution.getClass().getSimpleName());
 					executor.execute(solution);
-					System.out.println ("Executed Action " + solution.getClass().getName());
 					Monitor.getInstance().logExecution(solution.getProblemResource(), solution, solution.getLocalEvaluation(), Monitor.getInstance().getGlobalTicks());
 					//save the action for knowledge aquisition purposes
 					planner.getExecutedActions().add(solution);
@@ -60,6 +62,7 @@ public class SchedulingAgent {
 			}
 			Monitor.getInstance().logSystemStatus();
 			Monitor.getInstance().nextTick();
+			
 			i++;
 		}
 		

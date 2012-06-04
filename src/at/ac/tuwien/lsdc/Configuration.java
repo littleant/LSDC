@@ -106,7 +106,6 @@ public class Configuration {
 			this.setAppMovingCosts(Integer.parseInt(properties.getProperty("appMovingCosts")));
 			this.setAppInsertIntoVmCosts(Integer.parseInt(properties.getProperty("appInsertIntoVmCosts")));
 			this.setActionOnlyLearning("true".equals(properties.getProperty("actionOnlyLearning").trim()));
-			System.out.println("CONFIG1: " + "true".equals(properties.getProperty("plannerOnlyLearning").trim()));
 			this.setPlannerOnlyLearning("true".equals(properties.getProperty("plannerOnlyLearning").trim()));
 			
 			this.setDifferentOutputDirectory("true".equals(properties.getProperty("differentOutputDirectory").trim()));

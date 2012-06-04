@@ -69,7 +69,6 @@ public class CreateVmInsertApp extends Action {
 	
 	@Override
 	public int predict() {
-		int output = 0;
 		if (isOnlyLearning()) { //Randomized predictions for learning
 			return randomData.nextInt(0, 100);
 		}

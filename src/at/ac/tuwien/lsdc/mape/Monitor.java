@@ -346,7 +346,7 @@ public class Monitor {
 		
 	}
 
-	public void logPossibilities(Resource problem, Action action) {
+	public void logPossibilities(Resource problem, Action action, int duration) {
 		// GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId
 		if (problem != null) {
 			StringBuffer sb = new StringBuffer();
@@ -420,6 +420,7 @@ public class Monitor {
 				}
 			}
 			sb.append(";");
+			sb.append(duration);
 			
 			possibilitiesLog.println(sb.toString());
 			possibilitiesLog.flush();

@@ -34,9 +34,9 @@ public class CsvGenerator {
 			RandomData randomData = new RandomDataImpl();
 			
 
-			for(int k =0;k<100;k++){
+			for(int k =0;k<300;k++){
 			// Runtime
-			int value = randomData.nextInt(1, 1000);
+			int value = randomData.nextInt(300, 8000);
 			out.write(value + ";");
 			// Slas
 			for (int i = 0; i < 3; i++){
@@ -66,7 +66,7 @@ public class CsvGenerator {
 			for (int i = 0; i < value; i++)
 				out.write(new Double(randomData.nextGaussian(stormu, storsigma)).intValue()+ ";");
 			//Start
-			out.write(randomData.nextInt(1, 1000)+";");
+			out.write(randomData.nextInt(1, 20000)+";");
 
 			//
 			out.newLine();
