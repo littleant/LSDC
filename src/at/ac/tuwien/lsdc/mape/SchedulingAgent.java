@@ -84,7 +84,9 @@ public class SchedulingAgent {
 			}
 			
 			gc4 = new GregorianCalendar();
-			Monitor.getInstance().logSystemStatus();
+			if(i%100==0){
+				Monitor.getInstance().logSystemStatus();
+			}
 			gc5 = new GregorianCalendar();
 			Monitor.getInstance().nextTick();
 			gc6 = new GregorianCalendar();
