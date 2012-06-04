@@ -126,8 +126,9 @@ public class ChangeVmConfiguration extends Action {
 			
 			//minimum of 0
 			evaluation = Math.max(0, evaluation);
-			
+			Monitor.getInstance().logExecution(vm, this, evaluation, this.globalTickExecution);
 			curInstance.setValue(getKnowledgeBase().attribute(63), evaluation);
+			this.setLocalEvaluation(evaluation);
 			getKnowledgeBase().add(curInstance);
 		}
 		return true;
@@ -149,7 +150,7 @@ public class ChangeVmConfiguration extends Action {
 		
 		newCpuConfiguration=vm.getCurrentCpuAllocation()-vm.getCurrentCpuUsage();
 		newMemorayConfiguration=vm.getCurrentMemoryAllocation()-vm.getCurrentMemoryUsage();
-		newStorageConfiguration=vm.getCurrentStorageAllocation()-vm.getCurrentStorageUsage();
+		newStorageConfiguration=vm.getCurrentStorageAllocation()-vm.getCurrentStorageUsage(); 
 				
 	}
 
@@ -180,6 +181,7 @@ public class ChangeVmConfiguration extends Action {
 
 	@Override
 	public void execute() {
+		globalTickExecution = Monitor.getInstance().getGlobalTicks();
 		VirtualMachine oldVm = null;
 		
 		//if the App existed before
@@ -215,6 +217,9 @@ public class ChangeVmConfiguration extends Action {
 		this.selectedPm=null;
 		this.costs=0;
 		this.app=null;
+		this.setProblemResource(problemVm);
+		this.setProblemType(problemVm.getProblemType());
+		problemVm.setProblemType("");
 		
 		ChangeVmConfiguration.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
 		ChangeVmConfiguration.pmStartupCosts = Configuration.getInstance().getPmStartupCosts();
@@ -232,7 +237,6 @@ public class ChangeVmConfiguration extends Action {
 				costs += pmStartupCosts;
 				selectedPm = vm.getPm();
 				prediction  =calculateFit(app, vm.getPm());
-		
 			}
 			
 	}

@@ -16,24 +16,23 @@ public class Configuration {
 	
 	private Integer pmStartupCosts = null;
 	private Integer vmStartupCosts = null;
+	private Double factorCostsEvaluation = null;
 	
 	private String KBCreateVmInsertApp = null;
 	private String KBCreateAppInsertIntoVm = null;
 	private String KBMoveVm = null;
+	private String KBMaster =null;
 	
-	private boolean onlyLearning = false;
+	private int factorUsageEvaluation;
+	private int factorSlaViolations;
+	
+	private boolean actionOnlyLearning = false;
+	private boolean plannerOnlyLearning = false;
 
 	private int appInsertIntoVmCosts;
 
 	private int appMovingCosts;
 	
-	public boolean isOnlyLearning() {
-		return onlyLearning;
-	}
-
-	public void setOnlyLearning(boolean onlyLearning) {
-		this.onlyLearning = onlyLearning;
-	}
 
 	public Integer getTopRegion() {
 		return topRegion;
@@ -75,14 +74,18 @@ public class Configuration {
 			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
 			this.setAppMovingCosts(Integer.parseInt(properties.getProperty("appMovingCosts")));
 			this.setAppInsertIntoVmCosts(Integer.parseInt(properties.getProperty("appInsertIntoVmCosts")));
-			this.onlyLearning = Boolean.parseBoolean(properties.getProperty("onlyLearning"));
+			this.setActionOnlyLearning(Boolean.parseBoolean(properties.getProperty(" actionOnlyLearning")));
+			this.setPlannerOnlyLearning(Boolean.parseBoolean(properties.getProperty(" actionOnlyLearning")));
 			
-			
-			
+			//evaluation factors for global evaluation
+			this.setFactorSlaViolations(Integer.parseInt(properties.getProperty("factorSlaViolations")));
+			this.setFactorUsageEvaluation(Integer.parseInt(properties.getProperty("factorUsageEvaluation")));
+			this.setFactorCostsEvaluation(Double.parseDouble(properties.getProperty("factorCostsEvaluation")));
 			//knowledge
 			this.KBCreateVmInsertApp = properties.getProperty("KBCreateVmInsertApp");
 			this.KBCreateAppInsertIntoVm = properties.getProperty("KBCreateAppInsertIntoVm");
 			this.KBMoveVm = properties.getProperty("KBMoveVm");
+			this.setKBMaster(properties.getProperty("KBMaster"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -156,5 +159,53 @@ public class Configuration {
 
 	public void setKBMoveVm(String kBMoveVm) {
 		KBMoveVm = kBMoveVm;
+	}
+
+	public String getKBMaster() {
+		return KBMaster;
+	}
+
+	public void setKBMaster(String kBMaster) {
+		KBMaster = kBMaster;
+	}
+
+	public int getFactorUsageEvaluation() {
+		return factorUsageEvaluation;
+	}
+
+	public void setFactorUsageEvaluation(int factorUsageEvaluation) {
+		this.factorUsageEvaluation = factorUsageEvaluation;
+	}
+
+	public int getFactorSlaViolations() {
+		return factorSlaViolations;
+	}
+
+	public void setFactorSlaViolations(int factorSlaViolations) {
+		this.factorSlaViolations = factorSlaViolations;
+	}
+
+	public Double getFactorCostsEvaluation() {
+		return factorCostsEvaluation;
+	}
+
+	public void setFactorCostsEvaluation(Double factorCostsEvaluation) {
+		this.factorCostsEvaluation = factorCostsEvaluation;
+	}
+
+	public boolean isActionOnlyLearning() {
+		return actionOnlyLearning;
+	}
+
+	public void setActionOnlyLearning(boolean actionOnlyLearning) {
+		this.actionOnlyLearning = actionOnlyLearning;
+	}
+
+	public boolean isPlannerOnlyLearning() {
+		return plannerOnlyLearning;
+	}
+
+	public void setPlannerOnlyLearning(boolean plannerOnlyLearning) {
+		this.plannerOnlyLearning = plannerOnlyLearning;
 	}
 }

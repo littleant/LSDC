@@ -11,6 +11,9 @@ public abstract class Resource {
 	protected int suspendedTicks=0;
 	private int resourceId=0;
 	
+	private String problemType ="";
+	
+	
 	public void setNewPmId(){
 		lastPmId++;
 		this.resourceId=lastPmId;
@@ -141,4 +144,12 @@ public abstract class Resource {
 	
 	//calculate next tick
 	abstract public void nextTick();
+
+	public String getProblemType() {
+		return problemType;
+	}
+
+	public void setProblemType(String problemType) {
+		this.problemType = problemType;
+	}
 }

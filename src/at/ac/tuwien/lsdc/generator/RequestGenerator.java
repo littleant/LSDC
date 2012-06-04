@@ -34,7 +34,7 @@ public class RequestGenerator {
 	 * @return List of requests that should be converted to apps
 	 */
 	public List<Request> getPendingRequests() {
-		int globalTick = Monitor.getInstance().getGlobalTicks();
+		long globalTick = Monitor.getInstance().getGlobalTicks();
 		
 		List<Request> pendingRequests = new LinkedList<Request>();
 		for (Request request : this.requests) {

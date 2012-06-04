@@ -121,8 +121,9 @@ public class CreateAppInsertIntoVm extends Action {
 			
 			//minimum of 0
 			evaluation = Math.max(0, evaluation);
-			
+			Monitor.getInstance().logExecution(app, this, evaluation, this.globalTickExecution);
 			curInstance.setValue(getKnowledgeBase().attribute(63), evaluation);
+			this.setLocalEvaluation(evaluation);
 			getKnowledgeBase().add(curInstance);
 		}
 		return true;
@@ -170,7 +171,7 @@ public class CreateAppInsertIntoVm extends Action {
 
 	@Override
 	public void execute() {
-		
+		globalTickExecution = Monitor.getInstance().getGlobalTicks();
 		//remove the app from the request- queue??? 
 		if(app.getOriginalRequest()!=null) {
 			RequestGenerator.getInstance().removeRequestFromQueue(app.getOriginalRequest());
@@ -181,6 +182,9 @@ public class CreateAppInsertIntoVm extends Action {
 
 	@Override
 	public void init(Resource problemApp) {
+		this.setProblemResource(problemApp);
+		this.setProblemType(problemApp.getProblemType());
+		problemApp.setProblemType("");
 		this.preconditionsOk=false;
 		this.curInstance = null;
 		this.selectedVm=null;

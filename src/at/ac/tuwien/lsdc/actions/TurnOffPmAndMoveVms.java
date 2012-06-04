@@ -96,6 +96,8 @@ public class TurnOffPmAndMoveVms extends Action {
 	
 	@Override
 	public boolean evaluate() {
+		Monitor.getInstance().logExecution(pm, this, 0, this.globalTickExecution);
+		this.setLocalEvaluation(0);
 		//TODO: gst how to evaluate this action???
 		
 		
@@ -130,6 +132,7 @@ public class TurnOffPmAndMoveVms extends Action {
 			getKnowledgeBase().add(curInstance);
 		}
 		return true;*/
+		
 		return true;
 	}
 
@@ -169,6 +172,7 @@ public class TurnOffPmAndMoveVms extends Action {
 
 	@Override
 	public void execute() {
+		globalTickExecution = Monitor.getInstance().getGlobalTicks();
 		//remove the app from the old vm and insert it into the new vm 
 		for (MoveVm move: moveactions) {
 			move.execute();
@@ -178,6 +182,10 @@ public class TurnOffPmAndMoveVms extends Action {
 
 	@Override
 	public void init(Resource problemPm) {
+		this.setProblemResource(problemPm);
+		this.setProblemType(problemPm.getProblemType());
+		problemPm.setProblemType("");
+		
 		this.preconditionsOk=false;
 		this.curInstance = null;
 		this.costs=0;

@@ -118,11 +118,12 @@ public class MoveApp extends Action {
 			
 			//subtract SLA Violations
 			evaluation -= (app.getCpuSlaErrorcount()+app.getMemorySlaErrorcount()+app.getStorageSlaErrorcount())/10;
-			
+			Monitor.getInstance().logExecution(app, this, evaluation, this.globalTickExecution);
 			//minimum of 0
 			evaluation = Math.max(0, evaluation);
 			
 			curInstance.setValue(getKnowledgeBase().attribute(33), evaluation);
+			this.setLocalEvaluation(evaluation);
 			getKnowledgeBase().add(curInstance);
 		}
 		return true;
@@ -171,6 +172,7 @@ public class MoveApp extends Action {
 
 	@Override
 	public void execute() {
+		globalTickExecution = Monitor.getInstance().getGlobalTicks();
 		//remove the app from the old vm and insert it into the new vm 
 		app.getVm().getApps().remove(app);
 		selectedVm.getApps().add(app);
@@ -180,6 +182,9 @@ public class MoveApp extends Action {
 
 	@Override
 	public void init(Resource problemApp) {
+		this.setProblemResource(problemApp);
+		this.setProblemType(problemApp.getProblemType());
+		problemApp.setProblemType("");
 		this.preconditionsOk=false;
 		this.curInstance = null;
 		this.selectedVm=null;

@@ -1,10 +1,21 @@
 package at.ac.tuwien.lsdc.mape;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.math3.random.RandomData;
+import org.apache.commons.math3.random.RandomDataImpl;
+
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.functions.MultilayerPerceptron;
+import weka.core.Instance;
+import weka.core.Instances;
+
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.actions.Action;
+import at.ac.tuwien.lsdc.actions.ChangeVmConfiguration;
 import at.ac.tuwien.lsdc.actions.CreateAppInsertIntoVm;
 import at.ac.tuwien.lsdc.actions.CreateVmInsertApp;
 import at.ac.tuwien.lsdc.actions.MoveApp;
@@ -14,8 +25,36 @@ import at.ac.tuwien.lsdc.resources.Resource;
 public class WekaPlanner extends Planner {
 	List<Class> knownActions = new LinkedList<Class>();
 	
+	private static boolean onlyLearning = false;
+	private static Instances knowledgeBase = null;
+	private static Classifier classifier = null;
+	private static Evaluation evaluation = null;
+	private static RandomData randomData = new RandomDataImpl();
+	
+	public static Instances getKnowledgeBase() {
+		if (knowledgeBase ==null ) {
+			try {
+				//load knowledgebase from file
+				WekaPlanner.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
+				
+				//prediction is also performed therefore the classifier and the evaluator must be instantiated
+				if(!isOnlyLearning()) {
+					classifier = new MultilayerPerceptron();
+					classifier.buildClassifier(ChangeVmConfiguration.getKnowledgeBase());
+					evaluation = new Evaluation(ChangeVmConfiguration.getKnowledgeBase());
+					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+					
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return knowledgeBase;
+	}
+	
 	public WekaPlanner() {
-		Action.setOnlyLearning(Configuration.getInstance().isOnlyLearning());
+		Action.setOnlyLearning(Configuration.getInstance().isActionOnlyLearning());
+		WekaPlanner.setOnlyLearning(Configuration.getInstance().isPlannerOnlyLearning());
 		knownActions.add(CreateVmInsertApp.class);
 		knownActions.add(CreateAppInsertIntoVm.class);
 		knownActions.add(MoveApp.class);
@@ -24,13 +63,17 @@ public class WekaPlanner extends Planner {
 	
 	@Override
 	public Action selectAction(Resource problem) {
-		int currentFit=10000;
+		int pastResourceUsage = Monitor.getInstance().getGlobalAverageResourceUsageRate(10);
+		int pastSlaViolations = Monitor.getInstance().getGlobalNumberOfSlaViolations(10);
+		int currentFit=0;
 		Action selectedAction = null;
 		for (Class ac : knownActions) {
 			try {
-				Action a = (Action) ac.newInstance();
+				Action a = (Action)ac.newInstance();
 				a.init(problem);
-				if (a.preconditions() && calculateFit(a)<currentFit) {
+				a.setBeforeResourceUsage(pastResourceUsage);
+				a.setBeforeSlaViolations(pastSlaViolations);
+				if (a.preconditions() && calculateFit(a)>currentFit) {
 					System.out.println("Current Problem: " + problem.getResourceId());
 					selectedAction= a;
 					currentFit = calculateFit(a);
@@ -48,21 +91,100 @@ public class WekaPlanner extends Planner {
 		
 		return selectedAction;
 	}
+	
+	public void evaluatePastActions () {
+		//only evaluate if the predictions by the actions are not random!!
+		if (Action.isOnlyLearning()==false ) {
+			LinkedList<Action>rmActionList = new LinkedList<Action>();
+			//Knowledge aquisition
+			for (Action a: executedActions) {
+				if(a!=null) {
+					boolean evaluated = a.evaluate();
+					if(evaluated) {
+						a.setAfterResourceUsage(Monitor.getInstance().getGlobalAverageResourceUsageRate(10));
+						a.setAfterSlaViolations(Monitor.getInstance().getGlobalNumberOfSlaViolations(10));
+					    
+						int usageDiff = a.getAfterResourceUsage() - a.getBeforeResourceUsage();
+						int slaDiff = a.getAfterSlaViolations() - a.getBeforeSlaViolations();
+						
+						double evaluationValue = Configuration.getInstance().getFactorUsageEvaluation()*usageDiff + Configuration.getInstance().getFactorSlaViolations()*slaDiff - Configuration.getInstance().getFactorCostsEvaluation();
+					
+						Instance instance = createInstance(a, evaluationValue);
+						
+						rmActionList.add(a); // the action has been evaluated and can be removed
+					}
+				}
+			}
+
+			for (Action a: rmActionList) {
+				executedActions.remove(a); //remove actions that have been evaluated
+			}
+			
+		}
+		else {
+			executedActions = new LinkedList<Action>();
+		}
+	}
 
 	@Override
 	public void terminate() {
-		for (Class ac: knownActions) {
+		for (Class<Action> ac: knownActions) {
 			try {
+				//Master knowledge
+				Action.saveKnowledge(Configuration.getInstance().getKBMaster(), WekaPlanner.getKnowledgeBase());
+				
+				//terminate Actions => save knowledge
 				((Action)ac.newInstance()).terminate();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
+	private Instance createInstance (Action a, double evaluationValue){
+		Instance instance = new Instance(12);
+		instance.setValue(0, a.getProblemType());  //Problemtype
+		instance.setValue(1, a.getResourceType(a.getProblemResource()));  //ResourceType
+		instance.setValue(2, a.getClass().getName()); //Actionname
+		instance.setValue(3, a.estimate()); //estimation value
+		instance.setValue(4, a.predict()); //prediction value
+		instance.setValue(5, evaluationValue); //global evaluation
+		instance.setDataset(getKnowledgeBase());
+		return instance;
+	}
+	
 	public int calculateFit(Action a) {
-		return a.estimate()+ a.predict();
+		if (WekaPlanner.isOnlyLearning()) {
+			return randomData.nextInt(0, 100);
+		}
+		else {
+			//WEKA evaluation
+			Instance instance = createInstance(a, Instance.missingValue());
+			try {
+				return (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return 0;
+		
+	
+		
+		//return a.estimate()+ a.predict();
+	}
+
+	public static boolean isOnlyLearning() {
+		return onlyLearning;
+	}
+
+	public static void setOnlyLearning(boolean onlyLearning) {
+		WekaPlanner.onlyLearning = onlyLearning;
 	}
 }

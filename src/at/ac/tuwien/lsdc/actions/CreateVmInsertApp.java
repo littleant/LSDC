@@ -119,8 +119,9 @@ public class CreateVmInsertApp extends Action {
 			
 			//minimum of 0
 			evaluation = Math.max(0, evaluation);
-			
+			Monitor.getInstance().logExecution(app, this, evaluation, this.globalTickExecution);
 			curInstance.setValue(getKnowledgeBase().attribute(63), evaluation);
+			this.setLocalEvaluation(evaluation);
 			getKnowledgeBase().add(curInstance);
 		}
 		return true;
@@ -165,6 +166,7 @@ public class CreateVmInsertApp extends Action {
 
 	@Override
 	public void execute() {
+		globalTickExecution = Monitor.getInstance().getGlobalTicks();
 		VirtualMachine oldVm = null;
 		
 		//if the App existed before
@@ -196,6 +198,9 @@ public class CreateVmInsertApp extends Action {
 
 	@Override
 	public void init(Resource problemApp) {
+		this.setProblemResource(problemApp);
+		this.setProblemType(problemApp.getProblemType());
+		problemApp.setProblemType("");
 		this.preconditionsOk=false;
 		this.selectedPm=null;
 		this.costs=0;
