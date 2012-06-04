@@ -100,6 +100,11 @@ public class MoveVm extends Action {
 	 * @return Fit value
 	 */
 	private int calculateFit(VirtualMachine vm, PhysicalMachine pm) {
+		if (vm.getPm().equals(pm)) {
+			// don't move to the same PM!
+			return 0;
+		}
+		
 		int cpuFit = pm.getCurrentCpuAllocation() - vm.getCurrentCpuAllocation();
 		int memFit = pm.getCurrentMemoryAllocation() - vm.getCurrentMemoryAllocation();
 		int storageFit = pm.getCurrentStorageAllocation() - vm.getCurrentStorageAllocation();
