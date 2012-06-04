@@ -33,6 +33,33 @@ public class Configuration {
 
 	private int appMovingCosts;
 	
+	private int vmCpuOverhead;
+	private int vmMemoryOverhead;
+	private int vmStorageOverhead;
+
+	public int getVmCpuOverhead() {
+		return vmCpuOverhead;
+	}
+
+	public void setVmCpuOverhead(int vmCpuOverhead) {
+		this.vmCpuOverhead = vmCpuOverhead;
+	}
+
+	public int getVmMemoryOverhead() {
+		return vmMemoryOverhead;
+	}
+
+	public void setVmMemoryOverhead(int vmMemoryOverhead) {
+		this.vmMemoryOverhead = vmMemoryOverhead;
+	}
+
+	public int getVmStorageOverhead() {
+		return vmStorageOverhead;
+	}
+
+	public void setVmStorageOverhead(int vmStorageOverhead) {
+		this.vmStorageOverhead = vmStorageOverhead;
+	}
 
 	public Integer getTopRegion() {
 		return topRegion;
@@ -86,6 +113,11 @@ public class Configuration {
 			this.KBCreateAppInsertIntoVm = properties.getProperty("KBCreateAppInsertIntoVm");
 			this.KBMoveVm = properties.getProperty("KBMoveVm");
 			this.setKBMaster(properties.getProperty("KBMaster"));
+			
+			// VM Overhead
+			this.vmCpuOverhead = Integer.parseInt(properties.getProperty("vmCpuOverhead"));
+			this.vmMemoryOverhead = Integer.parseInt(properties.getProperty("vmMemoryOverhead"));
+			this.vmStorageOverhead = Integer.parseInt(properties.getProperty("vmStorageOverhead"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
