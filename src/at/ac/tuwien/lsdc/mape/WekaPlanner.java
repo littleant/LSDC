@@ -60,13 +60,13 @@ public class WekaPlanner extends Planner {
 		Action.setOnlyLearning(Configuration.getInstance().isActionOnlyLearning());
 		WekaPlanner.setOnlyLearning(Configuration.getInstance().isPlannerOnlyLearning());
 		knownActions.add(CreateVmInsertApp.class);
-		knownActions.add(CreateAppInsertIntoVm.class);
-		knownActions.add(MoveApp.class);
-		knownActions.add(MoveVm.class);
-		knownActions.add(DoNothing.class);
-		knownActions.add(Outsource.class);
-		knownActions.add(TurnOffPmAndMoveVms.class);
-		knownActions.add(ChangeVmConfiguration.class);
+		//knownActions.add(CreateAppInsertIntoVm.class);
+		//knownActions.add(MoveApp.class);
+		//knownActions.add(MoveVm.class);
+		//knownActions.add(DoNothing.class);
+		//knownActions.add(Outsource.class);
+		//knownActions.add(TurnOffPmAndMoveVms.class);
+		//knownActions.add(ChangeVmConfiguration.class);
 	}
 	
 	@Override

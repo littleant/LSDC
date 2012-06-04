@@ -157,20 +157,20 @@ public class VirtualMachine extends Resource {
 	
 	//set cpu allocation
 	public void setCurrentCpuAlloction(int newCpuConfiguration) {
-		int newCpuAllocation = allocatedCpu.getLast().intValue() + newCpuConfiguration;
-		allocatedCpu.set(allocatedCpu.size()-1, newCpuAllocation);
+		//int newCpuAllocation = allocatedCpu.getLast().intValue() + newCpuConfiguration;
+		allocatedCpu.set(allocatedCpu.size()-1, newCpuConfiguration);
 	}
 	
 	//set Memory allocation
 	public void setCurrentMemoryAlloction(int newMemoryConfiguration) {
-		int newMemoryAllocation = allocatedMemory.getLast().intValue() + newMemoryConfiguration;
-		allocatedMemory.set(allocatedMemory.size()-1, newMemoryAllocation);
+		//int newMemoryAllocation = allocatedMemory.getLast().intValue() + newMemoryConfiguration;
+		allocatedMemory.set(allocatedMemory.size()-1, newMemoryConfiguration);
 	}
 
 	//set storage allocation
 	public void setCurrentStorageAlloction(int newStorageConfiguration) {
-		int newStorageAllocation = allocatedStorage.getLast().intValue() + newStorageConfiguration;
-		allocatedStorage.set(allocatedStorage.size()-1, newStorageAllocation);
+		//int newStorageAllocation = allocatedStorage.getLast().intValue() + newStorageConfiguration;
+		allocatedStorage.set(allocatedStorage.size()-1, newStorageConfiguration);
 	}
 	
 	/**

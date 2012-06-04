@@ -182,7 +182,7 @@ public class CreateVmInsertApp extends Action {
 		}
 		
 		//TODO: gst: hard - coded startup value!!
-		VirtualMachine vm = selectedPm.createNewVm(app.getCpu(), app.getMemory(), app.getStorage(), 10);
+		VirtualMachine vm = selectedPm.createNewVm(app.getCpu(), app.getMemory(), app.getStorage(), Configuration.getInstance().getVmStartupCosts());
 		vm.createApp(this.app);
 		
 		if(oldVm!=null) {
@@ -213,7 +213,7 @@ public class CreateVmInsertApp extends Action {
 			
 			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
 				if(pm.isRunning())  {
-					if((100-pm.getCurrentCpuAllocation())>=app.getCpu() && (100-pm.getCurrentMemoryAllocation())>=app.getMemory() && (100-pm.getCurrentCpuAllocation())>app.getStorage()) {
+					if((100-pm.getCurrentCpuAllocation())>=app.getCpu() && (100-pm.getCurrentMemoryAllocation())>=app.getMemory() && (100-pm.getCurrentStorageAllocation())>app.getStorage()) {
 						found=true;
 						costs = vmStartupCosts;
 						curFit = calculateFit(app, pm);

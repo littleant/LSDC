@@ -224,7 +224,7 @@ public class PhysicalMachine extends Resource {
 	}
 	
 	public VirtualMachine createNewVm(int initialCpu, int initialMemory, int initialStorage, int startupTime) {
-		VirtualMachine vm = new VirtualMachine(initialCpu, initialMemory, initialStorage, startupTime);
+		VirtualMachine vm = new VirtualMachine(initialCpu+VirtualMachine.getCpuOverhead(), initialMemory+VirtualMachine.getStorageOverhead(), initialStorage, startupTime);
 		vm.setPm(this);
 		this.getVms().add(vm);
 		return vm;
