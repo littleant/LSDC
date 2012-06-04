@@ -51,7 +51,7 @@ public class ChangeVmConfiguration extends Action {
 		// decide how urgent a configurationchange is 0-100, 100 = urgent
 		int prediction = 0;
 System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAllocation() +" "+ this.optimizedCpuAllocation);
-		prediction = (Math.abs(this.vm.getCurrentCpuAllocation() - this.optimizedCpuAllocation) + Math.abs(this.vm.getCurrentMemoryAllocation() - this.optimizedMemoryAllocation) + Math.abs(this.vm.getCurrentStorageAllocation() - this.optimizedStorageAllocation)) / 3;
+		prediction = (int) (Math.abs(this.vm.getCurrentCpuAllocation() - this.optimizedCpuAllocation) + Math.abs(this.vm.getCurrentMemoryAllocation() - this.optimizedMemoryAllocation) + Math.abs(this.vm.getCurrentStorageAllocation() - this.optimizedStorageAllocation)) / 3;
 		
 		int slaViolationUrgency = 10;
 		int slaViolationCount = this.vm.getNumberOfSlaViolations(this.tickCount);
@@ -83,7 +83,7 @@ System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAl
 	 * @return The optimized CPU allocation value
 	 */
 	private int calculateOptimizedCpuAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getCurrentCpuAllocation(), this.vm.getCpuAllocationHistory(this.tickCount), this.vm.getCpuUsageHistory(this.tickCount));
+		return this.calculateOptimizedAllocation(this.vm.getCurrentCpuAllocation(), this.vm.getCpuAllocationHistory(this.tickCount), this.vm.getCpuUsageHistory(this.tickCount), VirtualMachine.getCpuOverhead());
 	}
 	
 	/**
@@ -93,7 +93,7 @@ System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAl
 	 * @return The optimized memory allocation value
 	 */
 	private int calculateOptimizedMemoryAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getCurrentMemoryAllocation(), this.vm.getMemoryAllocationHistory(this.tickCount), this.vm.getMemoryUsageHistory(this.tickCount));
+		return this.calculateOptimizedAllocation(this.vm.getCurrentMemoryAllocation(), this.vm.getMemoryAllocationHistory(this.tickCount), this.vm.getMemoryUsageHistory(this.tickCount), VirtualMachine.getMemoryOverhead());
 	}
 	
 	/**
@@ -103,7 +103,7 @@ System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAl
 	 * @return The optimized storage allocation value
 	 */
 	private int calculateOptimizedStorageAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getCurrentStorageAllocation(), this.vm.getStorageAllocationHistory(this.tickCount), this.vm.getStorageUsageHistory(this.tickCount));
+		return this.calculateOptimizedAllocation(this.vm.getCurrentStorageAllocation(), this.vm.getStorageAllocationHistory(this.tickCount), this.vm.getStorageUsageHistory(this.tickCount), VirtualMachine.getStorageOverhead());
 	}
 	
 	/**
@@ -114,7 +114,7 @@ System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAl
 	 * @param usageHistory
 	 * @return Optimized allocation value
 	 */
-	private int calculateOptimizedAllocation(int currentAllocation, List<Integer> allocationHistory, List<Integer> usageHistory) {
+	private int calculateOptimizedAllocation(int currentAllocation, List<Integer> allocationHistory, List<Integer> usageHistory, int overhead) {
 		int allocation = currentAllocation;
 		
 		int optimizedAllocation = 0;
@@ -125,7 +125,7 @@ System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAl
 		// calculate how often the VM went into a dangerous zone in the last n ticks (compare allocated to used resources)
 		for (int i = 0; i < allocationHistory.size(); i++) {
 			Integer allocated = allocationHistory.get(i);
-			Integer used = usageHistory.get(i);
+			Integer used = usageHistory.get(i) + overhead;
 			
 			// calculate percentage of the used resources vs. the allocated resources
 			int ratio = (int) ((used / (float) allocated) * 100);
@@ -142,7 +142,7 @@ System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAl
 			
 			if (topRegionReached > 0 || bottomRegionReached > 0) {
 				// calculate allocation so that "used" is 95% of the allocation
-				optimizedAllocation = (int) (((float) used / ChangeVmConfiguration.topRegion) * 100);
+				optimizedAllocation = (int) (((float) used / ChangeVmConfiguration.topRegion) * 100) + overhead;
 				
 				// need to change the allocation
 				if (allocation < optimizedAllocation) {
