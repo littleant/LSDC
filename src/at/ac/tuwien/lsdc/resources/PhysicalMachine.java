@@ -86,6 +86,7 @@ public class PhysicalMachine extends Resource {
 		}
 		
 	}
+	
 	@Override
 	//returns actual cpu - usage of the vms and apps
 	public Integer getCurrentCpuUsage() {
@@ -106,8 +107,6 @@ public class PhysicalMachine extends Resource {
 		return curmem;
 	}
 	
-	
-	
 	@Override
 	//returns the storage that is actually used by the vms and apps
 	public Integer getCurrentStorageUsage() {
@@ -117,7 +116,6 @@ public class PhysicalMachine extends Resource {
 		}
 		return curstorage;
 	}
-	
 	
 	//returns the storage that is currently allocated by the vms
 	public Integer getCurrentStorageAllocation() {
@@ -170,7 +168,7 @@ public class PhysicalMachine extends Resource {
 			values.add(vm.getMemoryUsageHistory(maxEntries));
 		}
 		
-		return this.aggregateValues(values);
+		return aggregateValues(values);
 	}
 
 	@Override
@@ -185,7 +183,7 @@ public class PhysicalMachine extends Resource {
 			
 		}
 		
-		return this.aggregateValues(values);
+		return aggregateValues(values);
 	}
 
 	@Override
@@ -197,7 +195,7 @@ public class PhysicalMachine extends Resource {
 			values.add(vm.getStorageAllocationHistory(maxEntries));
 		}
 		
-		return this.aggregateValues(values);
+		return aggregateValues(values);
 	}
 
 	@Override
@@ -209,7 +207,7 @@ public class PhysicalMachine extends Resource {
 			values.add(vm.getCpuAllocationHistory(maxEntries));
 		}
 		
-		return this.aggregateValues(values);
+		return aggregateValues(values);
 	}
 
 	@Override
@@ -222,7 +220,7 @@ public class PhysicalMachine extends Resource {
 			values.add(vm.getMemoryAllocationHistory(maxEntries));
 		}
 		
-		return this.aggregateValues(values);
+		return aggregateValues(values);
 	}
 	
 	public VirtualMachine createNewVm(int initialCpu, int initialMemory, int initialStorage, int startupTime) {
@@ -232,7 +230,20 @@ public class PhysicalMachine extends Resource {
 		return vm;
 	}
 	
-
-	
+	/**
+	 * Gets the number of SLA violations for all apps in all VMs on this PM for the last n ticks.
+	 * 
+	 * @param ticks How many ticks to look in the past
+	 * @return number of violations for the last n ticks
+	 */
+	public int getNumberOfSlaViolations(int ticks) {
+		int violations = 0;
+		
+		for (VirtualMachine vm : this.getVms()) {
+			violations += vm.getNumberOfSlaViolations(ticks);
+		}
+		
+		return violations;
+	}
 }
 
