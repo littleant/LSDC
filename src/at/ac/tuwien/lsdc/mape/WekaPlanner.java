@@ -66,6 +66,7 @@ public class WekaPlanner extends Planner {
 		knownActions.add(DoNothing.class);
 		knownActions.add(Outsource.class);
 		knownActions.add(TurnOffPmAndMoveVms.class);
+		knownActions.add(ChangeVmConfiguration.class);
 	}
 	
 	@Override

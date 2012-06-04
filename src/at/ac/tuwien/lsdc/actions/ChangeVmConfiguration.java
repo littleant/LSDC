@@ -7,7 +7,7 @@ import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class ChangeVmConfiguration extends Action {
-	private VirtualMachine vm;
+	private VirtualMachine vm = null;
 	private int optimizedCpuAllocation;
 	private int optimizedMemoryAllocation;
 	private int optimizedStorageAllocation;
@@ -41,6 +41,11 @@ public class ChangeVmConfiguration extends Action {
 
 	@Override
 	public int predict() {
+		if (this.vm == null) {
+			// only work with VMs
+			return 0;
+		}
+		
 		this.calculateBetterAllocationValues();
 		
 		// decide how urgent a configurationchange is 0-100, 100 = urgent
@@ -168,6 +173,11 @@ public class ChangeVmConfiguration extends Action {
 
 	@Override
 	public void execute() {
+		if (this.vm == null) {
+			// only work with VMs
+			return;
+		}
+		
 		// change CPU allocation
 		if (this.vm.getCurrentCpuAllocation() != this.optimizedCpuAllocation) {
 			this.vm.setCurrentCpuAlloction(this.optimizedCpuAllocation);
