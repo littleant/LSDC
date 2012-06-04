@@ -203,9 +203,9 @@ public class VirtualMachine extends Resource {
 		if (suspendedTicks > 0) {
 			suspendedTicks--;
 		} else {
-			this.allocatedCpu.add(getCurrentCpuAllocation() + getCpuOverhead());
-			this.allocatedMemory.add(getCurrentMemoryAllocation() + getMemoryOverhead());
-			this.allocatedStorage.add(getCurrentStorageAllocation() + getStorageOverhead());
+			this.allocatedCpu.add(getCurrentCpuAllocation());
+			this.allocatedMemory.add(getCurrentMemoryAllocation());
+			this.allocatedStorage.add(getCurrentStorageAllocation());
 			
 			runningTicks++;
 			for (App a: apps) {

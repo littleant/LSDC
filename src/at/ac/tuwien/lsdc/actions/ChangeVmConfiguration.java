@@ -50,13 +50,13 @@ public class ChangeVmConfiguration extends Action {
 		
 		// decide how urgent a configurationchange is 0-100, 100 = urgent
 		int prediction = 0;
-		
+System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAllocation() +" "+ this.optimizedCpuAllocation);
 		prediction = (Math.abs(this.vm.getCurrentCpuAllocation() - this.optimizedCpuAllocation) + Math.abs(this.vm.getCurrentMemoryAllocation() - this.optimizedMemoryAllocation) + Math.abs(this.vm.getCurrentStorageAllocation() - this.optimizedStorageAllocation)) / 3;
 		
 		int slaViolationUrgency = 10;
 		int slaViolationCount = this.vm.getNumberOfSlaViolations(this.tickCount);
 		if (prediction < slaViolationUrgency && slaViolationCount > 0) {
-			// reallocation should be neccessary, chose 10% importance
+			// reallocation should be necessary, chose 10% importance
 			prediction = slaViolationUrgency + slaViolationCount;
 			
 			if (prediction > 100) {
@@ -64,7 +64,7 @@ public class ChangeVmConfiguration extends Action {
 			}
 		}
 			
-		return 0;
+		return prediction;
 	}
 
 	/**
@@ -140,10 +140,10 @@ public class ChangeVmConfiguration extends Action {
 				// do nothing
 			}
 			
-			// calculate allocation so that "used" is 95% of the allocation
-			optimizedAllocation = (int) ((float) used / ChangeVmConfiguration.topRegion * 100);
-			
-			if (topRegionReached > 1 || bottomRegionReached > 1) {
+			if (topRegionReached > 0 || bottomRegionReached > 0) {
+				// calculate allocation so that "used" is 95% of the allocation
+				optimizedAllocation = (int) (((float) used / ChangeVmConfiguration.topRegion) * 100);
+				
 				// need to change the allocation
 				if (allocation < optimizedAllocation) {
 					allocation = optimizedAllocation;
@@ -180,17 +180,17 @@ public class ChangeVmConfiguration extends Action {
 		
 		// change CPU allocation
 		if (this.vm.getCurrentCpuAllocation() != this.optimizedCpuAllocation) {
-			this.vm.setCurrentCpuAlloction(this.optimizedCpuAllocation);
+			this.vm.setCurrentCpuAlloction(this.optimizedCpuAllocation + VirtualMachine.getCpuOverhead());
 		}
 		
 		// change memory allocation
 		if (this.vm.getCurrentMemoryAllocation() != this.optimizedMemoryAllocation) {
-			this.vm.setCurrentMemoryAlloction(this.optimizedMemoryAllocation);
+			this.vm.setCurrentMemoryAlloction(this.optimizedMemoryAllocation + VirtualMachine.getMemoryOverhead());
 		}
 		
 		// change storage allocation
 		if (this.vm.getCurrentStorageAllocation() != this.optimizedStorageAllocation) {
-			this.vm.setCurrentStorageAlloction(this.optimizedStorageAllocation);
+			this.vm.setCurrentStorageAlloction(this.optimizedStorageAllocation + VirtualMachine.getStorageOverhead());
 		}
 	}
 
