@@ -334,7 +334,7 @@ public class Monitor {
 			}
 			
 			this.analysisLog.println(sb.toString());
-			
+			this.analysisLog.flush();
 			
 			
 			
