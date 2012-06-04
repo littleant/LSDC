@@ -50,7 +50,6 @@ public class ChangeVmConfiguration extends Action {
 		
 		// decide how urgent a configurationchange is 0-100, 100 = urgent
 		int prediction = 0;
-System.out.println("current allocation vs. optimized: "+ this.vm.getCurrentCpuAllocation() +" "+ this.optimizedCpuAllocation);
 		prediction = (int) (Math.abs(this.vm.getCurrentCpuAllocation() - this.optimizedCpuAllocation) + Math.abs(this.vm.getCurrentMemoryAllocation() - this.optimizedMemoryAllocation) + Math.abs(this.vm.getCurrentStorageAllocation() - this.optimizedStorageAllocation)) / 3;
 		
 		int slaViolationUrgency = 10;
