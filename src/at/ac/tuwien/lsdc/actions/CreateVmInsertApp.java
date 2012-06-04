@@ -140,12 +140,11 @@ public class CreateVmInsertApp extends Action {
 	}
 
 	//calculate if an App fits to a pm
-	//TODO: gst: use WEKA to calc fit factor!!
 	private int calculateFit(App app2, PhysicalMachine pm) {
 		int output = 0;
 		if (Action.isOnlyLearning()== false ){
 			//is space available
-			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {		
+			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {
 				Instance instance = createInstance(Instance.missingValue());
 				instance.setDataset(CreateAppInsertIntoVm.getKnowledgeBase());
 				
@@ -208,7 +207,6 @@ public class CreateVmInsertApp extends Action {
 		
 		CreateVmInsertApp.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
 		CreateVmInsertApp.pmStartupCosts = Configuration.getInstance().getPmStartupCosts();
-		
 		if (problemApp instanceof App){
 			app = (App)problemApp;
 			boolean found = false;
@@ -228,7 +226,6 @@ public class CreateVmInsertApp extends Action {
 					}
 				}
 			}
-		
 			//no running machine found => search for a stopped machine
 			//TODO: gst: replace by real action
 			if (found ==false ) {
@@ -239,12 +236,14 @@ public class CreateVmInsertApp extends Action {
 						found=true;
 						costs += pmStartupCosts;
 						selectedPm = pm;
+						
 						prediction  =calculateFit(app, pm);
 						break;
 					}
 					
 				}
 			}
+			
 			preconditionsOk = found;
 		}
 		else {

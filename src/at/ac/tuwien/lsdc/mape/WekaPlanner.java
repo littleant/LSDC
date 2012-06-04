@@ -25,20 +25,21 @@ import at.ac.tuwien.lsdc.resources.Resource;
 public class WekaPlanner extends Planner {
 	List<Class> knownActions = new LinkedList<Class>();
 	
-	private static boolean onlyLearning = false;
+	private static boolean onlyLearning = true;
 	private static Instances knowledgeBase = null;
 	private static Classifier classifier = null;
 	private static Evaluation evaluation = null;
 	private static RandomData randomData = new RandomDataImpl();
 	
 	public static Instances getKnowledgeBase() {
-		if (knowledgeBase ==null ) {
+		if (WekaPlanner.knowledgeBase ==null ) {
 			try {
 				//load knowledgebase from file
-				WekaPlanner.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
+				WekaPlanner.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBMaster());
 				
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
-				if(!isOnlyLearning()) {
+				if(WekaPlanner.isOnlyLearning()==false) {
+					System.out.println("Start up Classifier");
 					classifier = new MultilayerPerceptron();
 					classifier.buildClassifier(ChangeVmConfiguration.getKnowledgeBase());
 					evaluation = new Evaluation(ChangeVmConfiguration.getKnowledgeBase());
@@ -55,6 +56,7 @@ public class WekaPlanner extends Planner {
 	public WekaPlanner() {
 		Action.setOnlyLearning(Configuration.getInstance().isActionOnlyLearning());
 		WekaPlanner.setOnlyLearning(Configuration.getInstance().isPlannerOnlyLearning());
+		System.out.println("CONFIG " + Configuration.getInstance().isPlannerOnlyLearning());
 		knownActions.add(CreateVmInsertApp.class);
 		knownActions.add(CreateAppInsertIntoVm.class);
 		knownActions.add(MoveApp.class);
@@ -70,15 +72,18 @@ public class WekaPlanner extends Planner {
 		for (Class ac : knownActions) {
 			try {
 				Action a = (Action)ac.newInstance();
+				System.out.println ("Init "+ a.getClass().getName());
 				a.init(problem);
 				a.setBeforeResourceUsage(pastResourceUsage);
 				a.setBeforeSlaViolations(pastSlaViolations);
-				if (a.preconditions() && calculateFit(a)>currentFit) {
+				System.out.println ("Init2 "+ a.getClass().getName());
+				int newFit = calculateFit(a);
+				if (a.preconditions() && newFit>currentFit) {
 					System.out.println("Current Problem: " + problem.getResourceId());
 					selectedAction= a;
-					currentFit = calculateFit(a);
+					currentFit = newFit;
 				}
-				
+				System.out.println ("Init3 "+ a.getClass().getName());
 				// logging
 				Monitor.getInstance().logPossibilities(problem, a);
 			} catch (InstantiationException e) {
@@ -147,14 +152,23 @@ public class WekaPlanner extends Planner {
 	}
 	
 	private Instance createInstance (Action a, double evaluationValue){
-		Instance instance = new Instance(12);
+		System.out.println(a.getProblemType());
+	
+		Instance instance = new Instance(6);
+		
+		instance.setDataset(getKnowledgeBase());
+		Instances ist = getKnowledgeBase();
+		System.out.println("Number of Attributes " + ist.numAttributes());
+		for(int i = 0; i<ist.numAttributes();i++) {
+			System.out.println( ist.attribute(i).isNominal());
+		}
 		instance.setValue(0, a.getProblemType());  //Problemtype
 		instance.setValue(1, a.getResourceType(a.getProblemResource()));  //ResourceType
 		instance.setValue(2, a.getClass().getName()); //Actionname
 		instance.setValue(3, a.estimate()); //estimation value
 		instance.setValue(4, a.predict()); //prediction value
 		instance.setValue(5, evaluationValue); //global evaluation
-		instance.setDataset(getKnowledgeBase());
+		
 		return instance;
 	}
 	
@@ -181,6 +195,7 @@ public class WekaPlanner extends Planner {
 	}
 
 	public static boolean isOnlyLearning() {
+		System.out.println("isOnlyLearning " + onlyLearning);
 		return onlyLearning;
 	}
 

@@ -43,10 +43,21 @@ public class SchedulingAgent {
 			//System.out.println ("SchedulingAgent - Tick " + Monitor.getInstance().getGlobalTicks());
 			planner.evaluatePastActions();
 			Resource problem = analyser.getTopProblem();
-			Action solution = planner.selectAction(problem);
-			executor.execute(solution);
-			//save the action for knowledge aquisition purposes
-			planner.getExecutedActions().add(solution);
+			if(problem!=null) {
+				System.out.println ("Problem " + problem.getProblemType());
+				Action solution = planner.selectAction(problem);
+				if(solution!=null){
+					System.out.println ("Selected Action " + solution.getClass().getName()); 
+					executor.execute(solution);
+					System.out.println ("Executed Action " + solution.getClass().getName());
+					Monitor.getInstance().logExecution(solution.getProblemResource(), solution, solution.getLocalEvaluation(), Monitor.getInstance().getGlobalTicks());
+					//save the action for knowledge aquisition purposes
+					planner.getExecutedActions().add(solution);
+				}
+				else {
+					System.out.println("No Solution found");
+				}
+			}
 			Monitor.getInstance().logSystemStatus();
 			Monitor.getInstance().nextTick();
 			i++;

@@ -74,8 +74,9 @@ public class Configuration {
 			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
 			this.setAppMovingCosts(Integer.parseInt(properties.getProperty("appMovingCosts")));
 			this.setAppInsertIntoVmCosts(Integer.parseInt(properties.getProperty("appInsertIntoVmCosts")));
-			this.setActionOnlyLearning(Boolean.parseBoolean(properties.getProperty(" actionOnlyLearning")));
-			this.setPlannerOnlyLearning(Boolean.parseBoolean(properties.getProperty(" actionOnlyLearning")));
+			this.setActionOnlyLearning("true".equals(properties.getProperty("actionOnlyLearning").trim()));
+			System.out.println("CONFIG1: " + "true".equals(properties.getProperty("plannerOnlyLearning").trim()));
+			this.setPlannerOnlyLearning("true".equals(properties.getProperty("plannerOnlyLearning").trim()));
 			
 			//evaluation factors for global evaluation
 			this.setFactorSlaViolations(Integer.parseInt(properties.getProperty("factorSlaViolations")));

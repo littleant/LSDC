@@ -9,6 +9,7 @@ import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
+import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class Analyser {
 	public Resource getTopProblem() {
@@ -63,8 +64,8 @@ public class Analyser {
 		
 		if (criticalAppPercentage >= topRegion) {
 			System.out.println("Top problem is critical app: " + criticalApp.getResourceId());
-			problemType = "CriticalApp";
 			problem = criticalApp;
+			problem.setProblemType("slaViolation");
 		}
 		
 		if (problem == null) {
@@ -73,21 +74,61 @@ public class Analyser {
 			
 			if (requests.size() > 0) {
 				// take first request and define it as the top problem
-				problemType = "NewApp";
 				problem = requests.get(0).createApp();
+				problem.setProblemType("newApp");
 			}
 			
 		}
 		
+		int lowUsageBenchmark = 20;
+		//look for PMs that are not really used
 		if (problem == null) {
+			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
+				if (pm.isRunning() && pm.getCurrentCpuUsage()< lowUsageBenchmark && pm.getCurrentMemoryUsage()< lowUsageBenchmark && pm.getCurrentStorageUsage()< lowUsageBenchmark) {
+					if (problem == null) {
+						problem = pm; 
+						problem.setProblemType("wasteOfResources");
+					}
+					else if ( (problem.getCurrentCpuUsage()+problem.getCurrentMemoryUsage()+ problem.getCurrentStorageUsage()> pm.getCurrentCpuUsage()+pm.getCurrentMemoryUsage()+pm.getCurrentStorageUsage())) {
+						problem = pm; 
+						problem.setProblemType("wasteOfResources");
+					}
+				}
+			}
+		}
+		
+		//look for VMs that are over-allocating
+		double lowUsagePercentage = 0.2;
+		if(problem == null) {
+			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
+				if (pm.isRunning()){
+					for (VirtualMachine vm: pm.getVms()) {
+						if (vm.getCurrentCpuUsage()/vm.getCurrentCpuAllocation()<lowUsagePercentage || vm.getCurrentMemoryUsage()/vm.getCurrentMemoryAllocation()<lowUsagePercentage || vm.getCurrentStorageUsage()/vm.getCurrentStorageAllocation()<lowUsagePercentage) {
+							if (problem==null){
+								problem = vm;
+								problem.setProblemType("wasteOfResources");
+							}
+							else if (vm.getCurrentCpuUsage()/vm.getCurrentCpuAllocation()+vm.getCurrentMemoryUsage()/vm.getCurrentMemoryAllocation()+vm.getCurrentStorageUsage()/vm.getCurrentStorageAllocation() < problem.getCurrentCpuUsage()/problem.getCurrentCpuAllocation()+problem.getCurrentMemoryUsage()/problem.getCurrentMemoryAllocation()+problem.getCurrentStorageUsage()/problem.getCurrentStorageAllocation()) {
+								problem = vm;
+								problem.setProblemType("wasteOfResources");
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+	   if (problem == null) {
 			// take the top problem if there is one that's not in the "green" region
 			if (criticalAppPercentage >= bottomRegion) {
 				problemType = "MediumCriticalApp";
 				problem = criticalApp;
+				problem.setProblemType("slaViolation");
 			}
 		}
 		if(problem!=null){  
-			Monitor.getInstance().logAnalysis(problem, problemType);
+			Monitor.getInstance().logAnalysis(problem, problem.getProblemType());
 		}
 		
 		return problem;
