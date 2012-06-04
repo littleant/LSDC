@@ -59,16 +59,45 @@ public class ChangeVmConfiguration extends Action {
 	}
 	
 	/**
-	 * Calculates an optimized allocation value for the VM
+	 * Calculates an optimized CPU allocation value for the VM
 	 * 
 	 * @param ticks Based on the last n ticks
-	 * @return The optimized allocation value
+	 * @return The optimized CPU allocation value
 	 */
-	public int calculateOptimizedCpuAllocation(int ticks) {
-		int allocation = this.vm.getCurrentCpuAllocation();
-		
-		List<Integer> cpuAllocationHistory = this.vm.getCpuAllocationHistory(this.tickCount);
-		List<Integer> cpuUsageHistory = this.vm.getCpuUsageHistory(this.tickCount);
+	private int calculateOptimizedCpuAllocation(int ticks) {
+		return this.calculateOptimizedAllocation(this.vm.getCurrentCpuAllocation(), this.vm.getCpuAllocationHistory(this.tickCount), this.vm.getCpuUsageHistory(this.tickCount));
+	}
+	
+	/**
+	 * Calculates an optimized memory allocation value for the VM
+	 * 
+	 * @param ticks Based on the last n ticks
+	 * @return The optimized memory allocation value
+	 */
+	private int calculateOptimizedMemoryAllocation(int ticks) {
+		return this.calculateOptimizedAllocation(this.vm.getCurrentMemoryAllocation(), this.vm.getMemoryAllocationHistory(this.tickCount), this.vm.getMemoryUsageHistory(this.tickCount));
+	}
+	
+	/**
+	 * Calculates an optimized storage allocation value for the VM
+	 * 
+	 * @param ticks Based on the last n ticks
+	 * @return The optimized storage allocation value
+	 */
+	private int calculateOptimizedStorageAllocation(int ticks) {
+		return this.calculateOptimizedAllocation(this.vm.getCurrentStorageAllocation(), this.vm.getStorageAllocationHistory(this.tickCount), this.vm.getStorageUsageHistory(this.tickCount));
+	}
+	
+	/**
+	 * Calculates an optimized allocation value for a given history of values
+	 * 
+	 * @param currentAllocation
+	 * @param allocationHistory
+	 * @param usageHistory
+	 * @return Optimized allocation value
+	 */
+	private int calculateOptimizedAllocation(int currentAllocation, List<Integer> allocationHistory, List<Integer> usageHistory) {
+		int allocation = currentAllocation;
 		
 		int optimizedAllocation = 0;
 		
@@ -76,9 +105,9 @@ public class ChangeVmConfiguration extends Action {
 		int bottomRegionReached = 0;
 		
 		// calculate how often the VM went into a dangerous zone in the last n ticks (compare allocated to used resources)
-		for (int i = 0; i < cpuAllocationHistory.size(); i++) {
-			Integer allocated = cpuAllocationHistory.get(i);
-			Integer used = cpuUsageHistory.get(i);
+		for (int i = 0; i < allocationHistory.size(); i++) {
+			Integer allocated = allocationHistory.get(i);
+			Integer used = usageHistory.get(i);
 			
 			// calculate percentage of the used resources vs. the allocated resources
 			int ratio = (int) ((used / (float) allocated) * 100);
@@ -109,22 +138,6 @@ public class ChangeVmConfiguration extends Action {
 		} else if (allocation < 0) {
 			allocation = 0;
 		}
-		
-		return allocation;
-	}
-	
-	public int calculateOptimizedMemoryAllocation(int ticks) {
-		int allocation = this.vm.getCurrentMemoryAllocation();
-		
-		// TODO
-		
-		return allocation;
-	}
-	
-	public int calculateOptimizedStorageAllocation(int ticks) {
-		int allocation = this.vm.getCurrentStorageAllocation();
-		
-		// TODO
 		
 		return allocation;
 	}
