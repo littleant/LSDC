@@ -184,7 +184,6 @@ public class TurnOffPmAndMoveVms extends Action {
 	public void init(Resource problemPm) {
 		this.setProblemResource(problemPm);
 		this.setProblemType(problemPm.getProblemType());
-		problemPm.setProblemType("");
 		
 		this.preconditionsOk=false;
 		this.curInstance = null;

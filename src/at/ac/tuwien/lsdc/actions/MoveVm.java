@@ -60,7 +60,6 @@ public class MoveVm extends Action {
 	public void init(Resource problemVm) {
 		this.setProblemResource(problemVm);
 		this.setProblemType(problemVm.getProblemType());
-		problemVm.setProblemType("");
 		this.preconditionsOk = false;
 		this.selectedPm = null;
 		this.costs = 0;

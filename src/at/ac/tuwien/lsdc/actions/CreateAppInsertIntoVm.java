@@ -179,7 +179,6 @@ public class CreateAppInsertIntoVm extends Action {
 	public void init(Resource problemApp) {
 		this.setProblemResource(problemApp);
 		this.setProblemType(problemApp.getProblemType());
-		problemApp.setProblemType("");
 		this.preconditionsOk=false;
 		this.curInstance = null;
 		this.selectedVm=null;

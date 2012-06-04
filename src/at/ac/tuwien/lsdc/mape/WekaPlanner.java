@@ -18,8 +18,11 @@ import at.ac.tuwien.lsdc.actions.Action;
 import at.ac.tuwien.lsdc.actions.ChangeVmConfiguration;
 import at.ac.tuwien.lsdc.actions.CreateAppInsertIntoVm;
 import at.ac.tuwien.lsdc.actions.CreateVmInsertApp;
+import at.ac.tuwien.lsdc.actions.DoNothing;
 import at.ac.tuwien.lsdc.actions.MoveApp;
 import at.ac.tuwien.lsdc.actions.MoveVm;
+import at.ac.tuwien.lsdc.actions.Outsource;
+import at.ac.tuwien.lsdc.actions.TurnOffPmAndMoveVms;
 import at.ac.tuwien.lsdc.resources.Resource;
 
 public class WekaPlanner extends Planner {
@@ -61,6 +64,9 @@ public class WekaPlanner extends Planner {
 		knownActions.add(CreateAppInsertIntoVm.class);
 		knownActions.add(MoveApp.class);
 		knownActions.add(MoveVm.class);
+		knownActions.add(DoNothing.class);
+		knownActions.add(Outsource.class);
+		knownActions.add(TurnOffPmAndMoveVms.class);
 	}
 	
 	@Override

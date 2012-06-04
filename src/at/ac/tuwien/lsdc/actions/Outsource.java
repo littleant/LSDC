@@ -1,5 +1,6 @@
 package at.ac.tuwien.lsdc.actions;
 
+import at.ac.tuwien.lsdc.generator.RequestGenerator;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.Resource;
 
@@ -18,6 +19,9 @@ public class Outsource extends Action {
 
 	@Override
 	public void init(Resource problemApp) {
+		this.setProblemResource(problemApp);
+		this.setProblemType(problemApp.getProblemType());
+		
 		if (problemApp instanceof App) {
 			problem = (App) problemApp;
 		}
@@ -26,7 +30,12 @@ public class Outsource extends Action {
 	@Override
 	public int predict() {
 		int ticks = 10;
-		return this.problem.getNumberOfSlaViolations(ticks) / (ticks * 3) * 100;
+		if (this.problem!=null){
+			return this.problem.getNumberOfSlaViolations(ticks) / (ticks * 3) * 100;
+		}
+		else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -36,13 +45,24 @@ public class Outsource extends Action {
 
 	@Override
 	public boolean preconditions() {
-		return true;
+		if (this.problem !=null) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public void execute() {
 		// remove the app from the system
-		this.problem.getVm().getToRemoveList().add(this.problem);
+
+		if (this.problem.getVm()!=null) {
+			this.problem.getVm().getToRemoveList().add(this.problem);
+		}
+		
+		//remove the app from the request- queue??? 
+		if(problem.getOriginalRequest()!=null) {
+			RequestGenerator.getInstance().removeRequestFromQueue(problem.getOriginalRequest());
+		}
 	}
 
 	@Override
