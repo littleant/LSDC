@@ -19,6 +19,7 @@ public class App extends Resource {
 	private int storage;
 	
 	private int cpuSlaErrorcount;
+	
 	public int getCpuSlaErrorcount() {
 		return cpuSlaErrorcount;
 	}
@@ -113,6 +114,51 @@ public class App extends Resource {
 		}
 		
 		return result;
+	}
+	
+	//gets the number of SLA violations for a certain number of past ticks for this app
+	public int getNumberOfSlaViolations(int maxTicks) {
+		int ret = 0;
+		
+		//CPU SLA
+		LinkedList<Integer> cpuallhist = this.getVm().getCpuAllocationHistory(maxTicks);
+		LinkedList<Integer> cpuusehist = this.getVm().getCpuUsageHistory(maxTicks);
+		LinkedList<Integer> appcpuusehist = this.getCpuUsageHistory(maxTicks);
+		
+		//MEM SLA
+		LinkedList<Integer> memallhist = this.getVm().getMemoryAllocationHistory(maxTicks);
+		LinkedList<Integer> memusehist = this.getVm().getMemoryUsageHistory(maxTicks);
+		LinkedList<Integer> appmemusehist = this.getMemoryUsageHistory(maxTicks);
+		
+		//Storage SLA 
+		LinkedList<Integer> storallhist = this.getVm().getStorageAllocationHistory(maxTicks);
+		LinkedList<Integer> storusehist = this.getVm().getStorageUsageHistory(maxTicks);
+		LinkedList<Integer> appstorusehist = this.getStorageUsageHistory(maxTicks);
+		
+		for (int i = 0; i<maxTicks; i++) {
+			//CPU
+			if (cpuallhist.get(i) < cpuusehist.get(i)) {
+				if (this.getCpu() > appcpuusehist.get(i)) {
+					ret++;
+				}
+			}
+			
+			//MEMORY
+			if (memallhist.get(i) < memusehist.get(i)) {
+				if (this.getMemory() > appmemusehist.get(i)) {
+					ret++;
+				}
+			}
+			
+			//STORAGE
+			if (storallhist.get(i) < storusehist.get(i)) {
+				if (this.getStorage() > appstorusehist.get(i)) {
+					ret++;
+				}
+			}
+		}
+		
+		return ret;
 	}
 	
 	public boolean isMemorySlaViolated() {

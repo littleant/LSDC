@@ -58,6 +58,9 @@ public class MoveVm extends Action {
 	
 	@Override
 	public void init(Resource problemVm) {
+		this.setProblemResource(problemVm);
+		this.setProblemType(problemVm.getProblemType());
+		problemVm.setProblemType("");
 		this.preconditionsOk = false;
 		this.selectedPm = null;
 		this.costs = 0;
@@ -169,6 +172,7 @@ public class MoveVm extends Action {
 
 	@Override
 	public void execute() {
+		globalTickExecution = Monitor.getInstance().getGlobalTicks();
 		// remove VM from old PM
 		VirtualMachine vm = this.vm;
 		this.vm.getPm().getVms().remove(this.vm);
@@ -201,7 +205,7 @@ public class MoveVm extends Action {
 			// evaluate usage 
 			// (510-(abs(85-pmcpu)-abs(85-pmmem)-abs(85-pmstor)-abs(85-vmcpu)-abs(85-vmmem)-abs(85-vmstor)))/510
 			double evaluation = (510 - calculateUsageRatio(pmCpuUsageHistory, 85) - calculateUsageRatio(pmMemoryUsageHistory, 85) - calculateUsageRatio(pmStorageUsageHistory, 85) - calculateUsageRatio(vmCpuUsageHistory, 85) - calculateUsageRatio(vmMemoryUsageHistory, 85) - calculateUsageRatio(vmStorageUsageHistory, 85)) / 510;
-			
+			Monitor.getInstance().logExecution(vm, this, evaluation, this.globalTickExecution);
 			// minimum of 0
 			//evaluation = Math.max(0, evaluation);
 			
@@ -233,7 +237,7 @@ public class MoveVm extends Action {
 			
 			//Evaluation
 			instance.setValue(getKnowledgeBase().attribute(33), evaluation);
-
+			this.setLocalEvaluation(evaluation);
 			getKnowledgeBase().add(instance);
 		}
 		return true;

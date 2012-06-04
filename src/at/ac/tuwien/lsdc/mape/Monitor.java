@@ -17,7 +17,7 @@ import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class Monitor {
-	private int globalTicks =0;
+	private long globalTicks =0;
 	private PrintWriter pmLog;
 	private PrintWriter vmLog;
 	private PrintWriter appLog;
@@ -26,11 +26,42 @@ public class Monitor {
 	private PrintWriter executionsLog;
 	private UUID executionUuid;
 	
-	public int getGlobalTicks() {
+	public int getGlobalNumberOfSlaViolations(int maxTicks) {
+		int ret = 0;
+		for (PhysicalMachine pm : pms) {
+			for (App a : pm.getApps()) {
+				ret += a.getNumberOfSlaViolations(maxTicks);
+			}
+		}
+		
+		return ret;
+	}
+	
+	public int getGlobalAverageResourceUsageRate(int maxTicks){
+		double val = 0;
+		int runningMachines = 0;
+		for (PhysicalMachine pm : pms) {
+			if (pm.isRunning()){
+				runningMachines++;
+				for (Integer i : pm.getCpuUsageHistory(maxTicks)) {
+					val+=(i/maxTicks)/3;
+				}
+				for (Integer i : pm.getMemoryUsageHistory(maxTicks)) {
+					val+=(i/maxTicks)/3;
+				}
+				for (Integer i : pm.getStorageUsageHistory(maxTicks)) {
+					val+=(i/maxTicks)/3;
+				}
+			}
+		}		
+		return (int)(val/(runningMachines));
+	}
+	
+	public long getGlobalTicks() {
 		return globalTicks;
 	}
 
-	public void setGlobalTicks(int globalTicks) {
+	public void setGlobalTicks(long globalTicks) {
 		this.globalTicks = globalTicks;
 	}
 
@@ -394,6 +425,88 @@ public class Monitor {
 			possibilitiesLog.flush();
 		}
 	}
+
+	public void logExecution(Resource problem, Action action, double evaluation, long globalTickDecision) {
+		// GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId
+		if (problem != null) {
+			StringBuffer sb = new StringBuffer();
+			// global tick
+			sb.append(globalTickDecision);
+			sb.append(";");
+			// PM, VM, App
+			if (problem instanceof PhysicalMachine) {
+				sb.append(problem.getResourceId());
+				sb.append(";;;");
+			} else if (problem instanceof VirtualMachine) {
+				sb.append(((VirtualMachine) problem).getPm().getResourceId());
+				sb.append(";");
+				// VM
+				sb.append(problem.getResourceId());
+				sb.append(";;");				
+			} else if (problem instanceof App) {
+				VirtualMachine vm = ((App) problem).getVm();
+				
+				if (vm != null) {
+					// PM
+					if (vm.getPm() != null) {
+						sb.append(vm.getPm().getResourceId());
+					}
+					sb.append(";");
+					// VM
+					sb.append(vm.getResourceId());
+					sb.append(";");
+				} else {
+					sb.append(";;");
+				}
+				// App
+				sb.append(problem.getResourceId());
+				sb.append(";");
+			}
+			// Action
+			sb.append(action.getClass().getSimpleName());
+			sb.append(";");
+			// Precondition
+			sb.append(action.preconditions());
+			sb.append(";");
+			// Estimation
+			sb.append(action.estimate());
+			sb.append(";");
+			// Prediction
+			sb.append(action.predict());
+			sb.append(";");
+			// DestinationPmId
+			if (action instanceof MoveVm) {
+				MoveVm moveVmAction = (MoveVm) action;
+				if (moveVmAction.getSelectedPm() != null) {
+					sb.append(moveVmAction.getSelectedPm().getResourceId());
+				}
+			} else if (action instanceof CreateVmInsertApp) {
+				CreateVmInsertApp a = (CreateVmInsertApp) action;
+				if (a.getSelectedPm() != null) {
+					sb.append(a.getSelectedPm().getResourceId());
+				}
+			}
+			sb.append(";");
+			// DestinationVmId
+			if (action instanceof CreateAppInsertIntoVm) {
+				CreateAppInsertIntoVm a = (CreateAppInsertIntoVm) action;
+				if (a.getSelectedVm() != null) {
+					sb.append(a.getSelectedVm().getResourceId());
+				}
+			} else if (action instanceof MoveApp) {
+				MoveApp a = (MoveApp) action;
+				if (a.getSelectedVm() != null) {
+					sb.append(a.getSelectedVm().getResourceId());
+				}
+			}
+			sb.append(";");
+			sb.append(evaluation);
+			
+			executionsLog.println(sb.toString());
+			executionsLog.flush();
+		}
+	}
+
 	
 	public void log (PrintWriter logfile, String text){
 		

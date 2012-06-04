@@ -13,8 +13,6 @@ public class KISSPlanner extends Planner {
 	List<Class> knownActions = new LinkedList<Class>();
 	
 	
-	
-	
 	public KISSPlanner() {
 		Action.setOnlyLearning(true);
 		knownActions.add(CreateVmInsertApp.class);
@@ -47,6 +45,10 @@ public class KISSPlanner extends Planner {
 		}
 		
 		return selectedAction;
+	}
+	
+	public void evaluatePastActions(){
+		//do nothing here => becaus KISSPlanner
 	}
 	
 	public void terminate(){
