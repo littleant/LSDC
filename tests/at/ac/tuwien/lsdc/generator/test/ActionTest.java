@@ -60,6 +60,24 @@ public class ActionTest {
 		cpuUsage.add(0);
 		cpuUsage.add(0);
 		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
+		cpuUsage.add(0);
 		
 		LinkedList<Integer> memoryUsage = cpuUsage;
 		LinkedList<Integer> storageUsage = cpuUsage;
