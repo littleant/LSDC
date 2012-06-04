@@ -346,7 +346,7 @@ public class Monitor {
 		
 	}
 
-	public void logPossibilities(Resource problem, Action action, int duration) {
+	public void logPossibilities(Resource problem, Action action, long duration) {
 		// GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId
 		if (problem != null) {
 			StringBuffer sb = new StringBuffer();

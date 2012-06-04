@@ -91,7 +91,7 @@ public class WekaPlanner extends Planner {
 				GregorianCalendar gc2 = new GregorianCalendar();
 				
 				// logging
-				Monitor.getInstance().logPossibilities(problem, a, gc2.compareTo(gc));
+				Monitor.getInstance().logPossibilities(problem, a, gc2.getTimeInMillis() - gc.getTimeInMillis());
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
