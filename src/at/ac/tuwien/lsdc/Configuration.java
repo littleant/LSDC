@@ -28,6 +28,8 @@ public class Configuration {
 	
 	private boolean actionOnlyLearning = false;
 	private boolean plannerOnlyLearning = false;
+	
+	private boolean differentOutputDirectory = false;
 
 	private int appInsertIntoVmCosts;
 
@@ -107,6 +109,7 @@ public class Configuration {
 			System.out.println("CONFIG1: " + "true".equals(properties.getProperty("plannerOnlyLearning").trim()));
 			this.setPlannerOnlyLearning("true".equals(properties.getProperty("plannerOnlyLearning").trim()));
 			
+			this.setDifferentOutputDirectory("true".equals(properties.getProperty("differentOutputDirectory").trim()));
 			//evaluation factors for global evaluation
 			this.setFactorSlaViolations(Integer.parseInt(properties.getProperty("factorSlaViolations")));
 			this.setFactorUsageEvaluation(Integer.parseInt(properties.getProperty("factorUsageEvaluation")));
@@ -252,5 +255,13 @@ public class Configuration {
 
 	public void setOutsourceCosts(int outsourceCosts) {
 		this.outsourceCosts = outsourceCosts;
+	}
+
+	public boolean isDifferentOutputDirectory() {
+		return differentOutputDirectory;
+	}
+
+	public void setDifferentOutputDirectory(boolean differentOutputDirectory) {
+		this.differentOutputDirectory = differentOutputDirectory;
 	}
 }

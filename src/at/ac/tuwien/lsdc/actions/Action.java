@@ -8,6 +8,7 @@ import java.io.IOException;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
+import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
 import at.ac.tuwien.lsdc.resources.Resource;
@@ -102,9 +103,19 @@ public abstract class Action {
 	//saves the knowledgebase to an arff - file
 	//TODO: gst: Problem bei Zur�ckschreiben in die gleiche Datei 
 	public static void saveKnowledge(String filepath, Instances knowledgeBase) throws IOException {
+		
 		ArffSaver saver = new ArffSaver();
+		
 		saver.setInstances(knowledgeBase);
-		File file = new File(filepath);
+		File file = null;
+		//Workaround for GST
+		if (Configuration.getInstance().isDifferentOutputDirectory()) {
+			file = new File("output"+filepath);
+		}
+		else {
+			file = new File(filepath);
+		}
+		
 		if(file.exists()) {
 			System.out.println("deleting file..." + file.getAbsolutePath());
 			System.out.println(file.delete());
