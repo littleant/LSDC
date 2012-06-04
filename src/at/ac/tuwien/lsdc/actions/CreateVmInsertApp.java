@@ -183,6 +183,10 @@ public class CreateVmInsertApp extends Action {
 		
 		//TODO: gst: hard - coded startup value!!
 		VirtualMachine vm = selectedPm.createNewVm(app.getCpu(), app.getMemory(), app.getStorage(), Configuration.getInstance().getVmStartupCosts());
+		/*System.out.println (Monitor.getInstance().getGlobalTicks() + " Creating VM: "+ app.getCpu()+", "+ app.getMemory()+", " + app.getStorage()+ ", " + Configuration.getInstance().getVmStartupCosts());
+		System.out.println (Monitor.getInstance().getGlobalTicks() + " VM: " + vm.getCurrentCpuAllocation() +", "+ vm.getCurrentMemoryAllocation() + ", " + vm.getCurrentStorageAllocation());
+		System.out.println (Monitor.getInstance().getGlobalTicks() + " VM: " + vm.getCpuOverhead() +", "+ vm.getMemoryOverhead() + ", " + vm.getStorageOverhead());
+		*/
 		vm.createApp(this.app);
 		
 		if(oldVm!=null) {
