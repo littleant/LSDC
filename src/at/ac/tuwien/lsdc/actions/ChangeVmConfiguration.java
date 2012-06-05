@@ -113,7 +113,6 @@ public class ChangeVmConfiguration extends Action {
 	 * @param usageHistory
 	 * @return Optimized allocation value
 	 */
-
 	private int calculateOptimizedAllocation(List<Integer> allocationHistory, List<Integer> usageHistory, int overhead) {
 		int allocation = overhead;
 

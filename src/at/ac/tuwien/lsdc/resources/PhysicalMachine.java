@@ -8,6 +8,8 @@ public class PhysicalMachine extends Resource {
 	private boolean isRunning;
 	private final Integer STARTUPTIME = 20;
 	private LinkedList<VirtualMachine> toRemoveList = new LinkedList<VirtualMachine>();
+
+	private LinkedList<VirtualMachine> vms = new LinkedList<VirtualMachine>();
 	
 	public LinkedList<VirtualMachine> getToRemoveList() {
 		return toRemoveList;
@@ -20,8 +22,6 @@ public class PhysicalMachine extends Resource {
 	public PhysicalMachine(){
 		setNewPmId();
 	}
-	
-	private LinkedList<VirtualMachine> vms = new LinkedList<VirtualMachine>();
 	
 	public LinkedList<VirtualMachine> getVms() {
 		return vms;
@@ -74,15 +74,24 @@ public class PhysicalMachine extends Resource {
 			
 		}
 		else {
-			toRemoveList = new LinkedList<VirtualMachine>();
-			runningTicks++;
-			for (VirtualMachine vm : vms ) {
+			this.toRemoveList = new LinkedList<VirtualMachine>();
+			this.runningTicks++;
+			
+			System.out.println("vor nextTick: "+ this.vms.size());
+			for (VirtualMachine vm : this.vms ) {
 				vm.nextTick();
 			}
+			System.out.println("nach nextTick: "+ this.vms.size());
 			
-			for (VirtualMachine vm:toRemoveList) {
-				vms.remove(vm);
+			System.out.println("remove size: "+ this.toRemoveList.size());
+			System.out.println("vor remove "+ this.vms.size());
+			
+			for (VirtualMachine vm : this.toRemoveList) {
+				System.out.println("removing VM "+ vm.getResourceId());
+				this.vms.remove(vm);
 			}
+			
+			System.out.println("nach remove: "+ this.vms.size());
 		}
 		
 	}
@@ -244,6 +253,17 @@ public class PhysicalMachine extends Resource {
 		}
 		
 		return violations;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Resource) {
+			if (((Resource) o).getResourceId() == this.getResourceId()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
 
