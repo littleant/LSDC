@@ -230,7 +230,6 @@ public class VirtualMachine extends Resource {
 	
 	public void terminate() {
 		pm.getToRemoveList().add(this);
-		System.out.println("added myself to the remove list: "+ this.getResourceId() +" (PM: "+ this.getPm().getResourceId() +")");
 	}
 
 	public List<App> getApps() {
