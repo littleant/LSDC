@@ -182,6 +182,7 @@ public class MoveVm extends Action {
 		
 		// insert VM into new PM
 		if (this.preconditions()) {
+			vm.setPm(this.selectedPm);
 			this.selectedPm.getVms().add(vm);
 			vm.setSuspendedTicks(Configuration.getInstance().getVmMovingCosts());
 		}
