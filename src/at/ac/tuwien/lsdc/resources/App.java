@@ -35,6 +35,9 @@ public class App extends Resource {
 	private LinkedList<Integer> memoryUsage;
 	private LinkedList<Integer> storageUsage;
 	
+	//sla errors 
+	private LinkedList<Integer> slaErrorsPerTick = new LinkedList<Integer>();
+	
 	// link to the hosting vm
 	private VirtualMachine vm;
 	
@@ -119,42 +122,10 @@ public class App extends Resource {
 	public int getNumberOfSlaViolations(int maxTicks) {
 		int ret = 0;
 		if(this.getVm()!= null){
-			//CPU SLA
-			LinkedList<Integer> cpuallhist = this.getVm().getCpuAllocationHistory(maxTicks);
-			LinkedList<Integer> cpuusehist = this.getVm().getCpuUsageHistory(maxTicks);
-			LinkedList<Integer> appcpuusehist = this.getCpuUsageHistory(maxTicks);
 			
-			//MEM SLA
-			LinkedList<Integer> memallhist = this.getVm().getMemoryAllocationHistory(maxTicks);
-			LinkedList<Integer> memusehist = this.getVm().getMemoryUsageHistory(maxTicks);
-			LinkedList<Integer> appmemusehist = this.getMemoryUsageHistory(maxTicks);
-			
-			//Storage SLA 
-			LinkedList<Integer> storallhist = this.getVm().getStorageAllocationHistory(maxTicks);
-			LinkedList<Integer> storusehist = this.getVm().getStorageUsageHistory(maxTicks);
-			LinkedList<Integer> appstorusehist = this.getStorageUsageHistory(maxTicks);
-			
-			for (int i = 0; i<maxTicks; i++) {
-				//CPU
-				if (cpuallhist.get(i) < cpuusehist.get(i)) {
-					if (this.getCpu() > appcpuusehist.get(i)) {
-						ret++;
-					}
-				}
-				
-				//MEMORY
-				if (memallhist.get(i) < memusehist.get(i)) {
-					if (this.getMemory() > appmemusehist.get(i)) {
-						ret++;
-					}
-				}
-				
-				//STORAGE
-				if (storallhist.get(i) < storusehist.get(i)) {
-					if (this.getStorage() > appstorusehist.get(i)) {
-						ret++;
-					}
-				}
+			LinkedList<Integer> slaErrors  = Resource.getLastEntriesUtil(slaErrorsPerTick, maxTicks);
+			for (Integer i : slaErrors) {
+				ret+=i;
 			}
 			return ret;
 		}
@@ -299,18 +270,24 @@ public class App extends Resource {
 			suspendedTicks--;
 		}
 		else {
+			int localcount =0;
 			runningTicks++;
 			if (isCpuSlaViolated()) {
 				cpuSlaErrorcount++;
+				localcount++;
 			}
 			
 			if (isMemorySlaViolated()) {
 				memorySlaErrorcount++;
+				localcount++;
 			}
 			
 			if (isStorageSlaViolated()) {
 				storageSlaErrorcount++;
+				localcount++;
 			}
+			
+			slaErrorsPerTick.add(localcount);
 			
 			//terminate?
 			if(runningTicks>ticks){

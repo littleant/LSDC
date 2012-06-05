@@ -79,7 +79,7 @@ public class Monitor {
 			this.possibilitiesLog = new PrintWriter("log/possibilities.txt");
 			this.executionsLog = new PrintWriter("log/executions.txt");
 			
-			this.analysisLog.println ("GlobalTick;ProblemType;ResourceType;PmId;VmId;AppId;CPUAll;CPUUse;MEMAll;MEMUse;STORAll;STORUse");
+			this.analysisLog.println ("GlobalTick;ProblemType;ResourceType;PmId;VmId;AppId;CPUAll;MEMAll;STORAll;CPUUse;MEMUse;STORUse");
 			this.possibilitiesLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId");
 			this.executionsLog.println ("GlobalTick;PmId;VmId;AppId;Action;Preconditions;Estimation;Prediction;DestinationPmId;DestinationVmId;Evaluation");
 			

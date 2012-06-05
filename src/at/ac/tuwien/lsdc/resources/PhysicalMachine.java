@@ -86,9 +86,9 @@ public class PhysicalMachine extends Resource {
 			System.out.println("remove size: "+ this.toRemoveList.size());
 			System.out.println("vor remove "+ this.vms.size());
 			
-			for (VirtualMachine vm : this.toRemoveList) {
-				System.out.println("removing VM "+ vm.getResourceId());
-				this.vms.remove(vm);
+			for (VirtualMachine vm:toRemoveList) {
+				System.out.println ("Remove VM " + vm.getResourceId() + " from PM " + this.getResourceId());
+				vms.remove(vm);
 			}
 			
 			System.out.println("nach remove: "+ this.vms.size());
