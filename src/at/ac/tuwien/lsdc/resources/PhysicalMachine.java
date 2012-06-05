@@ -81,12 +81,8 @@ public class PhysicalMachine extends Resource {
 			
 			System.out.println("PM: "+ this.getResourceId());
 			System.out.println("vor nextTick: "+ this.vms.size());
-//			for (VirtualMachine vm : this.vms) {
-//				vm.nextTick();
-//			}
-			
-			for (int i = 0; i < this.vms.size(); i++) {
-				this.vms.get(i).nextTick();
+			for (VirtualMachine vm : this.vms) {
+				vm.nextTick();
 			}
 			
 			System.out.println("nach nextTick: "+ this.vms.size());
@@ -96,15 +92,7 @@ public class PhysicalMachine extends Resource {
 			
 			for (VirtualMachine vm : this.toRemoveList) {
 				System.out.println (Monitor.getInstance().getGlobalTicks() + " Remove VM " + vm.getResourceId() + " from PM " + this.getResourceId());
-				//this.vms.remove(vm);
-				
-				for (int i = 0; i < this.toRemoveList.size(); i++) {
-					for (int j = 0; j < this.vms.size(); j++) {
-						if (this.toRemoveList.get(i).getResourceId() == this.vms.get(j).getResourceId()) {
-							this.vms.remove(j);
-						}
-					}
-				}
+				this.vms.remove(vm);
 			}
 			
 			System.out.println("nach remove: "+ this.vms.size());
