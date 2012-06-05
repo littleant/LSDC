@@ -84,7 +84,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @return The optimized CPU allocation value
 	 */
 	private int calculateOptimizedCpuAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getCpuAllocationHistory(this.tickCount), this.vm.getCpuUsageHistory(this.tickCount), VirtualMachine.getCpuOverhead());
+		return this.calculateOptimizedAllocation(this.vm.getCpuAllocationHistory(this.tickCount), this.vm.getCpuUsageHistory(this.tickCount), VirtualMachine.getCpuOverhead(), this.vm.getCpuSla());
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @return The optimized memory allocation value
 	 */
 	private int calculateOptimizedMemoryAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getMemoryAllocationHistory(this.tickCount), this.vm.getMemoryUsageHistory(this.tickCount), VirtualMachine.getMemoryOverhead());
+		return this.calculateOptimizedAllocation(this.vm.getMemoryAllocationHistory(this.tickCount), this.vm.getMemoryUsageHistory(this.tickCount), VirtualMachine.getMemoryOverhead(), this.vm.getMemorySla());
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @return The optimized storage allocation value
 	 */
 	private int calculateOptimizedStorageAllocation(int ticks) {
-		return this.calculateOptimizedAllocation(this.vm.getStorageAllocationHistory(this.tickCount), this.vm.getStorageUsageHistory(this.tickCount), VirtualMachine.getStorageOverhead());
+		return this.calculateOptimizedAllocation(this.vm.getStorageAllocationHistory(this.tickCount), this.vm.getStorageUsageHistory(this.tickCount), VirtualMachine.getStorageOverhead(), this.vm.getStorageSla());
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class ChangeVmConfiguration extends Action {
 	 * @param usageHistory
 	 * @return Optimized allocation value
 	 */
-	private int calculateOptimizedAllocation(List<Integer> allocationHistory, List<Integer> usageHistory, int overhead) {
+	private int calculateOptimizedAllocation(List<Integer> allocationHistory, List<Integer> usageHistory, int overhead, int sla) {
 		int allocation = overhead;
 
 		int optimizedAllocation = 0;
@@ -150,6 +150,11 @@ public class ChangeVmConfiguration extends Action {
 					allocation = optimizedAllocation;
 				}
 			}
+		}
+		
+		// don't give the VM more resources than the SLA guarantee
+		if (allocation > sla) {
+			allocation = sla;
 		}
 		
 		if (allocation > 100) {
