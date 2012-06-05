@@ -250,4 +250,46 @@ public class VirtualMachine extends Resource {
 		
 		return violations;
 	}
+	
+	/**
+	 * Sums up all CPU SLAs of all apps on this VM
+	 * 
+	 * @return Combined SLAs with overhead. Can be greater than 100
+	 */
+	public int getCpuSla() {
+		int slas = VirtualMachine.getCpuOverhead();
+		for (App app : this.apps) {
+			slas += app.getCpu();
+		}
+		
+		return slas;
+	}
+	
+	/**
+	 * Sums up all memory SLAs of all apps on this VM
+	 * 
+	 * @return Combined SLAs with overhead. Can be greater than 100
+	 */
+	public int getMemorySla() {
+		int slas = VirtualMachine.getMemoryOverhead();
+		for (App app : this.apps) {
+			slas += app.getMemory();
+		}
+		
+		return slas;
+	}
+	
+	/**
+	 * Sums up all storage SLAs of all apps on this VM
+	 * 
+	 * @return Combined SLAs with overhead. Can be greater than 100
+	 */
+	public int getStorageSla() {
+		int slas = VirtualMachine.getStorageOverhead();
+		for (App app : this.apps) {
+			slas += app.getStorage();
+		}
+		
+		return slas;
+	}
 }
