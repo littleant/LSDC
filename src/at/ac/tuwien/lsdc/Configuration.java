@@ -34,6 +34,7 @@ public class Configuration {
 	private int appInsertIntoVmCosts;
 
 	private int appMovingCosts;
+	private int vmMovingCosts;
 	
 	private int vmCpuOverhead;
 	private int vmMemoryOverhead;
@@ -57,6 +58,7 @@ public class Configuration {
 			this.pmStartupCosts = Integer.parseInt(properties.getProperty("pmStartupCosts"));
 			this.vmStartupCosts = Integer.parseInt(properties.getProperty("vmStartupCosts"));
 			this.setAppMovingCosts(Integer.parseInt(properties.getProperty("appMovingCosts")));
+			this.setVmMovingCosts(Integer.parseInt(properties.getProperty("vmMovingCosts")));
 			this.setAppInsertIntoVmCosts(Integer.parseInt(properties.getProperty("appInsertIntoVmCosts")));
 			this.setActionOnlyLearning("true".equals(properties.getProperty("actionOnlyLearning").trim()));
 			System.out.println("CONFIG1: " + "true".equals(properties.getProperty("plannerOnlyLearning").trim()));
@@ -273,5 +275,13 @@ public class Configuration {
 
 	public void setDifferentOutputDirectory(boolean differentOutputDirectory) {
 		this.differentOutputDirectory = differentOutputDirectory;
+	}
+
+	public int getVmMovingCosts() {
+		return vmMovingCosts;
+	}
+
+	public void setVmMovingCosts(int vmMovingCosts) {
+		this.vmMovingCosts = vmMovingCosts;
 	}
 }

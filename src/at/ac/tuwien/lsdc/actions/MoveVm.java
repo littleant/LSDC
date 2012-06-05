@@ -31,7 +31,6 @@ public class MoveVm extends Action {
 	private boolean preconditionsOk = false;
 	private int costs = 0;
 	private PhysicalMachine selectedPm = null;
-	private static int vmStartupCosts = 10;
 	
 	private int waitForEvaluation = 0;
 
@@ -65,7 +64,7 @@ public class MoveVm extends Action {
 		this.costs = 0;
 		this.vm = null;
 		
-		MoveVm.vmStartupCosts = Configuration.getInstance().getVmStartupCosts();
+		
 		
 		if (problemVm instanceof VirtualMachine){
 			this.vm = (VirtualMachine) problemVm;
@@ -76,7 +75,7 @@ public class MoveVm extends Action {
 				if (pm.isRunning() && pm !=vm.getPm())  {
 					if ((100 - pm.getCurrentCpuAllocation()) >= vm.getCurrentCpuAllocation() && (100 - pm.getCurrentMemoryAllocation()) >= vm.getCurrentMemoryAllocation() && (100 - pm.getCurrentCpuAllocation()) >= vm.getCurrentStorageAllocation()) {
 						found = true;
-						this.costs = vmStartupCosts;
+						this.costs = Configuration.getInstance().getVmMovingCosts();
 						
 						if (this.selectedPm == null || this.calculateFit(this.vm, pm) > fitFactor) {
 							this.selectedPm = pm;
@@ -184,6 +183,7 @@ public class MoveVm extends Action {
 		// insert VM into new PM
 		if (this.preconditions()) {
 			this.selectedPm.getVms().add(vm);
+			vm.setSuspendedTicks(Configuration.getInstance().getVmMovingCosts());
 		}
 	}
 
