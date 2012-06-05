@@ -73,7 +73,7 @@ public class MoveVm extends Action {
 			int fitFactor = 0;
 			
 			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
-				if (pm.isRunning())  {
+				if (pm.isRunning() && pm !=vm.getPm())  {
 					if ((100 - pm.getCurrentCpuAllocation()) >= vm.getCurrentCpuAllocation() && (100 - pm.getCurrentMemoryAllocation()) >= vm.getCurrentMemoryAllocation() && (100 - pm.getCurrentCpuAllocation()) >= vm.getCurrentStorageAllocation()) {
 						found = true;
 						this.costs = vmStartupCosts;

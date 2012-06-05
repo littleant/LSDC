@@ -81,6 +81,7 @@ public class PhysicalMachine extends Resource {
 			}
 			
 			for (VirtualMachine vm:toRemoveList) {
+				System.out.println ("Remove VM " + vm.getResourceId() + " from PM " + this.getResourceId());
 				vms.remove(vm);
 			}
 		}
