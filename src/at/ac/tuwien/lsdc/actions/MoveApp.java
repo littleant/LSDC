@@ -173,6 +173,7 @@ public class MoveApp extends Action {
 		//remove the app from the old vm and insert it into the new vm 
 		app.getVm().getApps().remove(app);
 		selectedVm.getApps().add(app);
+		app.setVm(selectedVm);
 		app.setSuspendedTicks(this.costs); // suspend the app with costs x
 		
 	}
