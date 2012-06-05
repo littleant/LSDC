@@ -63,6 +63,7 @@ public class Configuration {
 			this.setActionOnlyLearning("true".equals(properties.getProperty("actionOnlyLearning").trim()));
 			System.out.println("CONFIG1: " + "true".equals(properties.getProperty("plannerOnlyLearning").trim()));
 			this.setPlannerOnlyLearning("true".equals(properties.getProperty("plannerOnlyLearning").trim()));
+			this.setDifferentOutputDirectory("true".equals(properties.getProperty("differentOutputDirectory").trim()));
 			
 			//evaluation factors for global evaluation
 			this.setFactorSlaViolations(Integer.parseInt(properties.getProperty("factorSlaViolations")));
@@ -82,6 +83,7 @@ public class Configuration {
 			this.setVmConfigurationChangeCosts(Integer.parseInt(properties.getProperty("vmConfigurationChangeCosts")));
 			
 			this.setOutsourceCosts(Integer.parseInt(properties.getProperty("outsourceCosts")));
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

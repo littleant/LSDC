@@ -110,6 +110,7 @@ public class Monitor {
 		this.globalTicks++;
 		for (PhysicalMachine pm : pms){
 			pm.nextTick();
+			pm.logSlaViolations();
 		}
 	}
 	

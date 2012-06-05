@@ -133,9 +133,11 @@ public abstract class Action {
 			System.out.println("deleting file..." + file.getAbsolutePath());
 			System.out.println(file.delete());
 			
-			System.out.println("creating new, empty file..." + file.getAbsolutePath());
-			System.out.println(file.createNewFile());
+			
 		}
+		System.out.println("creating new, empty file..." + file.getAbsolutePath());
+		System.out.println(file.createNewFile());
+		
 		if(file.exists() && file.canWrite()) {
 			System.out.println("Exists and can write");
 		}

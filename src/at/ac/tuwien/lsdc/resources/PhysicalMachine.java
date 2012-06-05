@@ -91,6 +91,14 @@ public class PhysicalMachine extends Resource {
 		
 	}
 	
+	public void logSlaViolations() {
+		for (VirtualMachine vm : vms) {
+			for(App a: vm.getApps()){
+				a.logSlaViolations();
+			}
+		}
+	}
+	
 	@Override
 	//returns actual cpu - usage of the vms and apps
 	public Integer getCurrentCpuUsage() {

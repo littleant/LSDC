@@ -109,6 +109,10 @@ public class App extends Resource {
 	public boolean isCpuSlaViolated() {
 		boolean result = false;
 		
+		if(isSomeThingSuspended()){
+			return true;
+		}
+		
 		if (this.getVm().getCurrentCpuAllocation() < this.getVm().getCurrentCpuUsage()) {
 			if (this.getCpu() > this.getCurrentCpuUsage()) {
 				result = true;
@@ -129,14 +133,15 @@ public class App extends Resource {
 			}
 			return ret;
 		}
-		
 		return 0;
-				
-		
 	}
 	
 	public boolean isMemorySlaViolated() {
 		boolean result = false;
+		
+		if(isSomeThingSuspended()){
+			return true;
+		}
 		
 		if (this.getVm().getCurrentMemoryAllocation() < this.getVm().getCurrentMemoryUsage()) {
 			if (this.getMemory() > this.getCurrentMemoryUsage()) {
@@ -147,8 +152,29 @@ public class App extends Resource {
 		return result;
 	}
 	
+	public boolean isSomeThingSuspended(){
+		if (this.suspendedTicks>0){
+			return true;
+		}
+		if (this.getVm()!=null){
+			if(this.getVm().suspendedTicks>0){
+				return true;
+			}
+			if(this.getVm().getPm()!=null){
+				if(this.getVm().getPm().suspendedTicks>0){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public boolean isStorageSlaViolated() {
 		boolean result = false;
+		
+		if(isSomeThingSuspended()){
+			return true;
+		}
 		
 		if (this.getVm().getCurrentStorageAllocation() < this.getVm().getCurrentStorageUsage()) {
 			if (this.getStorage() > this.getCurrentStorageUsage()) {
@@ -270,30 +296,8 @@ public class App extends Resource {
 			suspendedTicks--;
 		}
 		else {
-			int localcount =0;
 			runningTicks++;
-			if (isCpuSlaViolated()) {
-				cpuSlaErrorcount++;
-				localcount++;
 			}
-			
-			if (isMemorySlaViolated()) {
-				memorySlaErrorcount++;
-				localcount++;
-			}
-			
-			if (isStorageSlaViolated()) {
-				storageSlaErrorcount++;
-				localcount++;
-			}
-			
-			slaErrorsPerTick.add(localcount);
-			
-			//terminate?
-			if(runningTicks>ticks){
-				vm.getToRemoveList().add(this);
-			}
-		}
 	}
 
 	@Override
@@ -328,6 +332,32 @@ public class App extends Resource {
 
 	public void setStorageSlaErrorcount(int storageSlaErrorcount) {
 		this.storageSlaErrorcount = storageSlaErrorcount;
+	}
+	
+	public void logSlaViolations(){
+		int localcount =0;
+		if (isCpuSlaViolated()) {
+			cpuSlaErrorcount++;
+			localcount++;
+		}
+		
+		if (isMemorySlaViolated()) {
+			memorySlaErrorcount++;
+			localcount++;
+		}
+		
+		if (isStorageSlaViolated()) {
+			storageSlaErrorcount++;
+			localcount++;
+		}
+		
+		slaErrorsPerTick.add(localcount);
+		
+		//terminate?
+		if(runningTicks>ticks){
+			vm.getToRemoveList().add(this);
+		}
+
 	}
 
 }
