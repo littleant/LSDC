@@ -3,6 +3,8 @@ package at.ac.tuwien.lsdc.resources;
 import java.util.LinkedList;
 import java.util.List;
 
+import at.ac.tuwien.lsdc.mape.Monitor;
+
 public class PhysicalMachine extends Resource {
 	//is the machine running? true=>yes
 	private boolean isRunning;
@@ -87,7 +89,7 @@ public class PhysicalMachine extends Resource {
 			System.out.println("vor remove "+ this.vms.size());
 			
 			for (VirtualMachine vm:toRemoveList) {
-				System.out.println ("Remove VM " + vm.getResourceId() + " from PM " + this.getResourceId());
+				System.out.println (Monitor.getInstance().getGlobalTicks() + " Remove VM " + vm.getResourceId() + " from PM " + this.getResourceId());
 				vms.remove(vm);
 			}
 			
