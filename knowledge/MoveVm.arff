@@ -1,5 +1,4 @@
 @relation MoveVm
-
 @attribute CPU8 numeric
 @attribute CPU9 numeric
 @attribute CPU10 numeric

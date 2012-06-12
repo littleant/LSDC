@@ -45,9 +45,10 @@ public class WekaPlanner extends Planner {
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				System.out.println ("WEKA - Panner is only learning: " + WekaPlanner.isOnlyLearning());
 				if(WekaPlanner.isOnlyLearning()==false) {
-					System.out.println("Start up WEKA Classifier");
+					System.out.println("START up WEKA Classifier");
 					classifier = new MultilayerPerceptron();
 					classifier.buildClassifier(WekaPlanner.knowledgeBase);
+					
 					evaluation = new Evaluation(WekaPlanner.knowledgeBase);
 					evaluation.crossValidateModel(classifier, WekaPlanner.knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
 					
@@ -180,9 +181,10 @@ public class WekaPlanner extends Planner {
 		else {
 			rt ="pm";
 		}
+		
 		instance.setValue(0, a.getProblemType());  //Problemtype
 		instance.setValue(1, rt);  //ResourceType
-		instance.setValue(2, a.getClass().getName()); //Actionname
+		instance.setValue(2, a.getClass().getSimpleName()); //Actionname
 		instance.setValue(3, a.estimate()); //estimation value
 		instance.setValue(4, a.predict()); //prediction value
 		instance.setValue(5, evaluationValue); //global evaluation
@@ -198,6 +200,9 @@ public class WekaPlanner extends Planner {
 			//WEKA evaluation
 			Instance instance = createInstance(a, Instance.missingValue());
 			try {
+				if (evaluation == null) {
+					System.out.println ("EVAL == NULL");
+				}
 				return (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

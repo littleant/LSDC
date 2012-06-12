@@ -12,7 +12,7 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.filters.supervised.instance.Resample;
+import weka.filters.unsupervised.instance.Resample;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.mape.Monitor;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
@@ -34,6 +34,8 @@ public class MoveVm extends Action {
 	private PhysicalMachine selectedPm = null;
 	
 	private int waitForEvaluation = 0;
+	
+	private int predictionValue = 0;
 
 	public static Instances getKnowledgeBase() {
 		if (knowledgeBase == null) {
@@ -41,6 +43,8 @@ public class MoveVm extends Action {
 				//load knowledgebase from file
 				MoveVm.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBMoveVm());
 				Resample rs = new Resample();
+				knowledgeBase.setClassIndex(18);
+				rs.setInputFormat(knowledgeBase); 
 				rs.setSampleSizePercent(0.1);
 				knowledgeBase = Resample.useFilter(knowledgeBase, rs);
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
@@ -130,10 +134,43 @@ public class MoveVm extends Action {
 
 	@Override
 	public int predict() {
+		return predictionValue;
+	}
+
+	private static int clusterValue(int value) {
+		return (int) (Math.ceil(value / 10) * 10);
+	}
+	
+	@Override
+	public int estimate() {
+		return this.costs;
+	}
+
+	@Override
+	public boolean preconditions() {
+		return this.preconditionsOk;
+	}
+
+	@Override
+	public void execute() {
+		globalTickExecution = Monitor.getInstance().getGlobalTicks();
+		// remove VM from old PM
+		VirtualMachine vm = this.vm;
+		this.vm.getPm().getVms().remove(this.vm);
+		
+		// insert VM into new PM
+		if (this.preconditions()) {
+			vm.setPm(this.selectedPm);
+			this.selectedPm.getVms().add(vm);
+			vm.setSuspendedTicks(Configuration.getInstance().getVmMovingCosts());
+		}
+	}
+	
+	private void calcPredictionValue(){
 		int output = 0;
 		
 		if (isOnlyLearning() || MoveVm.evaluation==null) { // Randomized predictions for learning
-			return randomData.nextInt(0, 100);
+			output =  randomData.nextInt(0, 100);
 		} else { // Use WEKA - evaluation for prediction
 			// Create new WEKA - instance
 			if(this.selectedPm!=null){ 
@@ -174,36 +211,7 @@ public class MoveVm extends Action {
 				}
 			}
 		}
-		return output;
-	}
-
-	private static int clusterValue(int value) {
-		return (int) (Math.ceil(value / 10) * 10);
-	}
-	
-	@Override
-	public int estimate() {
-		return this.costs;
-	}
-
-	@Override
-	public boolean preconditions() {
-		return this.preconditionsOk;
-	}
-
-	@Override
-	public void execute() {
-		globalTickExecution = Monitor.getInstance().getGlobalTicks();
-		// remove VM from old PM
-		VirtualMachine vm = this.vm;
-		this.vm.getPm().getVms().remove(this.vm);
-		
-		// insert VM into new PM
-		if (this.preconditions()) {
-			vm.setPm(this.selectedPm);
-			this.selectedPm.getVms().add(vm);
-			vm.setSuspendedTicks(Configuration.getInstance().getVmMovingCosts());
-		}
+		this.predictionValue = output;
 	}
 
 	@Override

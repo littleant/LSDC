@@ -160,7 +160,7 @@ public class CreateVmInsertApp extends Action {
 			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {
 				Instance instance = createInstance(Instance.missingValue(), pm);
 				instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
-				System.out.println ("Instance size: " + instance.numValues() + ", " + classifier);
+				//System.out.println ("Instance size: " + instance.numValues() + ", " + classifier);
 				try {
 					
 					output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
