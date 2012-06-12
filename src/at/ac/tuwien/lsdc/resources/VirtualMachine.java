@@ -216,8 +216,18 @@ public class VirtualMachine extends Resource {
 				a.nextTick();
 			}
 			
+			boolean test = false;
+			if (toRemoveList.size() > 0) {
+				System.out.println("remove list = "+ toRemoveList.size() +", execution list: "+ apps.size());
+				test = true;
+			}
+			
 			for (App r: toRemoveList) {
 				apps.remove(r);
+			}
+			
+			if (test) {
+				System.out.println("new execution list: "+ apps.size());
 			}
 			
 			if(apps.size()==0) {

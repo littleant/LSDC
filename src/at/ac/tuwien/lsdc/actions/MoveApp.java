@@ -12,6 +12,7 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.unsupervised.instance.Resample;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.mape.Monitor;
 import at.ac.tuwien.lsdc.resources.App;
@@ -48,6 +49,7 @@ public class MoveApp extends Action {
 				if(!isOnlyLearning()) {
 					if (knowledgeBase.numInstances()>0){
 						System.out.println("Classify data MoveApp");
+						
 						classifier = new MultilayerPerceptron();
 						classifier.buildClassifier(knowledgeBase);
 						evaluation = new Evaluation(knowledgeBase);

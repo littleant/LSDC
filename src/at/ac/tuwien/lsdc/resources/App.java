@@ -301,7 +301,12 @@ public class App extends Resource {
 				actionLock--;
 			}
 			runningTicks++;
+			
+			//terminate?
+			if (runningTicks > ticks){
+				vm.getToRemoveList().add(this);
 			}
+		}
 	}
 
 	@Override
