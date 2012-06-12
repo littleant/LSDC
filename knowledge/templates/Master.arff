@@ -1,8 +1,8 @@
-@relation masterevaluation
+@relation masterevaluation-weka.filters.unsupervised.instance.Resample-S1-Z100.0
 
 @attribute problemtype {newApp,slaViolation,shortageOfPms,wasteOfResources}
 @attribute resourcetype {pm,vm,app}
-@attribute actiontype string
+@attribute actiontype {ChangeVmConfiguration,DoNothing,CreateVmInsertApp,CreateAppInsertIntoVm,MoveVm,MoveApp,Outsource,TurnOffPmAndMoveVms}
 @attribute estimationvalue numeric
 @attribute predictionvalue numeric
 @attribute evaluation numeric
