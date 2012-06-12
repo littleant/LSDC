@@ -99,6 +99,7 @@ public class MoveVm extends Action {
 							
 							if (this.selectedPm == null || this.calculateFit(this.vm, pm) > fitFactor) {
 								this.selectedPm = pm;
+								calcPredictionValue();
 							}
 						}
 					}
@@ -202,9 +203,10 @@ public class MoveVm extends Action {
 				//Evaluation
 				instance.setValue(getKnowledgeBase().attribute(18), Instance.missingValue());
 		
-				instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
+				instance.setDataset(MoveVm.getKnowledgeBase());
 				
 				try {
+					
 					output = (int) (evaluation.evaluateModelOnce(classifier, instance));
 				} catch (Exception e) {
 					e.printStackTrace();
