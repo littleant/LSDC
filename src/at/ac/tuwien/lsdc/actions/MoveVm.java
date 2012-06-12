@@ -45,7 +45,7 @@ public class MoveVm extends Action {
 				Resample rs = new Resample();
 				knowledgeBase.setClassIndex(18);
 				rs.setInputFormat(knowledgeBase); 
-				rs.setSampleSizePercent(0.1);
+				rs.setSampleSizePercent(10);
 				knowledgeBase = Resample.useFilter(knowledgeBase, rs);
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				if(!isOnlyLearning()) {
