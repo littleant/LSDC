@@ -13,6 +13,7 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.unsupervised.instance.Resample;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.actions.Action;
 import at.ac.tuwien.lsdc.actions.ChangeVmConfiguration;
@@ -46,6 +47,10 @@ public class WekaPlanner extends Planner {
 				System.out.println ("WEKA - Panner is only learning: " + WekaPlanner.isOnlyLearning());
 				if(WekaPlanner.isOnlyLearning()==false) {
 					System.out.println("START up WEKA Classifier");
+					Resample rs = new Resample();
+					rs.setInputFormat(knowledgeBase); 
+					rs.setSampleSizePercent(10);
+					knowledgeBase = Resample.useFilter(knowledgeBase, rs);
 					classifier = new MultilayerPerceptron();
 					classifier.buildClassifier(WekaPlanner.knowledgeBase);
 					
