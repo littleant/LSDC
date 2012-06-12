@@ -201,8 +201,12 @@ public class VirtualMachine extends Resource {
 	public void nextTick(){
 		toRemoveList = new LinkedList<App>();
 		if (suspendedTicks > 0) {
+			//System.out.println("VM Suspended");
 			suspendedTicks--;
 		} else {
+			if(getActionLock()>0){
+				actionLock--;
+			}
 			this.allocatedCpu.add(getCurrentCpuAllocation());
 			this.allocatedMemory.add(getCurrentMemoryAllocation());
 			this.allocatedStorage.add(getCurrentStorageAllocation());

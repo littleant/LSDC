@@ -10,8 +10,10 @@ public abstract class Resource {
 	
 	protected int suspendedTicks=0;
 	private int resourceId=0;
+	protected int actionLock = 0;
 	
 	private String problemType ="";
+	
 	
 	
 	public void setNewPmId(){
@@ -151,5 +153,13 @@ public abstract class Resource {
 
 	public void setProblemType(String problemType) {
 		this.problemType = problemType;
+	}
+	
+	public int getActionLock() {
+		return actionLock;
+	}
+
+	public void setActionLock(int actionLock) {
+		this.actionLock = actionLock;
 	}
 }

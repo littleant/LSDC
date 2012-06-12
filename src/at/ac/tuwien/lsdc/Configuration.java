@@ -42,6 +42,8 @@ public class Configuration {
 	private int vmConfigurationChangeCosts;
 	
 	private int outsourceCosts;
+
+	private String KBMoveApp;
 	
 	private Configuration() {
 		// read lsdc.properties file
@@ -74,6 +76,7 @@ public class Configuration {
 			this.KBCreateAppInsertIntoVm = properties.getProperty("KBCreateAppInsertIntoVm");
 			this.KBMoveVm = properties.getProperty("KBMoveVm");
 			this.setKBMaster(properties.getProperty("KBMaster"));
+			this.setKBMoveApp(properties.getProperty("KBMoveApp"));
 			
 			// VM Overhead
 			this.vmCpuOverhead = Integer.parseInt(properties.getProperty("vmCpuOverhead"));
@@ -285,5 +288,13 @@ public class Configuration {
 
 	public void setVmMovingCosts(int vmMovingCosts) {
 		this.vmMovingCosts = vmMovingCosts;
+	}
+
+	public String getKBMoveApp() {
+		return KBMoveApp;
+	}
+
+	public void setKBMoveApp(String kBMoveApp) {
+		KBMoveApp = kBMoveApp;
 	}
 }

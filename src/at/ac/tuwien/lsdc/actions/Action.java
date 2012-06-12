@@ -83,16 +83,17 @@ public abstract class Action {
 			// create an empty ARFF and save it
 			DataSource source = new DataSource(filepath);
 			Instances data = source.getDataSet();
+			
 			if (data.classIndex() == -1) {
 				data.setClassIndex(data.numAttributes() - 1);
 			}
 			
-			ftest.createNewFile();
-			BufferedWriter writer = new BufferedWriter(new FileWriter(filepath));
-			writer.write(data.toString());
-			writer.newLine();
-			writer.flush();
-			writer.close();
+//			ftest.createNewFile();
+//			BufferedWriter writer = new BufferedWriter(new FileWriter(filepath));
+//			writer.write(data.toString());
+//			writer.newLine();
+//			writer.flush();
+//			writer.close();
 		}
 		
 		if (ftest.exists()) {
@@ -100,12 +101,15 @@ public abstract class Action {
 			DataSource source = new DataSource(filepath);
 			 
 			knowledgeBase = source.getDataSet();
-	
+			System.out.println("LOADING DATA - " + knowledgeBase.numAttributes());
+			
 			// setting class attribute if the data format does not provide this information
 			// For example, the XRFF format saves the class attribute information as well
 			if (knowledgeBase.classIndex() == -1){
 				knowledgeBase.setClassIndex(knowledgeBase.numAttributes() - 1);
 			}
+			
+			System.out.println ("CLASS INDEX: "+ knowledgeBase.classIndex());
 		}
 		 
 		return knowledgeBase;
@@ -135,8 +139,8 @@ public abstract class Action {
 			
 			
 		}
-		System.out.println("creating new, empty file..." + file.getAbsolutePath());
-		System.out.println(file.createNewFile());
+		//System.out.println("creating new, empty file..." + file.getAbsolutePath());
+		//System.out.println(file.createNewFile());
 		
 		if(file.exists() && file.canWrite()) {
 			System.out.println("Exists and can write");

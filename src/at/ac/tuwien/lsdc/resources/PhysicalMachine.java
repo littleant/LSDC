@@ -7,7 +7,9 @@ import at.ac.tuwien.lsdc.mape.Monitor;
 
 public class PhysicalMachine extends Resource {
 	//is the machine running? true=>yes
+	
 	private boolean isRunning;
+	
 	private final Integer STARTUPTIME = 20;
 	private LinkedList<VirtualMachine> toRemoveList = new LinkedList<VirtualMachine>();
 
@@ -58,6 +60,7 @@ public class PhysicalMachine extends Resource {
 
 	public void startMachine() {
 		suspendedTicks = STARTUPTIME;
+		setActionLock(STARTUPTIME*5);
 		isRunning = true;
 	}
 	
@@ -69,6 +72,7 @@ public class PhysicalMachine extends Resource {
 	public void nextTick() {
 		
 		if (suspendedTicks>0) {
+			//System.out.println("PM Suspended");
 			suspendedTicks--;
 		}
 		else if(isRunning==false ){
@@ -76,6 +80,10 @@ public class PhysicalMachine extends Resource {
 			
 		}
 		else {
+			if(getActionLock()>0){
+				actionLock--;
+			}
+			//System.out.println("PM Running" + this.getResourceId());
 			this.toRemoveList = new LinkedList<VirtualMachine>();
 			this.runningTicks++;
 			
@@ -84,7 +92,7 @@ public class PhysicalMachine extends Resource {
 			}
 
 			for (VirtualMachine vm : this.toRemoveList) {
-				System.out.println (Monitor.getInstance().getGlobalTicks() + " Remove VM " + vm.getResourceId() + " from PM " + this.getResourceId());
+				//System.out.println (Monitor.getInstance().getGlobalTicks() + " Remove VM " + vm.getResourceId() + " from PM " + this.getResourceId());
 				this.vms.remove(vm);
 			}
 		}
@@ -268,5 +276,7 @@ public class PhysicalMachine extends Resource {
 		
 		return false;
 	}
+
+
 }
 

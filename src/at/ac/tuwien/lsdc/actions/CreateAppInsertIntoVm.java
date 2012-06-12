@@ -43,10 +43,17 @@ public class CreateAppInsertIntoVm extends Action {
 				
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				if(!isOnlyLearning()) {
-					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(CreateAppInsertIntoVm.getKnowledgeBase());
-					evaluation = new Evaluation(CreateAppInsertIntoVm.getKnowledgeBase());
-					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+					System.out.println("Classify data CreateAppInsertInto");
+					if(knowledgeBase.numInstances()>0){
+						classifier = new MultilayerPerceptron();
+						classifier.buildClassifier(knowledgeBase);
+						evaluation = new Evaluation(knowledgeBase);
+						evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+						System.out.println("Classified data CreateAppInsertInto");
+					}
+					else {
+						System.out.println ("No Instancedata for classifier CreateAppInsertIntoVm" );
+					}
 					
 				}
 			} catch (Exception e) {
@@ -113,7 +120,7 @@ public class CreateAppInsertIntoVm extends Action {
 			evaluation -= (app.getCpuSlaErrorcount()+app.getMemorySlaErrorcount()+app.getStorageSlaErrorcount())/10;
 			
 			//minimum of 0
-			evaluation = Math.max(0, evaluation);
+			//evaluation = Math.max(0, evaluation);
 			Monitor.getInstance().logExecution(app, this, evaluation, this.globalTickExecution);
 			curInstance.setValue(getKnowledgeBase().attribute(63), evaluation);
 			this.setLocalEvaluation(evaluation);
@@ -139,7 +146,7 @@ public class CreateAppInsertIntoVm extends Action {
 	//TODO: gst: use WEKA to calc fit factor!!
 	private int calculateFit(App app2, VirtualMachine vm) {
 		int output = 0;
-		if (Action.isOnlyLearning()== false ){
+		if (Action.isOnlyLearning()== false && CreateAppInsertIntoVm.evaluation!=null){
 			//is free space available in the VM
 			if (app2.getCpu()+vm.getCurrentCpuUsage() < vm.getCurrentCpuAllocation() && app2.getMemory()+vm.getCurrentMemoryUsage() < vm.getCurrentMemoryAllocation() && app2.getStorage() + vm.getCurrentStorageUsage() < vm.getCurrentCpuAllocation()) {
 			

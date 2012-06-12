@@ -23,12 +23,14 @@ import at.ac.tuwien.lsdc.actions.MoveApp;
 import at.ac.tuwien.lsdc.actions.MoveVm;
 import at.ac.tuwien.lsdc.actions.Outsource;
 import at.ac.tuwien.lsdc.actions.TurnOffPmAndMoveVms;
+import at.ac.tuwien.lsdc.resources.App;
 import at.ac.tuwien.lsdc.resources.Resource;
+import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class WekaPlanner extends Planner {
 	List<Class> knownActions = new LinkedList<Class>();
 	
-	private static boolean onlyLearning = true;
+	private static boolean onlyLearning = false;
 	private static Instances knowledgeBase = null;
 	private static Classifier classifier = null;
 	private static Evaluation evaluation = null;
@@ -41,12 +43,13 @@ public class WekaPlanner extends Planner {
 				WekaPlanner.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBMaster());
 				
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
+				System.out.println ("WEKA - Panner is only learning: " + WekaPlanner.isOnlyLearning());
 				if(WekaPlanner.isOnlyLearning()==false) {
-					System.out.println("Start up Classifier");
+					System.out.println("Start up WEKA Classifier");
 					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(WekaPlanner.getKnowledgeBase());
-					evaluation = new Evaluation(WekaPlanner.getKnowledgeBase());
-					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+					classifier.buildClassifier(WekaPlanner.knowledgeBase);
+					evaluation = new Evaluation(WekaPlanner.knowledgeBase);
+					evaluation.crossValidateModel(classifier, WekaPlanner.knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
 					
 				}
 			} catch (Exception e) {
@@ -64,7 +67,7 @@ public class WekaPlanner extends Planner {
 	    knownActions.add(MoveApp.class);
 		knownActions.add(MoveVm.class);
 		knownActions.add(DoNothing.class);
-		knownActions.add(Outsource.class);
+		//knownActions.add(Outsource.class);
 		knownActions.add(TurnOffPmAndMoveVms.class);
 		knownActions.add(ChangeVmConfiguration.class);
 	}
@@ -104,23 +107,27 @@ public class WekaPlanner extends Planner {
 	}
 	
 	public void evaluatePastActions () {
-		//only evaluate if the predictions by the actions are not random!!
-		if (Action.isOnlyLearning()==false ) {
+		
 			LinkedList<Action>rmActionList = new LinkedList<Action>();
 			//Knowledge aquisition
 			for (Action a: executedActions) {
 				if(a!=null) {
 					boolean evaluated = a.evaluate();
+					//System.out.println(evaluated  + " " + a.getProblemType() + " + " + a.getResourceType(a.getProblemResource()) +" => " + a.getClass().getSimpleName());
 					if(evaluated) {
-						a.setAfterResourceUsage(Monitor.getInstance().getGlobalAverageResourceUsageRate(10));
-						a.setAfterSlaViolations(Monitor.getInstance().getGlobalNumberOfSlaViolations(10));
-					    
-						int usageDiff = a.getAfterResourceUsage() - a.getBeforeResourceUsage();
-						int slaDiff = a.getAfterSlaViolations() - a.getBeforeSlaViolations();
-						int costs = a.estimate();
-						double evaluationValue = Configuration.getInstance().getFactorUsageEvaluation()*usageDiff + Configuration.getInstance().getFactorSlaViolations()*slaDiff - Configuration.getInstance().getFactorCostsEvaluation()*costs;
-					
-						Instance instance = createInstance(a, evaluationValue);
+						//only evaluate if the predictions by the actions are not random!!
+						if (Action.isOnlyLearning()==false ) {
+							a.setAfterResourceUsage(Monitor.getInstance().getGlobalAverageResourceUsageRate(10));
+							a.setAfterSlaViolations(Monitor.getInstance().getGlobalNumberOfSlaViolations(10));
+						    
+							int usageDiff = a.getAfterResourceUsage() - a.getBeforeResourceUsage();
+							int slaDiff = a.getAfterSlaViolations() - a.getBeforeSlaViolations();
+							int costs = a.estimate();
+							double evaluationValue = Configuration.getInstance().getFactorUsageEvaluation()*usageDiff + Configuration.getInstance().getFactorSlaViolations()*slaDiff - Configuration.getInstance().getFactorCostsEvaluation()*costs;
+										
+							Instance instance = createInstance(a, evaluationValue);
+							WekaPlanner.getKnowledgeBase().add(instance);
+						}
 						
 						rmActionList.add(a); // the action has been evaluated and can be removed
 					}
@@ -131,10 +138,8 @@ public class WekaPlanner extends Planner {
 				executedActions.remove(a); //remove actions that have been evaluated
 			}
 			
-		}
-		else {
-			executedActions = new LinkedList<Action>();
-		}
+	
+		
 	}
 
 	@Override
@@ -145,6 +150,7 @@ public class WekaPlanner extends Planner {
 				Action.saveKnowledge(Configuration.getInstance().getKBMaster(), WekaPlanner.getKnowledgeBase());
 				
 				//terminate Actions => save knowledge
+				
 				((Action)ac.newInstance()).terminate();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
@@ -163,9 +169,19 @@ public class WekaPlanner extends Planner {
 		
 		instance.setDataset(getKnowledgeBase());
 		Instances ist = getKnowledgeBase();
-		
+		String rt = "";
+		Resource r = a.getProblemResource();
+		if (r instanceof App){
+			rt ="app";
+		}
+		else if (r instanceof VirtualMachine){
+			rt ="vm";
+		}
+		else {
+			rt ="pm";
+		}
 		instance.setValue(0, a.getProblemType());  //Problemtype
-		instance.setValue(1, a.getResourceType(a.getProblemResource()));  //ResourceType
+		instance.setValue(1, rt);  //ResourceType
 		instance.setValue(2, a.getClass().getName()); //Actionname
 		instance.setValue(3, a.estimate()); //estimation value
 		instance.setValue(4, a.predict()); //prediction value

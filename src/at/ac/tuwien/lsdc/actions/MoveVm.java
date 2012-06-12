@@ -12,6 +12,7 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.supervised.instance.Resample;
 import at.ac.tuwien.lsdc.Configuration;
 import at.ac.tuwien.lsdc.mape.Monitor;
 import at.ac.tuwien.lsdc.resources.PhysicalMachine;
@@ -39,13 +40,23 @@ public class MoveVm extends Action {
 			try {
 				//load knowledgebase from file
 				MoveVm.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBMoveVm());
-				
+				Resample rs = new Resample();
+				rs.setSampleSizePercent(0.1);
+				knowledgeBase = Resample.useFilter(knowledgeBase, rs);
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				if(!isOnlyLearning()) {
-					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(MoveVm.getKnowledgeBase());
-					evaluation = new Evaluation(MoveVm.getKnowledgeBase());
-					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+					if (knowledgeBase.numInstances()>0){
+						
+						System.out.println("Classify data MoveVm");
+						classifier = new MultilayerPerceptron();
+						classifier.buildClassifier(knowledgeBase);
+						evaluation = new Evaluation(knowledgeBase);
+						evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+						System.out.println("Classified data MoveVm");
+					}
+					else {
+						System.out.println ("No Instancedata for classifier MoveVM" );
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -67,24 +78,30 @@ public class MoveVm extends Action {
 		
 		
 		if (problemVm instanceof VirtualMachine){
-			this.vm = (VirtualMachine) problemVm;
-			boolean found = false;
-			int fitFactor = 0;
 			
-			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
-				if (pm.isRunning() && pm !=vm.getPm())  {
-					if ((100 - pm.getCurrentCpuAllocation()) >= vm.getCurrentCpuAllocation() && (100 - pm.getCurrentMemoryAllocation()) >= vm.getCurrentMemoryAllocation() && (100 - pm.getCurrentCpuAllocation()) >= vm.getCurrentStorageAllocation()) {
-						found = true;
-						this.costs = Configuration.getInstance().getVmMovingCosts();
-						
-						if (this.selectedPm == null || this.calculateFit(this.vm, pm) > fitFactor) {
-							this.selectedPm = pm;
+			this.vm = (VirtualMachine) problemVm;
+			if (vm.getPm()==null){
+				preconditionsOk=false;
+			}
+			else {
+				boolean found = false;
+				int fitFactor = 0;
+				
+				for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
+					if (pm.isRunning() && pm !=vm.getPm())  {
+						if ((100 - pm.getCurrentCpuAllocation()) >= vm.getCurrentCpuAllocation() && (100 - pm.getCurrentMemoryAllocation()) >= vm.getCurrentMemoryAllocation() && (100 - pm.getCurrentCpuAllocation()) >= vm.getCurrentStorageAllocation()) {
+							found = true;
+							this.costs = Configuration.getInstance().getVmMovingCosts();
+							
+							if (this.selectedPm == null || this.calculateFit(this.vm, pm) > fitFactor) {
+								this.selectedPm = pm;
+							}
 						}
 					}
 				}
+				
+				preconditionsOk = found;
 			}
-			
-			preconditionsOk = found;
 		}
 		else {
 			preconditionsOk= false;
@@ -115,47 +132,48 @@ public class MoveVm extends Action {
 	public int predict() {
 		int output = 0;
 		
-		if (isOnlyLearning()) { // Randomized predictions for learning
+		if (isOnlyLearning() || MoveVm.evaluation==null) { // Randomized predictions for learning
 			return randomData.nextInt(0, 100);
 		} else { // Use WEKA - evaluation for prediction
 			// Create new WEKA - instance
-			Instance instance = new Instance(61);
-
-			// PM history
-			LinkedList<Integer> pmCpuHistory = this.selectedPm.getCpuAllocationHistory(10);
-			LinkedList<Integer> pmMemoryHistory = this.selectedPm.getMemoryAllocationHistory(10);
-			LinkedList<Integer> pmStorageHistory = this.selectedPm.getStorageAllocationHistory(10);
-			
-			// VM history
-			List<Integer> vmCpuHistory = this.vm.getCpuAllocationHistory(10);
-			List<Integer> vmMemoryHistory = this.vm.getMemoryAllocationHistory(10);
-			List<Integer> vmStorageHistory = this.vm.getStorageAllocationHistory(10);
-			
-			// CPU/Memory/Storage - Allocation history before the VM is moved
-			for (int i = 0; i < 10; i++) {
-				// VM history
-				instance.setValue(MoveVm.getKnowledgeBase().attribute(i), clusterValue(vmCpuHistory.get(i)));
-				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 10), clusterValue(vmMemoryHistory.get(i)));
-				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 20), clusterValue(vmStorageHistory.get(i)));
-				
-				// PM history
-				instance.setValue(getKnowledgeBase().attribute(i + 30), clusterValue(pmCpuHistory.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i + 40), clusterValue(pmMemoryHistory.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i + 50), clusterValue(pmStorageHistory.get(i)));
-			}
-			
-			//Evaluation
-			instance.setValue(getKnowledgeBase().attribute(60), Instance.missingValue());
+			if(this.selectedPm!=null){ 
+				Instance instance = new Instance(19);
 	
-			instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
-			
-			try {
-				output = (int) (evaluation.evaluateModelOnce(classifier, instance));
-			} catch (Exception e) {
-				e.printStackTrace();
+				// PM history
+				LinkedList<Integer> pmCpuHistory = this.selectedPm.getCpuAllocationHistory(3);
+				LinkedList<Integer> pmMemoryHistory = this.selectedPm.getMemoryAllocationHistory(3);
+				LinkedList<Integer> pmStorageHistory = this.selectedPm.getStorageAllocationHistory(3);
+				
+				// VM history
+				List<Integer> vmCpuHistory = this.vm.getCpuAllocationHistory(3);
+				List<Integer> vmMemoryHistory = this.vm.getMemoryAllocationHistory(3);
+				List<Integer> vmStorageHistory = this.vm.getStorageAllocationHistory(3);
+				
+				// CPU/Memory/Storage - Allocation history before the VM is moved
+				for (int i = 0; i < 3; i++) {
+					// VM history
+					instance.setValue(MoveVm.getKnowledgeBase().attribute(i), clusterValue(vmCpuHistory.get(i)));
+					instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 3), clusterValue(vmMemoryHistory.get(i)));
+					instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 6), clusterValue(vmStorageHistory.get(i)));
+					
+					// PM history
+					instance.setValue(getKnowledgeBase().attribute(i + 9), clusterValue(pmCpuHistory.get(i)));
+					instance.setValue(getKnowledgeBase().attribute(i + 12), clusterValue(pmMemoryHistory.get(i)));
+					instance.setValue(getKnowledgeBase().attribute(i + 15), clusterValue(pmStorageHistory.get(i)));
+				}
+				
+				//Evaluation
+				instance.setValue(getKnowledgeBase().attribute(18), Instance.missingValue());
+		
+				instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
+				
+				try {
+					output = (int) (evaluation.evaluateModelOnce(classifier, instance));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
 		return output;
 	}
 
@@ -198,14 +216,14 @@ public class MoveVm extends Action {
 			return false;
 		} else {
 			// PM history
-			List<Integer> pmCpuUsageHistory = this.selectedPm.getCpuUsageHistory(10);
-			List<Integer> pmMemoryUsageHistory = this.selectedPm.getMemoryUsageHistory(10);
-			List<Integer> pmStorageUsageHistory = this.selectedPm.getStorageUsageHistory(10);
+			List<Integer> pmCpuUsageHistory = this.selectedPm.getCpuUsageHistory(3);
+			List<Integer> pmMemoryUsageHistory = this.selectedPm.getMemoryUsageHistory(3);
+			List<Integer> pmStorageUsageHistory = this.selectedPm.getStorageUsageHistory(3);
 			
 			// VM history
-			List<Integer> vmCpuUsageHistory = this.vm.getCpuUsageHistory(10);
-			List<Integer> vmMemoryUsageHistory = this.vm.getMemoryUsageHistory(10);
-			List<Integer> vmStorageUsageHistory = this.vm.getStorageUsageHistory(10);	
+			List<Integer> vmCpuUsageHistory = this.vm.getCpuUsageHistory(3);
+			List<Integer> vmMemoryUsageHistory = this.vm.getMemoryUsageHistory(3);
+			List<Integer> vmStorageUsageHistory = this.vm.getStorageUsageHistory(3);	
 			
 			// evaluate usage 
 			// (510-(abs(85-pmcpu)-abs(85-pmmem)-abs(85-pmstor)-abs(85-vmcpu)-abs(85-vmmem)-abs(85-vmstor)))/510
@@ -215,33 +233,33 @@ public class MoveVm extends Action {
 			//evaluation = Math.max(0, evaluation);
 			
 			// create new WEKA - instance
-			Instance instance = new Instance(61);
+			Instance instance = new Instance(19);
 			
 			/// PM history
-			List<Integer> pmCpuHistory = this.selectedPm.getCpuAllocationHistory(10);
-			List<Integer> pmMemoryHistory = this.selectedPm.getMemoryAllocationHistory(10);
-			List<Integer> pmStorageHistory = this.selectedPm.getStorageAllocationHistory(10);
+			List<Integer> pmCpuHistory = this.selectedPm.getCpuAllocationHistory(3);
+			List<Integer> pmMemoryHistory = this.selectedPm.getMemoryAllocationHistory(3);
+			List<Integer> pmStorageHistory = this.selectedPm.getStorageAllocationHistory(3);
 			
 			// VM history
-			List<Integer> vmCpuHistory = this.vm.getCpuAllocationHistory(10);
-			List<Integer> vmMemoryHistory = this.vm.getMemoryAllocationHistory(10);
-			List<Integer> vmStorageHistory = this.vm.getStorageAllocationHistory(10);
+			List<Integer> vmCpuHistory = this.vm.getCpuAllocationHistory(3);
+			List<Integer> vmMemoryHistory = this.vm.getMemoryAllocationHistory(3);
+			List<Integer> vmStorageHistory = this.vm.getStorageAllocationHistory(3);
 			
 			// CPU/Memory/Storage - Allocation history before the VM is moved
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 3; i++) {
 				// VM history
 				instance.setValue(MoveVm.getKnowledgeBase().attribute(i), clusterValue(vmCpuHistory.get(i)));
-				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 10), clusterValue(vmMemoryHistory.get(i)));
-				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 20), clusterValue(vmStorageHistory.get(i)));
+				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 3), clusterValue(vmMemoryHistory.get(i)));
+				instance.setValue(MoveVm.getKnowledgeBase().attribute(i + 6), clusterValue(vmStorageHistory.get(i)));
 				
 				// PM history
-				instance.setValue(getKnowledgeBase().attribute(i + 30), clusterValue(pmCpuHistory.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i + 40), clusterValue(pmMemoryHistory.get(i)));
-				instance.setValue(getKnowledgeBase().attribute(i + 50), clusterValue(pmStorageHistory.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i + 9), clusterValue(pmCpuHistory.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i + 12), clusterValue(pmMemoryHistory.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i + 15), clusterValue(pmStorageHistory.get(i)));
 			}
 			
 			//Evaluation
-			instance.setValue(getKnowledgeBase().attribute(33), evaluation);
+			instance.setValue(getKnowledgeBase().attribute(18), evaluation);
 			this.setLocalEvaluation(evaluation);
 			getKnowledgeBase().add(instance);
 		}

@@ -1,74 +1,93 @@
-%This file contains the values for the CreateAppInsertIntoVm - Action
-% CPU1ALL - CPU10ALL Contains the allocation history of the destination VM
-% CPU1USE - CPU10USE Contains the usage history of the destination VM
-% MEM1USE - MEM10USE Contains the usage history of the destination VM
-% STOR1USE - STOR10USE Contains the usage history of the destination VM
-%...
-% SLACPU,.... Contains the SLAs of the new app
-% EVAL Contains the evaluated value after the execution
-@relation 'cpu'
-@attribute CPU1ALL real
-@attribute CPU2ALL real
-@attribute CPU3ALL real
-@attribute CPU4ALL real
-@attribute CPU5ALL real
-@attribute CPU6ALL real
-@attribute CPU7ALL real
-@attribute CPU8ALL real
-@attribute CPU9ALL real
-@attribute CPU10ALL real
-@attribute CPU1USE real
-@attribute CPU2USE real
-@attribute CPU3USE real
-@attribute CPU4USE real
-@attribute CPU5USE real
-@attribute CPU6USE real
-@attribute CPU7USE real
-@attribute CPU8USE real
-@attribute CPU9USE real
-@attribute CPU10USE real
-@attribute MEM1ALL real
-@attribute MEM2ALL real
-@attribute MEM3ALL real
-@attribute MEM4ALL real
-@attribute MEM5ALL real
-@attribute MEM6ALL real
-@attribute MEM7ALL real
-@attribute MEM8ALL real
-@attribute MEM9ALL real
-@attribute MEM10ALL real
-@attribute MEM1USE real
-@attribute MEM2USE real
-@attribute MEM3USE real
-@attribute MEM4USE real
-@attribute MEM5USE real
-@attribute MEM6USE real
-@attribute MEM7USE real
-@attribute MEM8USE real
-@attribute MEM9USE real
-@attribute MEM10USE real
-@attribute STOR1ALL real
-@attribute STOR2ALL real
-@attribute STOR3ALL real
-@attribute STOR4ALL real
-@attribute STOR5ALL real
-@attribute STOR6ALL real
-@attribute STOR7ALL real
-@attribute STOR8ALL real
-@attribute STOR9ALL real
-@attribute STOR10ALL real
-@attribute STOR1USE real
-@attribute STOR2USE real
-@attribute STOR3USE real
-@attribute STOR4USE real
-@attribute STOR5USE real
-@attribute STOR6USE real
-@attribute STOR7USE real
-@attribute STOR8USE real
-@attribute STOR9USE real
-@attribute STOR10USE real
-@attribute SLACpu real
-@attribute SLAMemory real
-@attribute SLAStorage real
-@attribute EVAL real
+@relation cpu
+
+@attribute CPU1ALL numeric
+@attribute CPU2ALL numeric
+@attribute CPU3ALL numeric
+@attribute CPU4ALL numeric
+@attribute CPU5ALL numeric
+@attribute CPU6ALL numeric
+@attribute CPU7ALL numeric
+@attribute CPU8ALL numeric
+@attribute CPU9ALL numeric
+@attribute CPU10ALL numeric
+@attribute CPU1USE numeric
+@attribute CPU2USE numeric
+@attribute CPU3USE numeric
+@attribute CPU4USE numeric
+@attribute CPU5USE numeric
+@attribute CPU6USE numeric
+@attribute CPU7USE numeric
+@attribute CPU8USE numeric
+@attribute CPU9USE numeric
+@attribute CPU10USE numeric
+@attribute MEM1ALL numeric
+@attribute MEM2ALL numeric
+@attribute MEM3ALL numeric
+@attribute MEM4ALL numeric
+@attribute MEM5ALL numeric
+@attribute MEM6ALL numeric
+@attribute MEM7ALL numeric
+@attribute MEM8ALL numeric
+@attribute MEM9ALL numeric
+@attribute MEM10ALL numeric
+@attribute MEM1USE numeric
+@attribute MEM2USE numeric
+@attribute MEM3USE numeric
+@attribute MEM4USE numeric
+@attribute MEM5USE numeric
+@attribute MEM6USE numeric
+@attribute MEM7USE numeric
+@attribute MEM8USE numeric
+@attribute MEM9USE numeric
+@attribute MEM10USE numeric
+@attribute STOR1ALL numeric
+@attribute STOR2ALL numeric
+@attribute STOR3ALL numeric
+@attribute STOR4ALL numeric
+@attribute STOR5ALL numeric
+@attribute STOR6ALL numeric
+@attribute STOR7ALL numeric
+@attribute STOR8ALL numeric
+@attribute STOR9ALL numeric
+@attribute STOR10ALL numeric
+@attribute STOR1USE numeric
+@attribute STOR2USE numeric
+@attribute STOR3USE numeric
+@attribute STOR4USE numeric
+@attribute STOR5USE numeric
+@attribute STOR6USE numeric
+@attribute STOR7USE numeric
+@attribute STOR8USE numeric
+@attribute STOR9USE numeric
+@attribute STOR10USE numeric
+@attribute SLACpu numeric
+@attribute SLAMemory numeric
+@attribute SLAStorage numeric
+@attribute EVAL numeric
+
 @data
+0,0,0,0,0,0,60,60,60,60,20,20,20,30,20,30,30,20,30,20,0,0,0,0,0,0,40,40,40,40,10,20,20,-1.72549,20,20,10,20,20,10,0,0,0,0,0,0,40,40,40,40,40,50,50,50,50,50,50,50,40,40,40,10,10,0
+0,0,0,0,0,0,0,0,0,20,10,10,20,20,0,10,10,10,10,10,0,0,0,0,0,0,0,0,0,60,10,10,0,-9.592157,0,10,10,10,0,10,0,0,0,0,0,0,0,0,0,40,10,20,20,10,10,20,10,10,10,10,10,30,20,0
+60,60,60,60,60,60,60,60,60,60,30,20,20,20,20,30,20,30,20,20,30,30,30,30,30,30,30,30,30,30,10,10,20,-13.631373,20,20,10,20,20,10,30,30,30,30,30,30,30,30,30,30,20,20,20,20,30,20,30,30,20,40,10,10,30,0
+0,0,0,0,0,0,0,0,0,50,10,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,30,10,0,10,-2.603922,0,0,0,0,10,0,0,0,0,0,0,0,0,0,0,40,0,0,0,10,10,10,10,10,10,10,40,20,10,0
+0,0,0,0,0,0,0,0,0,40,10,10,10,10,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,60,20,10,20,-27.337255,20,20,10,10,20,20,0,0,0,0,0,0,0,0,0,40,10,20,20,10,10,10,10,10,20,10,40,10,10,0
+40,40,40,40,40,40,40,40,40,40,40,40,40,40,30,40,40,40,40,40,30,30,30,30,30,30,30,30,30,30,30,30,30,-20.713725,30,40,30,40,30,40,20,20,20,20,20,20,20,20,20,20,30,30,20,30,30,30,30,30,20,20,10,10,20,0
+30,30,30,30,30,30,30,30,30,30,30,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,10,10,10,-20.941176,20,20,10,20,10,10,20,20,20,20,20,20,20,20,20,20,10,10,20,20,20,20,10,10,20,20,10,10,20,0
+0,0,0,0,0,0,0,0,0,40,40,30,40,40,40,40,40,40,40,40,0,0,0,0,0,0,0,0,0,40,30,30,30,-20.517647,40,30,30,30,30,30,0,0,0,0,0,0,0,0,0,40,20,30,30,30,30,30,20,20,30,30,10,10,20,0
+40,40,40,40,40,40,40,40,40,40,40,40,30,40,40,40,40,30,40,40,40,30,30,30,30,30,30,30,30,30,30,30,30,-31.541176,30,30,30,30,30,30,20,20,20,20,20,20,20,20,20,20,30,20,20,30,30,30,30,30,30,30,10,10,20,0
+40,40,40,40,40,40,40,40,40,40,50,50,50,50,40,50,40,40,40,40,40,40,40,40,40,40,40,40,40,40,30,30,40,-38.701961,40,30,30,30,30,40,20,20,20,20,20,20,20,20,20,20,30,10,30,30,20,20,20,20,30,30,10,10,20,0
+40,40,40,40,40,40,40,40,40,40,10,20,20,10,10,10,20,20,20,10,30,30,30,30,30,30,30,30,30,30,20,30,20,-3.47451,30,20,20,20,30,20,30,30,30,30,30,30,30,30,30,30,10,10,10,10,10,10,10,10,10,10,10,10,10,0
+40,40,40,40,40,40,40,40,40,40,20,10,10,10,10,10,20,20,10,10,30,30,30,30,30,30,30,30,30,30,20,20,20,-5.533333,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,10,20,10,10,20,20,20,10,20,30,10,20,40,0
+40,40,40,40,40,40,40,40,40,40,20,10,10,10,10,10,20,20,10,10,30,30,30,30,30,30,30,30,30,30,20,20,20,-5.533333,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,10,20,10,10,20,20,20,10,20,30,10,20,40,0
+20,20,20,20,20,20,20,20,20,20,20,10,20,20,20,20,20,20,20,10,30,30,30,30,30,30,30,30,30,30,20,20,30,-4.733333,30,20,20,30,30,20,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,0
+30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,40,40,40,40,40,40,40,40,40,40,50,40,60,-4.482353,50,50,50,60,50,40,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,10,10,10,0
+40,40,40,40,40,40,40,40,40,40,40,30,30,30,30,20,20,30,30,30,40,40,40,40,40,40,40,40,40,40,50,40,50,-6.717647,50,60,50,50,50,50,20,20,20,20,20,20,20,20,20,20,20,30,20,20,20,20,20,20,20,20,10,10,10,0
+40,40,40,40,40,40,40,40,40,40,20,20,20,20,20,20,30,20,20,20,30,30,30,30,30,30,30,30,30,30,20,10,20,-4.682353,10,10,10,10,10,20,30,30,30,30,30,30,30,30,30,30,20,20,20,10,10,10,20,20,10,10,10,10,20,0
+0,0,0,0,0,0,0,0,0,40,10,10,10,10,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,40,20,20,10,-5.505882,20,10,20,10,20,10,0,0,0,0,0,0,0,0,0,30,10,20,10,10,20,20,10,10,10,20,40,10,10,0
+40,40,40,40,40,40,40,40,40,40,30,40,30,30,40,20,40,40,40,30,40,40,40,40,40,40,40,40,40,40,40,30,40,-7.737255,40,40,40,40,40,40,20,20,20,20,20,20,20,20,20,20,30,30,20,40,30,20,30,30,30,20,10,10,20,0
+30,30,30,30,30,30,30,30,30,30,30,40,30,30,30,30,40,30,30,30,40,40,40,40,40,40,40,40,40,40,40,40,40,-11.72549,40,50,30,40,40,40,20,20,20,20,20,20,20,20,20,20,30,30,30,30,40,40,30,30,30,20,10,10,20,0
+30,30,30,30,30,30,30,30,30,30,40,30,40,30,40,40,30,30,30,40,40,40,40,40,40,40,40,40,40,40,40,40,30,-21.690196,40,40,40,40,40,50,20,20,20,20,20,20,20,20,20,20,40,20,30,30,30,30,20,40,30,20,10,10,20,0
+40,40,40,40,40,40,40,40,40,40,50,40,50,50,50,50,50,50,40,50,30,30,30,30,30,30,30,30,30,30,30,30,30,-22.541176,30,30,30,30,30,40,20,20,20,20,20,20,20,20,20,20,20,20,20,20,10,20,30,40,30,20,10,10,20,0
+0,0,0,0,0,0,0,0,0,50,20,20,20,20,20,30,20,20,20,20,0,0,0,0,0,0,0,0,0,60,10,10,10,-29.501961,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,50,20,20,10,20,20,20,20,20,0,10,10,10,20,0
+0,0,0,0,0,0,0,0,0,50,20,20,20,20,20,20,20,20,10,20,0,0,0,0,0,0,0,0,0,60,10,10,0,-14.733333,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,10,0,0,0,0,10,10,0,0,10,0,20,10,10,0
+0,0,0,0,0,0,0,0,0,50,10,10,10,10,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,50,10,10,10,-10.788235,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,40,20,20,20,20,30,30,20,30,20,30,20,40,50,0

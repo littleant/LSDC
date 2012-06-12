@@ -42,14 +42,21 @@ public class MoveApp extends Action {
 		if (knowledgeBase ==null ) {
 			try {
 				//load knowledgebase from file
-				MoveApp.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateAppInsertIntoVm());
+				MoveApp.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBMoveApp());
 				
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				if(!isOnlyLearning()) {
-					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(MoveApp.getKnowledgeBase());
-					evaluation = new Evaluation(MoveApp.getKnowledgeBase());
-					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+					if (knowledgeBase.numInstances()>0){
+						System.out.println("Classify data MoveApp");
+						classifier = new MultilayerPerceptron();
+						classifier.buildClassifier(knowledgeBase);
+						evaluation = new Evaluation(knowledgeBase);
+						evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+						System.out.println("Classified data MoveApp");
+					}
+					else {
+						System.out.println ("No Instancedata for classifier MoveApp" );
+					}
 					
 				}
 			} catch (Exception e) {
@@ -61,7 +68,8 @@ public class MoveApp extends Action {
 	
 	public void terminate() {
 		try {
-			Action.saveKnowledge(Configuration.getInstance().getKBCreateAppInsertIntoVm(), MoveApp.getKnowledgeBase());
+			System.out.println("Terminate MoveApp");
+			Action.saveKnowledge(Configuration.getInstance().getKBMoveApp(), MoveApp.getKnowledgeBase());
 		} catch (IOException e) {
 			
 			e.printStackTrace();
@@ -104,7 +112,7 @@ public class MoveApp extends Action {
 			return false;
 		}
 		else {
-			System.out.println("APP - Running Ticks: " + app.getRunningTicks());
+			//System.out.println("APP - Running Ticks: " + app.getRunningTicks());
 			LinkedList<Integer> cpuusagehist = selectedVm.getPm().getCpuUsageHistory(10);	
 			
 			LinkedList<Integer> memusagehist = selectedVm.getPm().getMemoryUsageHistory(10);	
@@ -117,7 +125,7 @@ public class MoveApp extends Action {
 			evaluation -= (app.getCpuSlaErrorcount()+app.getMemorySlaErrorcount()+app.getStorageSlaErrorcount())/10;
 			Monitor.getInstance().logExecution(app, this, evaluation, this.globalTickExecution);
 			//minimum of 0
-			evaluation = Math.max(0, evaluation);
+			//evaluation = Math.max(0, evaluation);
 			
 			curInstance.setValue(getKnowledgeBase().attribute(33), evaluation);
 			this.setLocalEvaluation(evaluation);

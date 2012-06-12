@@ -195,7 +195,7 @@ public class App extends Resource {
 
 	public Integer getCurrentCpuUsage() {
 		if(this.runningTicks>0 && this.runningTicks<=this.getCpuUsage().size()) {
-			return this.getCpuUsage().get(this.runningTicks-1);
+			return  this.getCpuUsage().get(this.runningTicks-1);
 		}
 		else {
 			return 0;
@@ -204,7 +204,7 @@ public class App extends Resource {
 
 	public Integer getCurrentMemoryUsage() {
 		if(this.runningTicks>0 && this.runningTicks<=this.getMemoryUsage().size()) {
-			return this.getMemoryUsage().get(this.runningTicks-1);
+			return  this.getMemoryUsage().get(this.runningTicks-1);
 		}
 		else{
 			return 0;
@@ -293,9 +293,13 @@ public class App extends Resource {
 	public void nextTick() {
 		//System.out.println("APP "+ this.getResourceId()+ ": next tick");
 		if (suspendedTicks>0) {
+			//System.out.println("APP Suspended" + this.getResourceId());
 			suspendedTicks--;
 		}
 		else {
+			if(getActionLock()>0){
+				actionLock--;
+			}
 			runningTicks++;
 			}
 	}

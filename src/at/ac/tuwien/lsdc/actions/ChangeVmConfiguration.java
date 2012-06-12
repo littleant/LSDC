@@ -122,34 +122,36 @@ public class ChangeVmConfiguration extends Action {
 		
 		int topRegionReached = 0;
 		int bottomRegionReached = 0;
-		
+		Integer maxUsed = 0;
 		// calculate how often the VM went into a dangerous zone in the last n ticks (compare allocated to used resources)
+		
 		for (int i = 0; i < allocationHistory.size(); i++) {
 			Integer allocated = allocationHistory.get(i);
 			Integer used = usageHistory.get(i) + overhead;
-			
-			// calculate percentage of the used resources vs. the allocated resources
-			int ratio = (int) ((used / (float) allocated) * 100);
-			if (ratio > ChangeVmConfiguration.topRegion) {
-				// need more resources
-				topRegionReached++;
-			} else if (ratio < ChangeVmConfiguration.bottomRegion) {
-				// need less resources
-				bottomRegionReached++;
-			} else {
-				// resource allocation is perfect
-				// do nothing
-			}
-			
-			if (topRegionReached > 0 || bottomRegionReached > 0) {
-				// calculate allocation so that "used" is 95% of the allocation
-				optimizedAllocation = (int) (((float) used / ChangeVmConfiguration.topRegion) * 100) + overhead;
-				
-				// need to change the allocation
-				if (allocation < optimizedAllocation) {
-					allocation = optimizedAllocation;
-				}
-			}
+			maxUsed = Math.max(maxUsed, used);
+//			// calculate percentage of the used resources vs. the allocated resources
+//			int ratio = (int) ((used / (float) allocated) * 100);
+//			if (ratio > ChangeVmConfiguration.topRegion) {
+//				// need more resources
+//				topRegionReached++;
+//			} else if (ratio < ChangeVmConfiguration.bottomRegion) {
+//				// need less resources
+//				bottomRegionReached++;
+//			} else {
+//				// resource allocation is perfect
+//				// do nothing
+//			}
+//			
+//			if (topRegionReached > 0 || bottomRegionReached > 0) {
+//				// calculate allocation so that "used" is 95% of the allocation
+//				//optimizedAllocation = (int) (((float) used / ChangeVmConfiguration.topRegion) * 100) + overhead;
+//				optimizedAllocation = maxUsed + overhead+5;
+//				// need to change the allocation
+//				//if (allocation < optimizedAllocation) {
+//					allocation = optimizedAllocation;
+//				//}
+//			}
+			allocation = maxUsed + overhead + 5;
 		}
 		
 		// don't give the VM more resources than the SLA guarantee
@@ -198,6 +200,7 @@ public class ChangeVmConfiguration extends Action {
 		if (this.vm.getCurrentStorageAllocation() != this.optimizedStorageAllocation) {
 			this.vm.setCurrentStorageAlloction(this.optimizedStorageAllocation);
 		}
+		this.vm.setActionLock(50);
 	}
 
 	@Override

@@ -20,7 +20,7 @@ import at.ac.tuwien.lsdc.resources.Resource;
 import at.ac.tuwien.lsdc.resources.VirtualMachine;
 
 public class CreateVmInsertApp extends Action {
-	private static Instances knowledgeBase = null;
+	public static Instances knowledgeBase = null;
 	private static Classifier classifier = null;
 	private static Evaluation evaluation = null;
 	private static RandomData randomData = new RandomDataImpl();
@@ -42,13 +42,25 @@ public class CreateVmInsertApp extends Action {
 			try {
 				//load knowledgebase from file
 				CreateVmInsertApp.knowledgeBase = Action.loadKnowledge(Configuration.getInstance().getKBCreateVmInsertApp());
+				System.out.println ("Knowledge: " + knowledgeBase.numAttributes());
 				
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				if(!isOnlyLearning()) {
-					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(CreateVmInsertApp.getKnowledgeBase());
-					evaluation = new Evaluation(CreateVmInsertApp.getKnowledgeBase());
-					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+					if(knowledgeBase.numInstances()>0){
+						System.out.println("Classify1 data CreateVMInsertApp");
+						classifier = new MultilayerPerceptron();
+						System.out.println("Classify2 data CreateVMInsertApp");
+						classifier.buildClassifier(CreateVmInsertApp.knowledgeBase);
+						
+						System.out.println("Classify3 data CreateVMInsertApp");
+						evaluation = new Evaluation(CreateVmInsertApp.knowledgeBase);
+						System.out.println("Classify4 data CreateVMInsertApp");
+						evaluation.crossValidateModel(classifier, CreateVmInsertApp.knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+						System.out.println("Classified data CreateVMInsertApp");
+					}
+					else{
+						System.out.println ("No Instancedata for classifier CreateVMInsertApp" );
+					}
 					
 				}
 			} catch (Exception e) {
@@ -93,18 +105,20 @@ public class CreateVmInsertApp extends Action {
 	@Override
 	public boolean evaluate() {
 		if (curInstance == null) {
-			curInstance = createInstance(0); // create a Instance with the past values
+			curInstance = createInstance(0, selectedPm); // create a Instance with the past values
 		}
 		
 		if (app.getSuspendedTicks()>0 || app.getVm().getSuspendedTicks()>0 || app.getVm().getPm().getSuspendedTicks()>0) {
+			//System.out.println("Wait for SUSPEND");
 			return false;
 		}
 		else if (waitForEvaluation>0) {
+			//System.out.println("Wait for EVAL");
 			waitForEvaluation--;
 			return false;
 		}
 		else {
-			System.out.println("APP - Running Ticks: " + app.getRunningTicks());
+			//System.out.println("APP - Running Ticks: " + app.getRunningTicks());
 			LinkedList<Integer> cpuusagehist = selectedPm.getCpuUsageHistory(10);	
 			
 			LinkedList<Integer> memusagehist = selectedPm.getMemoryUsageHistory(10);	
@@ -117,9 +131,9 @@ public class CreateVmInsertApp extends Action {
 			evaluation -= (app.getCpuSlaErrorcount()+app.getMemorySlaErrorcount()+app.getStorageSlaErrorcount())/10;
 			
 			//minimum of 0
-			evaluation = Math.max(0, evaluation);
+			//evaluation = Math.max(0, evaluation);
 			Monitor.getInstance().logExecution(app, this, evaluation, this.globalTickExecution);
-			curInstance.setValue(getKnowledgeBase().attribute(63), evaluation);
+			curInstance.setValue(getKnowledgeBase().attribute(21), evaluation);
 			this.setLocalEvaluation(evaluation);
 			getKnowledgeBase().add(curInstance);
 		}
@@ -144,10 +158,11 @@ public class CreateVmInsertApp extends Action {
 		if (Action.isOnlyLearning()== false ){
 			//is space available
 			if (app2.getCpu()< (100-pm.getCurrentCpuAllocation()) && app2.getMemory() < (100-pm.getCurrentMemoryAllocation()) && app2.getStorage() < (100-pm.getCurrentCpuAllocation())) {
-				Instance instance = createInstance(Instance.missingValue());
-				instance.setDataset(CreateAppInsertIntoVm.getKnowledgeBase());
-				
+				Instance instance = createInstance(Instance.missingValue(), pm);
+				instance.setDataset(CreateVmInsertApp.getKnowledgeBase());
+				System.out.println ("Instance size: " + instance.numValues() + ", " + classifier);
 				try {
+					
 					output = (int) (evaluation.evaluateModelOnce(classifier, instance) *100);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -166,6 +181,7 @@ public class CreateVmInsertApp extends Action {
 	public void execute() {
 		globalTickExecution = Monitor.getInstance().getGlobalTicks();
 		VirtualMachine oldVm = null;
+		
 		
 		//if the App existed before
 		if (app.getVm()!=null) {
@@ -188,6 +204,7 @@ public class CreateVmInsertApp extends Action {
 		System.out.println (Monitor.getInstance().getGlobalTicks() + " VM: " + vm.getCpuOverhead() +", "+ vm.getMemoryOverhead() + ", " + vm.getStorageOverhead());
 		*/
 		vm.createApp(this.app);
+		vm.setActionLock(costs);
 		
 		if(oldVm!=null) {
 			oldVm.getApps().remove(app);
@@ -254,47 +271,47 @@ public class CreateVmInsertApp extends Action {
 	}
 	
 	
-	private Instance createInstance(double eval) {
-		Instance instance = new Instance(64);
+	private Instance createInstance(double eval, PhysicalMachine pm) {
+		Instance instance = new Instance(22);
 		
-		LinkedList<Integer> cpuallhist = selectedPm.getCpuAllocationHistory(10);
-		LinkedList<Integer> cpuusehist = selectedPm.getCpuUsageHistory(10);
+		LinkedList<Integer> cpuallhist = pm.getCpuAllocationHistory(3);
+		LinkedList<Integer> cpuusehist = pm.getCpuUsageHistory(3);
 
-		LinkedList<Integer> memallhist = selectedPm.getMemoryAllocationHistory(10);
-		LinkedList<Integer> memusehist = selectedPm.getMemoryUsageHistory(10);
+		LinkedList<Integer> memallhist = pm.getMemoryAllocationHistory(3);
+		LinkedList<Integer> memusehist = pm.getMemoryUsageHistory(3);
 		
 			
-		LinkedList<Integer> storageallhist = selectedPm.getStorageAllocationHistory(10);
-		LinkedList<Integer> storageusehist = selectedPm.getStorageUsageHistory(10);
+		LinkedList<Integer> storageallhist = pm.getStorageAllocationHistory(3);
+		LinkedList<Integer> storageusehist = pm.getStorageUsageHistory(3);
 		
 		//CPU/Memory/Storage - Allocation history before the new vm was created
-		for (int i = 0; i<10;i++) {
+		for (int i = 0; i<3;i++) {
 				//cpu allocation
 				instance.setValue(getKnowledgeBase().attribute(i), clusterValue(cpuallhist.get(i)));
 				//cpu usage
-				instance.setValue(getKnowledgeBase().attribute(i+10), clusterValue(cpuusehist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+3), clusterValue(cpuusehist.get(i)));
 				
 				//memory allocation
-				instance.setValue(getKnowledgeBase().attribute(i+20),clusterValue( memallhist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+6),clusterValue( memallhist.get(i)));
 				//memory usage
-				instance.setValue(getKnowledgeBase().attribute(i+30),clusterValue( memusehist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+9),clusterValue( memusehist.get(i)));
 				
 				//storage allocation
-				instance.setValue(getKnowledgeBase().attribute(i+40), clusterValue(storageallhist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+12), clusterValue(storageallhist.get(i)));
 				//storage usage 
-				instance.setValue(getKnowledgeBase().attribute(i+50),clusterValue( storageusehist.get(i)));
+				instance.setValue(getKnowledgeBase().attribute(i+15),clusterValue( storageusehist.get(i)));
 		}
 		
 		//SLAs
 		//CPU
-		instance.setValue(getKnowledgeBase().attribute(60), clusterValue(app.getCpu()));
+		instance.setValue(getKnowledgeBase().attribute(18), clusterValue(app.getCpu()));
 		//Memory
-		instance.setValue(getKnowledgeBase().attribute(61),clusterValue(app.getMemory()));
+		instance.setValue(getKnowledgeBase().attribute(19),clusterValue(app.getMemory()));
 		//Storage
-		instance.setValue(getKnowledgeBase().attribute(62), clusterValue(app.getStorage()));
+		instance.setValue(getKnowledgeBase().attribute(20), clusterValue(app.getStorage()));
 		
 		//Evaluation
-		instance.setValue(getKnowledgeBase().attribute(63), eval);
+		instance.setValue(getKnowledgeBase().attribute(21), eval);
 
 		return instance;
 	}

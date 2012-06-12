@@ -28,13 +28,30 @@ public class Analyser {
 		// check which app is the most critical problem
 		App criticalApp = null;
 		int criticalAppPercentage = 0;
+		int slacount = 0;
 		
+		// Decide what the top problem is
+		Resource problem = null;
+				
 		for (App app : apps) {
 			// cpu
 			// 100% of SLA = app.getCpu()
 			// % of usage, compared to PM = app.getCurrentCpuUsage()
 			// percentage of usage, compared to the SLA
-			int cpuPercentage = app.getCurrentCpuUsage() / app.getVm().getCurrentCpuAllocation() * 100;
+			int cursla = app.getNumberOfSlaViolations(1);
+			if (app.getVm()!= null){
+				VirtualMachine vm = app.getVm();
+				if (cursla >slacount && (vm.getCurrentCpuUsage()>vm.getCurrentCpuAllocation() || vm.getCurrentMemoryUsage()>vm.getCurrentMemoryAllocation()||vm.getCurrentStorageUsage()>vm.getCurrentStorageAllocation())) {
+					slacount = app.getNumberOfSlaViolations(1);
+					problem = app;
+					problem.setProblemType("slaViolation");
+					if(cursla>=3){
+						break;
+					}
+				}
+			}
+			
+			/*int cpuPercentage = app.getCurrentCpuUsage() / app.getVm().getCurrentCpuAllocation() * 100;
 			// check if percentage is higher than previous app
 			if (cpuPercentage > criticalAppPercentage && app.getVm().getCurrentCpuAllocation() < app.getCpu()) {
 				// replace the top criticl app
@@ -56,16 +73,15 @@ public class Analyser {
 				// replace the top criticl app
 				criticalApp = app;
 				criticalAppPercentage = storagePercentage;
-			}
+			} */
 		}
 		
-		// Decide what the top problem is
-		Resource problem = null;
 		
-		if (criticalAppPercentage >= topRegion) {
+		
+		/*if (criticalAppPercentage >= topRegion) {
 			problem = criticalApp;
 			problem.setProblemType("slaViolation");
-		}
+		}*/
 		
 		if (problem == null) {
 			// Check if there are one or more requests in the queue
@@ -83,7 +99,7 @@ public class Analyser {
 		//look for PMs that are not really used
 		if (problem == null) {
 			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
-				if (pm.isRunning() && pm.getCurrentCpuUsage()< lowUsageBenchmark && pm.getCurrentMemoryUsage()< lowUsageBenchmark && pm.getCurrentStorageUsage()< lowUsageBenchmark) {
+				if (pm.getActionLock()==0 && pm.isRunning() && pm.getCurrentCpuUsage()< lowUsageBenchmark && pm.getCurrentMemoryUsage()< lowUsageBenchmark && pm.getCurrentStorageUsage()< lowUsageBenchmark) {
 					if (problem == null) {
 						problem = pm; 
 						problem.setProblemType("wasteOfResources");
@@ -102,7 +118,7 @@ public class Analyser {
 			for (PhysicalMachine pm : Monitor.getInstance().getPms()) {
 				if (pm.isRunning()){
 					for (VirtualMachine vm: pm.getVms()) {
-						if (vm.getCurrentCpuUsage()/vm.getCurrentCpuAllocation()<lowUsagePercentage || vm.getCurrentMemoryUsage()/vm.getCurrentMemoryAllocation()<lowUsagePercentage || vm.getCurrentStorageUsage()/vm.getCurrentStorageAllocation()<lowUsagePercentage) {
+						if (vm.getActionLock()==0 && (vm.getCurrentCpuUsage()/vm.getCurrentCpuAllocation()<lowUsagePercentage || vm.getCurrentMemoryUsage()/vm.getCurrentMemoryAllocation()<lowUsagePercentage || vm.getCurrentStorageUsage()/vm.getCurrentStorageAllocation()<lowUsagePercentage)) {
 							if (problem==null){
 								problem = vm;
 								problem.setProblemType("wasteOfResources");

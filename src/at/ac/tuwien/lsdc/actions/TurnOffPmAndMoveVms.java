@@ -50,11 +50,12 @@ public class TurnOffPmAndMoveVms extends Action {
 				
 				//prediction is also performed therefore the classifier and the evaluator must be instantiated
 				if(!isOnlyLearning()) {
-					classifier = new MultilayerPerceptron();
-					classifier.buildClassifier(TurnOffPmAndMoveVms.getKnowledgeBase());
-					evaluation = new Evaluation(TurnOffPmAndMoveVms.getKnowledgeBase());
-					evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
-					
+					if(knowledgeBase.numInstances()>0){
+						classifier = new MultilayerPerceptron();
+						classifier.buildClassifier(TurnOffPmAndMoveVms.getKnowledgeBase());
+						evaluation = new Evaluation(TurnOffPmAndMoveVms.getKnowledgeBase());
+						evaluation.crossValidateModel(classifier, knowledgeBase, 10, knowledgeBase.getRandomNumberGenerator(randomData.nextLong(1, 1000)));
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -193,7 +194,7 @@ public class TurnOffPmAndMoveVms extends Action {
 		
 		if (problemPm instanceof PhysicalMachine){ //only pms can be turned off
 			pm = (PhysicalMachine)problemPm;
-			if (pm.isRunning()){
+			if (pm.isRunning() && pm.getActionLock()==0){
 				preconditionsOk=true;
 				prediction = 0;
 				MoveVm movevmaction;
