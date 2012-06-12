@@ -1,44 +1,26 @@
-%
-% As used by Kilpatrick, D. & Cameron-Jones, M. (1998). Numeric prediction
-% using instance-based learning with encoding length selection. In Progress
-% in Connectionist-Based Information Systems. Singapore: Springer-Verlag.
-%
-% Deleted "vendor" attribute to make data consistent with with what we
-% used in the data mining book.
-%
-@relation 'cpu'
-@attribute CPU1 real
-@attribute CPU2 real
-@attribute CPU3 real
-@attribute CPU4 real
-@attribute CPU5 real
-@attribute CPU6 real
-@attribute CPU7 real
-@attribute CPU8 real
-@attribute CPU9 real
-@attribute CPU10 real
-@attribute MEM1 real
-@attribute MEM2 real
-@attribute MEM3 real
-@attribute MEM4 real
-@attribute MEM5 real
-@attribute MEM6 real
-@attribute MEM7 real
-@attribute MEM8 real
-@attribute MEM9 real
-@attribute MEM10 real
-@attribute STOR1 real
-@attribute STOR2 real
-@attribute STOR3 real
-@attribute STOR4 real
-@attribute STOR5 real
-@attribute STOR6 real
-@attribute STOR7 real
-@attribute STOR8 real
-@attribute STOR9 real
-@attribute STOR10 real
-@attribute SLACpu real
-@attribute SLAMemory real
-@attribute SLAStorage real
-@attribute EVAL real
+@relation cpu
+
+@attribute CPU8ALL numeric
+@attribute CPU9ALL numeric
+@attribute CPU10ALL numeric
+@attribute CPU8USE numeric
+@attribute CPU9USE numeric
+@attribute CPU10USE numeric
+@attribute MEM8ALL numeric
+@attribute MEM9ALL numeric
+@attribute MEM10ALL numeric
+@attribute MEM8USE numeric
+@attribute MEM9USE numeric
+@attribute MEM10USE numeric
+@attribute STOR8ALL numeric
+@attribute STOR9ALL numeric
+@attribute STOR10ALL numeric
+@attribute STOR8USE numeric
+@attribute STOR9USE numeric
+@attribute STOR10USE numeric
+@attribute SLACpu numeric
+@attribute SLAMemory numeric
+@attribute SLAStorage numeric
+@attribute EVAL numeric
+
 @data
